@@ -1,3 +1,5 @@
+import re
+import json
 import socket
 import threading
 
@@ -8,20 +10,28 @@ class Game:
 
 
 class Player:
-    alive = True
-    def __init__(self, pid):
+    __alive = True
+    def __init__(self, pid, client):
         self.__pid = pid
-        
+        self.__client = client
+
     def listen(self):
-        while self.alive:
+        while self.__alive:
             try:
-                data = self.session.recv(1024)
+                data = self.__client.recv(1024)
                 if data:
-                    self.raw_keylogs += data.decode()
-            except socket.error as exc:
-                interface.message("DISCONNECT", f"Session {self.session_id} ({self.address[0]}:{self.address[1]}) - Logs Saved", colour=Fore.BLUE, line_break=True)
-                if self.alive:
-                    self.kill()
+                    SERVER.message(f"CLIENT-{self.__pid}", data.decode())
+                    parsed_command = re.sub(' +', ' ', data.decode()).strip().split(" ")
+                    print(parsed_command)
+            except socket.error:
+                SERVER.message("Disconnect", f"Session #{self.__pid} closed")
+                self.kill()
+                
+    def send(self, data):
+        self.__client.send(json.dumps(data).encode())
+
+    def kill(self):
+        self.__alive = False
 
 class ConnectionHandler:
     _running = False
@@ -37,6 +47,7 @@ class ConnectionHandler:
         while self._running:
             (client, client_address) = con_socket.accept()
             SERVER.message("ConnectionHandler", "Connection from {}:{}".format(*client.getpeername()))
+            SERVER.add_client(client)
             
     
     def start(self):
@@ -53,27 +64,42 @@ class Server:
     __games = []
     __clients = []
     __next_id = 1
+    
+    __CLIENT_DATA = {
+        "options": {
+            "host": {
+                "desc": "host own game",
+                "params": ""
+                },
+            "join": {
+                "desc": "join a game",
+                "params": "<game_code>"
+                }
+            },
+        "instructions":"AAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+    }
+    
     def __init__(self, host, port):
         self.__connection_handler = ConnectionHandler(host, port)
-        
     
     @staticmethod
     def message(prefix, message):
         print(f"[{prefix}] {message}")
-        
-    
-    
+
+    def handle_instruction(self):
+        pass
+
+    # add player/client connection
     def add_client(self, client):
-        self.__clients.append(Player(self.__next_id, client)) 
+        p = Player(self.__next_id, client)
+        self.__clients.append(p) 
+        self.__next_id += 1
+        threading.Thread(target=p.listen).start()
+        p.send(self.__CLIENT_DATA)
         
-    
-        
-        
-    
+    # start the connection handler 
     def start(self):
         self.__connection_handler.start()
-
-
 
 
 def main():

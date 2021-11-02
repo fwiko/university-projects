@@ -30,8 +30,8 @@ class Session:
         self.__client_socket.close()
         self.alive = False
         
-    def send(self, data):
-        self.__client_socket.send(data.encode())
+    def send(self, header, data):
+        self.__client_socket.send(json.dumps({"header":header, "data":data}).encode())
     
     def receiver(self):
         while True:
@@ -53,18 +53,27 @@ class Session:
             self.__state = data.get("state", None)
         elif header == "commands":
             self.commands = data
+        elif header == "alert":
+            console_output(header, data.get("message", None))
             
-def handle_command(command, args):
-    pass
+
+# client-side terminal output function
+def console_output(prefix, message):
+    print(f"[{prefix.upper()}] > {message}")
 
 if __name__ == '__main__':
     session = Session(SERVER_ADDRESS, SERVER_PORT)
     session.connect()
     time.sleep(.5)
     print("\n".join([f"{key} | {value['desc']}" for key, value in session.commands.items()]))
-    while session.alive:
-        user_input = (re.sub(' +', ' ', input("$ ").strip())).lower().split(" ")
-        if user_input[0] == "exit":
-            session.disconnect()
-        elif user_input[0] in session.commands.keys():
-            pass
+    try:
+        while session.alive:
+            user_input = (re.sub(' +', ' ', input("$ ").strip())).lower().split(" ")
+            if user_input[0] == "exit":
+                session.disconnect()
+            elif user_input[0] in session.commands.keys():
+                if user_input[0] == "host":
+                    session.send("command", {"command":"host"})
+    except Exception as e:
+        print("DISCONNECTED", e)
+        session.disconnect()

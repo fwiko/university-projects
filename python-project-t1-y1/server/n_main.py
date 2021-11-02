@@ -2,6 +2,7 @@ import re
 import json
 import string
 import socket
+import random
 import threading
 
 HOST = "0.0.0.0"
@@ -34,6 +35,40 @@ class Client:
             "game": None,
             "username": f"CLIENT-{uid}"
         }
+        
+    # client command processor
+    # commands sent by client connections are processed here
+    def __process_command(self, command):
+        # formatting the command, removing spaces, seperating command and passed in arguments
+        parsed_command = (re.sub(' +', ' ', command.strip())).lower().split(" ")
+        
+        # checking what state the user is in
+        # user is in-menu
+        if self.__state == "inMenu":
+            command = parsed_command[0]
+            args = parsed_command[1:]
+            
+            # if the command sent by the user is "host"
+            if command == "host":
+                # create/host a new quiz game
+                new_game = Game(self)
+                SERVER.add_game(new_game)
+                self.set_state("inGame")
+                self.__config["game"] = new_game
+                new_game.alert(f"Game created with code {new_game.get_code()}")
+                
+            # if the command sent by the user is "join"
+            elif command == "join":
+                # join an available game 
+                pass
+        
+            elif command == "games":
+                # display list of available games
+                pass
+                
+        #user is in-game
+        elif self.__state == "inGame":
+            pass
     
     def listen(self):
         self.__alive = True
@@ -42,8 +77,17 @@ class Client:
             try:
                 data = self.__conn.recv(1024)
                 if len(data) < 1: break
-                console_output(f"CLIENT-{self.uid}", data.decode())
-            except:
+                
+                data = json.loads(data.decode())
+                
+                console_output(f"CLIENT-{self.uid}", data)
+                
+                if not data.get("header", None) or not data.get("data", None) or not data["data"].get("command"): continue
+                if data["header"] == "command":
+                    self.__process_command(data["data"]["command"])
+                    
+            except Exception as e:
+                print(e)
                 break
         SERVER.disconnected(self)
         
@@ -54,45 +98,45 @@ class Client:
         }
         self.__conn.send(json.dumps(packet).encode())
         
-    def __command(self, command):
-        parsed_command = (re.sub(' +', ' ', command.strip())).lower().split(" ")
-        if self.__state == "inMenu":
-            command = parsed_command[0]
-            args = parsed_command[1:]
-            if command == "host":
-                new_game = Game(self)
-                SERVER.add_game(new_game)
-        elif self.__state == "inGame":
-            pass
-        
     def get_state(self):
         return self.__state
     
     def set_state(self, state):
         self.__state = state
+        self.send("state", {"state": state})
+        console_output("server", f"Set state of CLIENT-{self.uid} to \"{state}\"")
+        
+    def set_username(self, username):
+        self.__config["username"] = username
+        console_output("server", f"Set username of CLIENT-{self.uid} to \"{username}\"")
     
     def close_connection(self):
         self.__alive = False
         self.__conn.close()
-    
         
-
 class Game:
     def __init__(self, owner: Client):
         self.__config = {
             "code": generate_code(),
             "owner": owner,
-            "players": [],
+            "players": [owner],
             "questions": {}
         }
+        console_output("GAME", f"New game created by CLIENT-{owner.uid}")
+        
+    def get_code(self):
+        return self.__config.get("code")
+
+    def alert(self, message):
+        for client in self.__config.get("players"):
+            client.send("alert", {"message": message})
+            
 
 class Server:
     __running = False
     __clients = []
-    __games = {}
+    __games = []
     __next_uid = 1
-    
-
     
     # Handles client connections
     # Gets relevant data and creates a client object based on the Client class
@@ -140,10 +184,17 @@ class Server:
     # stop everything - close server..
     def __stop(self):
         self.__running = False
+        
+        
+        
+    #   relative to game management   #
+    
+    def add_game(self, game):
+        self.__games.append(game)
     
 # server-side terminal output function
 def console_output(prefix, message):
-    print(f"[{prefix.upper()}] > {message.capitalize()}")
+    print(f"[{prefix.upper()}] > {message}")
 
 if __name__ == "__main__":
     SERVER = Server()

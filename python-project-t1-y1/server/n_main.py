@@ -1,10 +1,22 @@
 import re
+import json
 import string
 import socket
 import threading
 
 HOST = "0.0.0.0"
 PORT = 5555
+
+CLIENT_COMMANDS = {
+    "games": { "desc": "list available games"},
+    "host": { "desc": "host own game" },
+    "join": {
+        "desc": "join a game",
+        "params": "<game_code>"
+        },
+    "leave": { "desc": "leave current game" },
+    "exit": { "desc": "exit program" }
+    }
 
 def generate_code():
     return "".join([random.choice(string.ascii_uppercase) for _ in range(5)])
@@ -15,7 +27,7 @@ class Client:
     __state = "inMenu"
     
     def __init__(self, conn, addr, uid):
-        self.conn = conn
+        self.__conn = conn
         self.addr = addr
         self.uid = uid
         self.__config = {
@@ -25,26 +37,43 @@ class Client:
     
     def listen(self):
         self.__alive = True
-        self.conn.settimeout(300)
+        self.__conn.settimeout(300)
         while self.__alive:
             try:
-                data = self.conn.recv(1024)
+                data = self.__conn.recv(1024)
+                if len(data) < 1: break
                 console_output(f"CLIENT-{self.uid}", data.decode())
             except:
                 break
         SERVER.disconnected(self)
         
-    def __client_command(self, command):
+    def send(self, header, data):
+        packet = {
+            "header": header,
+            "data": data
+        }
+        self.__conn.send(json.dumps(packet).encode())
+        
+    def __command(self, command):
         parsed_command = (re.sub(' +', ' ', command.strip())).lower().split(" ")
         if self.__state == "inMenu":
-            if (parsed_command[0]):
-                pass
+            command = parsed_command[0]
+            args = parsed_command[1:]
+            if command == "host":
+                new_game = Game(self)
+                SERVER.add_game(new_game)
         elif self.__state == "inGame":
             pass
+        
+    def get_state(self):
+        return self.__state
+    
+    def set_state(self, state):
+        self.__state = state
     
     def close_connection(self):
         self.__alive = False
-        self.conn.close()
+        self.__conn.close()
     
         
 
@@ -63,6 +92,8 @@ class Server:
     __games = {}
     __next_uid = 1
     
+
+    
     # Handles client connections
     # Gets relevant data and creates a client object based on the Client class
     def __handle_connection(self, conn, addr):
@@ -72,6 +103,8 @@ class Server:
         thread = threading.Thread(target=new_client.listen)
         thread.start()
         self.__clients.append(new_client)
+        new_client.send("commands", CLIENT_COMMANDS)
+        new_client.send("state", {"state": new_client.get_state()})
 
     # Client disconnection signal
     # Called when a client has stopped responding - lost connection
@@ -103,8 +136,6 @@ class Server:
     # Return list of clients connected to the server
     def get_clients(self):
         return self.__clients
-            
-
             
     # stop everything - close server..
     def __stop(self):

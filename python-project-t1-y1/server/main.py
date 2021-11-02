@@ -68,13 +68,18 @@ class Server:
     __CLIENT_DATA = {
         "options": {
             "host": {
-                "desc": "host own game",
-                "params": ""
+                "desc": "host own game"
                 },
             "join": {
                 "desc": "join a game",
                 "params": "<game_code>"
-                }
+                },
+            "leave": {
+                "desc": "leave current game"
+            },
+            "exit": {
+                "desc": "exit program"
+            }
             },
         "instructions":"AAAAAAAAAAAAAAAAAAAAAAAAAAAA"
     }

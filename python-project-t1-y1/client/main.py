@@ -1,4 +1,6 @@
+import re
 import sys
+import time
 import json
 import socket
 import threading
@@ -8,33 +10,61 @@ SERVER_PORT = 5555
 
 
 class Session:
-    __CLIENT_DATA = {}
     alive = False
+    __state = None
+    commands = {}
     
     def __init__(self, address, port):
-        self.client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self.__client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.address = address
         self.port = port
     
     def connect(self):
-        self.client_socket.connect((self.address, self.port))
+        self.__client_socket.connect((self.address, self.port))
         thread = threading.Thread(target=self.receiver)
         thread.start()
         self.alive = True
         
+    def disconnect(self):
+        self.__client_socket.shutdown(2)
+        self.__client_socket.close()
+        self.alive = False
+        
+    def send(self, data):
+        self.__client_socket.send(data.encode())
+    
     def receiver(self):
         while True:
             try:
-                data = self.client_socket.recv(1024)
+                data = self.__client_socket.recv(1024)
                 if len(data) < 1: break
-            except:
+                self.__process_data(json.loads(data.decode()))
+            except Exception as e:
+                print(e)
                 break
         print("Connection closed")
         self.alive = False
 
+    def __process_data(self, packet):
+        header = packet.get("header", None)
+        data = packet.get("data", None) 
+        if not header or not data: return
+        if header == "state":
+            self.__state = data.get("state", None)
+        elif header == "commands":
+            self.commands = data
+            
+def handle_command(command, args):
+    pass
+
 if __name__ == '__main__':
-    s = Session(SERVER_ADDRESS, SERVER_PORT)
-    s.connect()
-    while s.alive:
-        s.client_socket.send(input(":> ").encode())
-        
+    session = Session(SERVER_ADDRESS, SERVER_PORT)
+    session.connect()
+    time.sleep(.5)
+    print("\n".join([f"{key} | {value['desc']}" for key, value in session.commands.items()]))
+    while session.alive:
+        user_input = (re.sub(' +', ' ', input("$ ").strip())).lower().split(" ")
+        if user_input[0] == "exit":
+            session.disconnect()
+        elif user_input[0] in session.commands.keys():
+            pass

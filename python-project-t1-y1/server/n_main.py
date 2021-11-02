@@ -9,15 +9,6 @@ PORT = 5555
 def generate_code():
     return "".join([random.choice(string.ascii_uppercase) for _ in range(5)])
 
-class Game:
-    def __init__(self, owner: Client):
-        self.__config = {
-            "code": generate_code(),
-            "owner": owner,
-            "players": [],
-            "questions": {}
-        }
-
 
 class Client:
     __alive = False
@@ -27,6 +18,10 @@ class Client:
         self.conn = conn
         self.addr = addr
         self.uid = uid
+        self.__config = {
+            "game": None,
+            "username": f"CLIENT-{uid}"
+        }
     
     def listen(self):
         self.__alive = True
@@ -53,7 +48,14 @@ class Client:
     
         
 
-
+class Game:
+    def __init__(self, owner: Client):
+        self.__config = {
+            "code": generate_code(),
+            "owner": owner,
+            "players": [],
+            "questions": {}
+        }
 
 class Server:
     __running = False

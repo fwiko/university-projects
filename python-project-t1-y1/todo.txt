@@ -1,0 +1,11 @@
+client -
+
+display of help menu
+display of games list /
+display of final quiz leaderboard /
+beautify message output
+
+server -
+
+handler quiz host/owner disconnect
+close an open game/lobby on host disconnect

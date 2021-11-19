@@ -66,7 +66,7 @@ class Game:
         self.logger.debug(f"Removed client {client.username}")
     
     def close_game(self) -> None:
-        self.__manager.remove_game(self)
+        self.__manager.game_close(self)
         self.state_change(State.IN_MENU)
         for client in self.settings.players:
             client.game = None
@@ -101,14 +101,17 @@ class Game:
     def end_quiz(self) -> None:
         if not self.__current_quiz:
             return
+        self._send_data("quiz_stats", self.__current_quiz.scores)
         self.__current_quiz = None
         self.settings.active = False
         self.state_change(State.IN_LOBBY)
         self.logger.info("Quiz has ended")
         
-    def handle_answer(self, client: client.Client, answer: str) -> None:
-        self.logger.info(f"{client.username} submitted answer '{answer}'")
-        # TODO: Handle the answer input and update stats if applicable
+    def handle_answer(self, game_client: client.Client, answer: str) -> None:
+        self.logger.info(f"{game_client.username} submitted answer '{answer}'")
+        self.__current_quiz.current_question["submitted"].append(game_client)
+        if answer == self.__current_quiz.current_question.get("answer"):
+            self.__current_quiz.scores[game_client.uid] += 1
     
     def _quiz_sequence(self) -> None:
         self.alert("Quiz starting in 5 seconds!")
@@ -123,6 +126,8 @@ class Game:
             
             while len(self.__current_question.get("submitted")) != len(self.settings.players):
                 time.sleep(.5)
+                
+        self.end_quiz()
     
     # event handlers
     

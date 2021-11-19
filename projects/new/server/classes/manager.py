@@ -59,5 +59,5 @@ class Manager:
         if client.game is not None:
             client.game.client_leave(client)
         
-    def game_close(self, game: game.Game) -> None:
-        self.remove_game(game)
+    def game_close(self, g: game.Game) -> None:
+        self.remove_game(g)

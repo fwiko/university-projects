@@ -1,0 +1,139 @@
+
+
+<!-- HTML doctype and language of webpages -->
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<!-- Meta tags used for compatibility -->
+		<meta charset="UTF-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<title>CPD Portfolio - Part-Time Job</title>
+		<!-- Import of external CSS file -->
+		<link rel="stylesheet" href="../assets/css/style.css">
+	</head>
+	<body>
+		<!-- Heading -->
+		<header class="header">
+			<div class="grid">
+				<!-- Container for the image/icon located in the header using div tags with an img within -->
+				<div class="image">
+					<!-- Adding the image from the images src folder, using img tags, also using an alt tag to add description to image to improve accessibility -->
+					<img src="../assets/images/snf_logo.png" alt="Sub and Fletch YouTube profile picture">
+				</div>
+				<!-- Container for the main content of the header - Title and text/introduction 
+					inline css being used in this instance to remove the margin from the top of the container and add a small amount of padding within the top above the header text -->
+				<div class="container" style="margin-top: 0;">
+					<!-- Main heading/title of page within header -->
+					<div class="container-header">
+						<h1 style="margin: 0;">Part Time Job</h1>
+					</div>
+					<!-- Introduction paragraph - additional part of header introducing user to the page -->
+					<div class="container-body">
+						<p>Over the past couple of months, i have continued to complete work at my part-time job. This includes using software from the adobe suite to create video content. <br><br>
+							Both video editing, graphic design, and sound design are involved when creating this content. THis requires me to meet deadlines and work with a team to have the best result possible.
+						</p>
+					</div>
+				</div>
+			</div>
+		</header>
+		<!-- Navigation Bar -->
+		<nav class="nav" aria-label="Main Navigation">
+			<!-- Grid layout, controlled via my external css - using the additional c3 class to state that i wish to have 3 columns per row of the grid -->
+			<div class="grid c3">
+				<!-- First item in grid/nav being "contact me" button -->
+				<a href="../contact.html">Contact me</a>
+				<!-- Second item in grid/nav being "home" button -->
+				<a href="../index.html" id="d">Home</a>
+				<!-- Third item in grid being an "activities" button that will display a dropdown once hovered over -->
+				<a class="dropdown-button">Activities ></a>
+				<!-- Dropdown content (content/links that will display when the dropdown button above is hovered over) -->
+				<div id="dropdown-content">
+					<a href="../activities/cyber-challenges.html">TryHackMe Challenges</a>
+					<a href="../activities/project-development.html">Project Development</a>
+					<a href="../activities/mentoring-sessions.html">Mentoring Sessions</a>
+				</div>
+			</div>
+		</nav>
+		<!-- Main Page Content -->
+		<main class="main">
+			<!-- only subsection -->
+			<div class="subsection">
+				<!-- What was involved subsection heading and introduction -->
+				<h2>What was involved?</h2>
+				<hr>
+				<!-- Introduction paragraph of subsection -->
+				<p>When given a task to complete, it is my job to take whatever footage/content i am given and comprise it within an 8 to 10 minute long video clip. This helps with retention and maximising profits on the video platform of choise. <br><br>
+					The software used is Adobe Premiere Pro, sometimes used in conjunction with adobe photoshop and adobe audition. This software is an industry standard and allows content to be created to the highest quality standard.
+				</p>
+				<!-- Grid layout used again - used for container layout -->
+				<div class="grid c2">
+					<!-- Sub and Fletch Container -->
+					<div class="container">
+						<div class="container-header">
+							<!-- Container Title -->
+							<h2 style="display: inline;">Sub & Fletch</h2>
+						</div>
+						<div class="container-body">
+							<p>Video Edits for sub and fletch.</p>
+							<!-- Youtube Video Embed Iframe -->
+							<div class="video-container">
+								<iframe class="responsive-iframe" src="https://www.youtube.com/embed/ndzypzPGHJs?controls=0" title="YouTube video player" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+							</div>
+						</div>
+					</div>
+					<!-- Flebsy Container -->
+					<div class="container">
+						<div class="container-header">
+							<!-- Container Title -->
+							<h2 style="display: inline;">Flebsy</h2>
+						</div>
+						<div class="container-body">
+							<p>Video Edits for Flebsy.</p>
+							<!-- Youtube Video Embed Iframe -->
+							<div class="video-container">
+								<iframe class="responsive-iframe" src="https://www.youtube.com/embed/jCVeOklO8MM?controls=0" title="YouTube video player" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</main>
+		<!-- Footer -->
+		<footer class="footer">
+			<div class="grid c2">
+				<!-- contact section styled to align text to the right -->
+				<div class="contact">
+					<!-- h3 header category header -->
+					<h3>Contact Info</h3>
+					<hr>
+					<!-- unordered list containing links/infomration about contact methdos -->
+					<ul>
+						<!-- tel link to a phone number -->
+						<li class="col-md-2">Phone: <a href="tel:7888455555">+44 7888455555</a></li>
+						<!-- mailto link to email address -->
+						<li class="col-md-2">Email: <a href="mailto:raff@raffsimms.com">raff@raffsimms.com</a></li>
+						<!-- address text -->
+						<li class="col-md-2">Address: <a href="">57 Street name, Nottingham, p5t c0de</a></li>
+					</ul>
+				</div>
+				<!-- social links section styled to align text to the left -->
+				<div class="social-links" >
+					<!-- h3 header category header -->
+					<h3>Other Pages</h3>
+					<hr>
+					<!-- links to other available pages on the website -->
+					<ul>
+						<li class="col-md-2"><a href="../index.html">Home Page</a></li>
+						<li class="col-md-2"><a href="../contact.html">Contact Form</a></li>
+						<li class="col-md-2"><a href="../activities/project-development.html">Personal Projects</a></li>
+						<li class="col-md-2"><a href="../activities/cyber-challenges.html">TryHackMe Activities</a></li>
+						<li class="col-md-2"><a href="../activities/mentoring-sessions.html">Mentoring Sessions</a></li>
+					</ul>
+				</div>
+			</div>
+			<!-- copyright text -->
+			<p style="text-align: center;">raff simms © 2021</p>
+		</footer>
+	</body>
+</html>

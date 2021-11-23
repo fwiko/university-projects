@@ -1,0 +1,151 @@
+
+
+<!-- HTML doctype and language of webpages -->
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<!-- Meta tags used for compatibility -->
+		<meta charset="UTF-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<title>CPD Portfolio - Cyber Security</title>
+		<!-- Import of external CSS file -->
+		<link rel="stylesheet" href="../assets/css/style.css">
+	</head>
+	<body>
+		<!-- Heading -->
+		<header class="header">
+			<div class="grid">
+				<!-- Container for the image/icon located in the header using div tags with an img within -->
+				<div class="image">
+					<!-- Adding the image from the images src folder, using img tags, also using an alt tag to add description to image to improve accessibility -->
+					<img src="../assets/images/thm_logo.jpg" alt="TryHackMe Logo">
+				</div>
+				<!-- Container for the main content of the header - Title and text/introduction 
+					inline css being used in this instance to remove the margin from the top of the container and add a small amount of padding within the top above the header text -->
+				<div class="container" style="margin-top: 0;">
+					<!-- Main heading/title of page within header -->
+					<div class="container-header">
+						<h1 style="margin: 0;">TryHackMe Challenges</h1>
+					</div>
+					<!-- Introduction paragraph - additional part of header introducing user to the page -->
+					<div class="container-body">
+						<p>TryHackMe is an Online platform that allow users to learn cyber-security through challenges that are often based on real-world scenarios. There are a wide range of difficulties with challenges getting harder as you progress. There are learning paths set out to allow the user to follow a set path to feel a sense of direction including an offensive security path and defensive security path.<br><br>
+							Each has a slight different approach to teaching however have the same goal which is to teach cyber-security.
+						</p>
+					</div>
+				</div>
+			</div>
+		</header>
+		<!-- Navigation Bar -->
+		<nav class="nav" aria-label="Main Navigation">
+			<!-- Grid layout, controlled via my external css - using the additional c3 class to state that i wish to have 3 columns per row of the grid -->
+			<div class="grid c3">
+				<!-- First item in grid/nav being "contact me" button -->
+				<a href="../contact.html">Contact me</a>
+				<!-- Second item in grid/nav being "home" button -->
+				<a href="../index.html" id="d">Home</a>
+				<!-- Third item in grid being an "activities" button that will display a dropdown once hovered over -->
+				<a class="dropdown-button">Activities ></a>
+				<!-- Dropdown content (content/links that will display when the dropdown button above is hovered over) -->
+				<div id="dropdown-content">
+					<a href="../activities/project-development.html">Personal Project Development</a>
+					<a href="../activities/mentoring-sessions.html">Mentoring Sessions</a>
+					<a href="../activities/parttime-job.html">Part-Time Job</a>
+				</div>
+			</div>
+		</nav>
+		<!-- Main Page Content -->
+		<main class="main">
+			<div class="subsection">
+				<!-- What was involved subsection heading and introduction -->
+				<h2>What was involved?</h2>
+				<hr>
+				<p>Throughout my time using both tryhackme and hackthebox i covered many topics in both the cyber-security and more generalised computing fields. I beleive the activities that were offered and the ones that i completed gave me a good insight into what was involved in the cyber-security scene in addition to giving me valueable experience using different tools and techniques. <br><br> Below is a summary of some topics that were covered.</p>
+				<div class="grid c2">
+					<!-- Linux Systems Container
+						Information about the usage of linux systems in this activity in a formatted structure-->
+					<div class="container">
+						<div class="container-header">
+							<h2 style="display: inline;">Operating linux systems</h2>
+						</div>
+						<div class="container-body">
+							<ul>
+								<li>File system management</li>
+								<li>utilising command line tools</li>
+								<li>virtual machines</li>
+							</ul>
+							<p>When completing tasks on both tryhackme and hackthebox, being able to access and utilize a linux system was a must. This allowed me to have the best experience as most tools used in each tasks were built with and for linux operating systems. To achieve this i used the virtualisation software "vmware workstation" to virtualise a kali linux destop system on my windows machine.</p>
+							<!-- Image of kali linux desktop located in images folder -->
+							<img src="../assets/images/linux.png" alt="Kali Linux Desktop Screenshot" style="min-width: 100%; max-width: 100%;" >
+						</div>
+					</div>
+					<!-- Security Tools Container 
+						Infomration about the security tools used throughout in a formatted structure -->
+					<div class="container">
+						<div class="container-header">
+							<h2 style="display: inline;">Utilization of security tools</h2>
+						</div>
+						<div class="container-body">
+							<ul>
+								<li>nmap</li>
+								<li>burp suite</li>
+								<li>john the ripper</li>
+								<li>metasploit</li>
+								<li>wireshark</li>
+							</ul>
+							<p>Throught my time using TryHackMe i completed many CTF (Capture the Flag) challenges requiring me to use the knowledge that i had gained to gain access to a external machine/network using a variety of techniques and security tools. </p>
+							<!-- Image of metasploit interface located in images folder -->
+							<img src="../assets/images/metasploit.png" alt="Metasploit CLI Screenshot" style="min-width: 100%; max-width: 100%;" >
+						</div>
+					</div>
+				</div>
+			</div>
+			<!-- subsection for page conclusion - aligning text to the righthand side with the text-right subclass -->
+			<div class="subsection text-right">
+				<!-- Final thoughts heading and conclusion -->
+				<h2>Final thoughts</h2>
+				<hr>
+				<p>I beleive that completing a variety of tasks using tryhackme has given me some incredibly valueable experience that will help me in the future, especially when completing this degree course. The tasks i have completed are directly related to this degree course i am studying and i hope i can put what i have learnt to good use. <br><br>I gained a vast number of experience on tryhackme over the many hours i spent doing tasks and challenges. Eventually reaching level 9, which i beleive is a mid-tier level on this particular site.</p>
+				<img src="../assets/images/thm_stats.png" alt="TryHackMe Account Statistics" style="min-width: 100%; max-width: 100%;">
+				<p class="text-center">thank you for reading!</p>
+			</div>
+		</main>
+		<!-- Footer -->
+		<footer class="footer">
+			<div class="grid c2">
+				<!-- contact section styled to align text to the right -->
+				<div class="contact">
+					<!-- h3 header category header -->
+					<h3>Contact Info</h3>
+					<hr>
+					<!-- unordered list containing links/infomration about contact methdos -->
+					<ul>
+						<!-- tel link to a phone number -->
+						<li class="col-md-2">Phone: <a href="tel:7888455555">+44 7888455555</a></li>
+						<!-- mailto link to email address -->
+						<li class="col-md-2">Email: <a href="mailto:raff@raffsimms.com">raff@raffsimms.com</a></li>
+						<!-- address text -->
+						<li class="col-md-2">Address: <a href="">57 Street name, Nottingham, p5t c0de</a></li>
+					</ul>
+				</div>
+				<!-- social links section styled to align text to the left -->
+				<div class="social-links" >
+					<!-- h3 header category header -->
+					<h3>Other Pages</h3>
+					<hr>
+					<!-- links to other available pages on the website -->
+					<ul>
+						<li class="col-md-2"><a href="../index.html">Home Page</a></li>
+						<li class="col-md-2"><a href="../contact.html">Contact Form</a></li>
+						<li class="col-md-2"><a href="../activities/project-development.html">Personal Projects</a></li>
+						<li class="col-md-2"><a href="../activities/mentoring-sessions.html">Mentoring Sessions</a></li>
+						<li class="col-md-2"><a href="../activities/parttime-job.html">Part-Time Job</a></li>
+					</ul>
+				</div>
+			</div>
+			<!-- copyright text -->
+			<p style="text-align: center;">raff simms © 2021</p>
+		</footer>
+	</body>
+</html>

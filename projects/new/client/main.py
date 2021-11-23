@@ -17,18 +17,25 @@ class Session():
 
     def start(self):
         """initiate the connection with the quiz server"""
-        with self._socket as sock:
-            sock.connect((self._host, self._port))
-            threading.Thread(target=self._receiver, args=[sock]).start()
+        self._socket.connect((self._host, self._port))
+        self.listener_thread = threading.Thread(target=self._receiver).start()
+        
+    def stop(self):
+        self.alive = False
+        self._socket.close()
     
     # receiving data from the server
     
-    def _receiver(self, sock: socket.socket):
+    def _handle_received(self, data: str):
+        """handles received data from the quiz server"""
+        pass
+    
+    def _receiver(self):
         """receive data sent from the quiz server
         function will run in a thread (coroutine) alongside the rest of the client"""
         while self.alive:
             try:
-                data = sock.recv(1024).decode('utf-8')
+                data = self._socket.recv(1024).decode('utf-8')
                 if not data: break
                 print(data)
             except Exception as e:
@@ -37,34 +44,51 @@ class Session():
         self.alive = False
         print("Connection closed")
         
+    # received data handling
+    
+    
+    
     # sending data to the server
     
     def _send(self, header: str, data: str):
-        self._socket.send(json.dumps({header: header, "data": {header: data}}).encode('utf-8'))
+        self._socket.send(json.dumps({"header": header, "data": {header: data}}).encode('utf-8'))
         
-    def _command(self, command: str):
+    def _command(self, **kwargs):
         """handles user input"""
-        self._send("command", command)
+        cmd = kwargs.get("command")
+        args = kwargs.get("args")
+        self._send("command", f"{cmd}{' ' + ' '.join(args) if args else ''}")
         
     def _answer(self, answer: str):
         self._send("answer", answer)
         
+    # additional handlers
+    
+    def _help_menu(self):
+        print(settings.HELP_MENU)
+        
     # handling user input
     
-    def _handlers(self):
+    def _get_handler(self, command: str):
         """handles user input"""
-        return {
-            "host": self._command(*args),
-            "join": self._command(*args)
-        }
+        if command in ("host", "join", "leave", "start", "games"):
+            return self._command
+        elif command in ("help"):
+            return self._help_menu
     
     def input(self, input: str):
         """input and send it to the quiz server"""
-        print(input.upper())
+        sanitised_input: list[str] = (re.sub(' +', ' ', input.strip())).lower().split(" ")
+        cmd = sanitised_input[0]
+        args = sanitised_input[1:]
+        handler = self._get_handler(cmd)
+        if handler:
+            handler(command=cmd, args=args)
     
 
 if __name__ == '__main__':
     session = Session(settings.HOST, settings.PORT)
+    session.start()
     while True:
         message = input("> ")
         if message == "exit":

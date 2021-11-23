@@ -1,0 +1,404 @@
+/* custom font-face used throughout - located in assets/fonts */
+@font-face {
+    font-family: vcr_osd_mono;
+    src: url(../fonts/VCR_OSD_MONO_1.001.ttf);
+}
+/* global styling on all elements */
+* {
+   /* forcing all text to be uppercase */
+    text-transform: uppercase;
+   /* setting the custom font family of the website */
+    font-family: vcr_osd_mono;
+   /* word wrap style */
+    word-wrap: break-word;
+   /* default font weight of 800 */
+    font-weight: 800;
+   /* sizing and relative sizing of elements */
+    box-sizing: border-box;
+}
+/* Setting the base body styling and attributes - to be repeated on every page throughout the site */
+body {
+   /* setting the background image to the bg.jpg image located in the images folder (image of the sky and clouds) */
+    background-image: url(../images/bg.jpg);
+   /* setting the background size to cover the entire screen (so that the image covers the entire background) */
+    background-size: cover;
+   /* creating a translucent section of the body that page content will be contained in this helps with accessiblity and meeting contrast requirements as the contras between the text and the background is higher */
+    box-shadow: inset 0 0 0 1000rem rgba(0, 5, 15, 0.911);
+    background-color: black;
+   /* setting the maxwidth of the content to 80% of the entire viewport meaning content will be more centered towards the middle */
+    max-width: 80%;
+   /* setting the margin of the content to be centered */
+    margin: 0 auto;
+   /* setting the padding of the content to both the left and right */
+    padding: 2rem 2rem 0 2rem;
+   /* setting the minimum width of the body content so that things will not get too squished on narrow displays */
+    min-width: 300px;
+    /* setting the height of content to be 100% of the screen no matter the height */
+    min-height: 100vh;
+    /* setting the display type of the main body content
+    help to structure page and also make sure the footer stays at the bottom of the page - no matter how short the page content is */
+    display: flex;
+    flex-direction: column;
+}
+/* Reusable values Setting reuseable colour values that can be used throughout the css - meaning no need to repeat the same colour every time. */
+:root {
+    --hover-bg: -webkit-linear-gradient(left,#6f8de9,#5293d3);
+    --windows-bg: linear-gradient(to bottom right, rgb(211, 211, 211), silver);
+    --header-bg: -webkit-linear-gradient(left,#112c80,#3274b6);
+}
+/* grid layout the reuseable grid layout that is used to organise information throughout the site */
+.grid {
+    display: grid;
+   /* gap of 2% of the viewport widthways between each grid element */
+    grid-column-gap: 2%;
+   /* default grid layout of two elements per row */
+    grid-template-columns: repeat(2, auto);
+}
+/* two elements per row grid layout specification (used as a subclass)*/
+.c2 {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+/* three elements per row grid layout specification (used as a subclass) */
+.c3 {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+/* heading */
+/* setting the colour of text within header DIVs to white */
+.header {
+    color: white;
+}
+/* setting attributes of images located within header DIVs */
+.header img {
+   /* max image height of 200px */
+    max-height: 200px;
+   /* border radius of 10% (rounding the edges of the image) */
+    border-radius: 10%;
+   /* setting the border of the image to solid white with a thickness of 3 pixels */
+    border: 3px solid white;
+   /* setting the background colour of the image to a gray gradient specified above in :root (won't be visible unless the image has some transparency) */
+    background: var(--windows-bg);
+}
+/* navigation menu */
+/* setting the oclour of text located in the nav DIV white by default also setting the nav DIVs margin to 0 by default, reducing the gap between itself and other elements */
+.nav {
+    color: white;
+    margin: 0;
+}
+/* style for nav "buttons" (actually anchor links due to limitation of no javascript) as well as form submit input */
+.nav a, input[type=submit] {
+   /* 20px inside padding increasing gap between button text and edge of button */
+    padding: 20px;
+   /* setting the word-wrap style - if page gets too narrow words will split in half e.g. cont / act / me */
+    word-wrap: break-word;
+   /* aligning the text within the button to the center */
+    text-align: center;
+   /* removing the default decoration on link text (dotted underline) */
+    text-decoration: none;
+   /* setting the colour of the text within the buttons to black */
+    color: black;
+   /* rounding the edges of the buttons with a border radius */
+    border-radius: 10px;
+   /* setting a 2px solid color border on the buttons */
+    border: 2px solid;
+   /* setting the bottom border colour to dark gray */
+    border-bottom-color: #424242;
+   /* setting the right border colour to dark gray */
+    border-right-color: #424242;
+   /* setting the left border colour to white */
+    border-left-color: #fff;
+   /* setting the top border colour to white */
+    border-top-color: #fff;
+   /* setting the background colour to a light gray gradient as specified in :root above */
+    background: var(--windows-bg);
+}
+/* setting what happens when a user hovers on a nav bar button or form submit button */
+.nav a:hover, input[type=submit]:hover {
+   /* setting the background colour to a blue gradient as specified in :root */
+    background: var(--hover-bg);
+   /* setting the text colour to white */
+    color: white;
+}
+/* setting the style for the buttons in the navbar dropdown menu */
+.nav #dropdown-content {
+   /* each element should span 3 traditional column widths (space of 3 normal buttons) */
+    grid-column: 1 / span 3;
+   /* items in the dropdown should appear ontop of everything */
+    z-index: 1;
+   /* not visible by default (only upon dropdown hover or narrow page width */
+    display: none;
+}
+/* style of buttons within the dropdown */
+.nav #dropdown-content a {
+   /* 12px padding on top and bottom and 16px padding on left and right */
+    padding: 12px 16px;
+   /* removal of link text dotted underline */
+    text-decoration: none;
+   /* setting the display to block, making the dropdown visible */
+    display: block;
+   /* gap between buttons to 20px */
+    margin-top: 20px;
+   /* blue gradient backgroud colour specified in :root */
+    background-image: var(--hover-bg);
+   /* 3px wide, white border */
+    border: 3px solid white;
+   /* rounded edges */
+    border-radius: 10px;
+   /* break word wrap style - splitting words when necessary */
+    word-wrap: break-word;
+   /* centering the text within the buttons */
+    text-align: center;
+   /* setting the colour of the text within the button to white */
+    color: white;
+   /* setting the weight of the button text to bold */
+    font-weight: bold;
+}
+/* setting what happens when the dropdown button is hovered over */
+.nav .dropdown-button:hover + #dropdown-content {
+   /* display the content of the dropdown (buttons) */
+    display: block;
+}
+/* setting what happens when the dropdown is hovered over */
+.nav #dropdown-content:hover {
+   /* maintain the visible state of the dropdown */
+    display: block;
+}
+/* subsection styling of subsections used throughout the site - usually subheadings of content */
+.subsection {
+   /* setting colour of text to white */
+    color: white;
+   /* top and bottom margins set to 30px */
+    margin: 30px 0 30px 0;
+}
+/* styling of the h2 heading within subsections */
+.subsection h2 {
+   /* setting the weight of the text to bold - making it thicker */
+    font-weight: bold;
+}
+/* styling of seperation lines used throughout */
+.subsection hr {
+   /* increase from default thickness to 2px and colour set to solid white */
+    border: 2px solid white;
+}
+/* styling of the p paragraph tag within subsections */
+.subsection p {
+   /* setting the weight of the font/text to 100 (lighter than usual) */
+    font-weight: 100;
+}
+/* container containers are a common occurence throughout the website containing useful information and allowing me to structure it in a visually appealing and readable way */
+.container {
+   /* default colour of text within containers is black */
+    color: black;
+   /* background image of containers is a light gray gradient - specified in :root */
+    background-image: var(--windows-bg);
+   /* setting border to outset (adding a contrast between edges) of 3px width */
+    border: 3px outset white;
+   /* margin of 2% view width on each container element */
+    margin: 2% 0;
+}
+/* styling of container headers (title of containers) */
+.container-header{
+   /* setting background colour to a deep blue gradient - specified in :root */
+    background: var(--header-bg);
+   /* setting the colour of text to white within the header */
+    color: #fff;
+   /* setting the display style to block - pushing other content down if necessary */
+    display: block;
+   /* words will split if page get too narrow */
+    word-wrap: break-word;
+   /* padding on all sides of the text- increasing gap between edge of container */
+    padding: 1rem;
+   /* adding a border to the bottom of the header box as a splitoff between content */
+    border-bottom: 3px solid white;
+}
+/* styling of buttons within containers - similar to all other buttons */
+.container a {
+   /* block display type - pushing content up/down if necessary to fit in */
+    display: block;
+   /* colour of text within BLACK */
+    color: black;
+   /* remoiving dotted link underline */
+    text-decoration: none;
+   /* increasing gap between letters in text */
+    letter-spacing: 6px;
+   /* adding padding to all sides 10px */
+    padding: 10px;
+   /* alingingin the text to the center of the button */
+    text-align: center;
+   /* rounding the edges of buttons */
+    border-radius: 10px;
+   /* setting the weight of the text to bold (thick) */
+    font-weight: bold;
+   /* setting a border to the button of 2px width */
+    border: 2px solid;
+   /* setting the bottom border colour to dark gray */
+    border-bottom-color: #424242;
+   /* setting the right border colour to dark gray */
+    border-right-color: #424242;
+   /* setting the left border colour to white */
+    border-left-color: #fff;
+   /* setting the top border colour to white */
+    border-top-color: #fff;
+   /* setting the background colour of the button to a light gray gradient (specified in :root) */
+    background: var(--windows-bg);
+}
+/* setting what happens when buttons are hovered on - make it look like an inset button */
+.nav a:hover, .container a:hover, .nav #dropdown-content a:hover {
+   /* flipping the border colours to the opposite sides as normal */
+    border-bottom-color: #fff;
+    border-right-color: #fff;
+    border-left-color: #424242;
+    border-top-color: #424242;
+}
+/* date posted text located bottom left of containers on the HOME page */
+.container .section-date {
+   /* auto margin - removing default alignment */
+    margin-left: auto;
+   /* aligning the text to the right hand side */
+    text-align: right;
+}
+/* container footer (Stats inc date posted) on the HOME page */
+.container .stats {
+   /* setting text colour to black */
+    color: black;
+   /* flexible display - text move when needs to */
+    display: flex;
+}
+/* the body of the container - the main content within */
+.container-body {
+   /* padding of 10px increasing gap between edge of container */
+    padding: 10px;
+}
+
+/* footer Located at the bottom of all pages - contains links to other pages and contact information */
+/* main footer DIV */
+.footer {
+   /* top margin of 5vh - sufficient seperation from the rest of the webpage content */
+    margin-top: auto;
+   /* inside padding of 1vh (view height) on the top and bottom and 1vw (view width) on the left and right */
+    padding: 1vh 7vw;
+   /* rounding the top left and right corners */
+    border-radius: 10px 10px 0px 0px ;
+   /* 4px white border */
+    border: 4px solid white;
+   /* removing the border on the bottom of the footer */
+    border-bottom: 0px;
+   /* setting the background colour to a light gray gradient - specified in :root above */
+    background-image: var(--windows-bg);
+}
+/* h3 header within the footer DIV used to title category */
+.footer h3 {
+   /* setting the font weight to bold */
+    font-weight: bold;
+   /* setting the font size to extra large */
+    font-size: x-large;
+   /* removing the bottom margin of the header text -decrease of gap */
+    margin-bottom: 0;
+}
+/* unordered list within the footer DIV styling */
+.footer ul {
+   /* setting the style type of the list to none */
+    list-style-type: none;
+   /* removing all padding around the unordered list */
+    padding: 0;
+}
+/* elements within the unordered list in the footer DIV */
+.footer li {
+   /* setting the style type of the element to none (removing bullet points) */
+    list-style-type: none;
+   /* setting the bottom margin of each element to 10px - increasing gap to next element */
+    margin-bottom: 10px;
+}
+/* line divisor within the footer DIV */
+.footer hr {
+   /* setting the thickness to 2px and colour to black */
+    border: 2px solid black;
+}
+/* anchor link styling within the footer DIV */
+.footer a {
+   /* colour of text to black */
+    color: black;
+   /* link text decoration being a dotted black underline */
+    text-decoration: dotted underline;
+}
+/* footer - contact info section */
+.footer .contact {
+   /* aligning the text to the right hand side */
+    text-align: right;
+}
+/* media queries Used to detect when a page may be viewed on a mobile device or a tablet or too narrow in general therefore requiring the style of some elements to be switched around slightly to fit the device and allow for a better viewing experience */
+/* if the viewport/scren width hits or drops below 1024px */
+@media only screen and (max-width: 1024px) {
+   /* set the grid template columns to auto - meaning that there should only be one element per row of grids - where implemented */
+    .grid {
+        grid-template-columns: auto;
+}
+   /* setting the margin of the grid within the navigation bars - for the dropdown content */
+    .nav .grid a {
+        margin: 1vh 0 0 0;
+}
+   /* putting the header image ontop of the headers instead of to the side and also centering the image */
+    .header .image {
+        margin: 0 auto;
+        margin-bottom: 10px;
+}
+   /* making the dropdown content visible by default so no dropdown button must be clicked or hovered over */
+    .nav #dropdown-content {
+        grid-column: 1;
+        display: block;
+}
+   /* removing the dropdown button from the nav menu */
+    .dropdown-button {
+        display: none;
+}
+    body {
+        max-width: 95%;
+    }
+}
+/* utility */
+/* class that can be called throughout the site where needed to automatically align all text under that class tag to to the right */
+.text-right {
+    text-align: right;
+}
+/* class that can be called throughout the site where needed to automatically align all text under that class tag to to the middle */
+.text-center {
+    text-align: center;
+}
+/* Video embeds Youtube video embeds are used on the part-time job page to indicate examples of work that was completed - this styles them */
+/* container of videos */
+.video-container {
+    position: relative;
+   /* width of the video must be 100% of what is possible - 100% of the container width after considering padding and margin constraints */
+    width: 100%;
+   /* 16:9 Aspect Ratio - normal for 1080p video content */
+    padding-top: 55%;
+}
+/* the iframe - the actual video embed within the webpage */
+.responsive-iframe {
+   /* sizing must be what is necessary for the video to be displayed appropriately */
+    position: absolute;
+   /* margin / gap on top bottom left and right set to nothing - to improve placement ensuring the video stays in the intended place */
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+   /* width of the video must be 100% of what is possible - 100% of the container width after considering padding and margin constraints */
+    width: 100%;
+   /* height of the video must be 100% of what is possible - 100% of the video height after considering padding and margin constraints */
+    height: 100%;
+   /* removing the default border that is shown with HTML iframe elements */
+    border: none;
+}
+/* contact form styling of contact form on the contact form page */
+/* styling of form input elements text input and text area for email */
+input[type=text], input[type=email], textarea {
+   /* span 100% of the CONTAINER width */
+    width: 100%;
+   /* 10px top and bottom margin */
+    margin: 10px auto;
+   /* inside padding of 5px */
+    padding: 5px;
+   /* border of 3px outset light grey */
+    border: 3px outset;
+   /* text area can only be resized vertically - for page display safety */
+    resize: vertical;
+}

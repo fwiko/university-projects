@@ -1,0 +1,112 @@
+
+
+<!-- HTML doctype and language of webpages -->
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<!-- Meta tags used for compatibility -->
+		<meta charset="UTF-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<title>CPD Portfolio - Contact Me</title>
+		<!-- Import of external CSS file -->
+		<link rel="stylesheet" href="assets/css/style.css">
+		<!-- infile css required to handle navbar on narrow page -->
+		<style>
+			/* when the page is 1024 or less pixels wide */
+			@media only screen and (max-width: 1024px) {
+			/* make the home button span the enture navbar width as the dropdown button will disappear */
+			#home-button {
+			grid-column: 1 / span 2;
+			}
+			}
+		</style>
+	</head>
+	<body>
+		<!-- Heading -->
+		<header class="header">
+			<!-- very simple heading for this page - that being contact me - there is no need for an image or an introduction paragraph because .. why? -->
+			<h1 style="text-align: center; font-size: xx-large;">CONTACT ME</h1>
+		</header>
+		<!-- Navigation Bar -->
+		<nav class="nav" aria-label="Main Navigation">
+			<div class="grid c2">
+				<!-- first button is a home button taking the user back to the home page -->
+				<a href="index.html" id="home-button">Home</a>
+				<!-- second is a dropdown button - when hovered on it will display a dropdown of buttons that link to other CPD activity pages respectivley -->
+				<a class="dropdown-button">Activities ></a>
+				<div id="dropdown-content" style="grid-column: 1 / span 2;">
+					<a href="./activities/cyber-challenges.html">TryHackMe Activities</a>
+					<a href="./activities/project-development.html">Personal Project Development</a>
+					<a href="./activities/mentoring-sessions.html">Mentoring Sessions</a>
+					<a href="./activities/parttime-job.html">Part-Time Job</a>
+				</div>
+			</div>
+		</nav>
+		<!-- Main Page Content -->
+		<main class="main">
+			<!-- Contact form container -->
+			<div class="container" >
+				<div class="container-header">
+					<h1 style="margin: 0;">Contact Form</h1>
+				</div>
+				<!-- content of the container being an email contact form -->
+				<div class="container-body">
+					<!-- the form will open a mailto link when submitted -->
+					<form action="mailto:raff@raffsimms.com" method="post" enctype="text/plain">
+						<!-- Name user input with adequate label -->
+						<label for="name">Name</label>
+						<input type="text" id="name" name="name" placeholder="John Smith">
+						<!-- email adress input - specified type meaning user must input an email adress -->
+						<label class="required" for="email">Email Address</label>
+						<input id="email" class="input" name="email" placeholder="email@example.com" type="email" />
+						<!-- Subject input - subject of the email - title yeah -->
+						<label class="required" for="subject">Subject</label>
+						<input id="subject" class="input" name="subject" placeholder="Important Enquiry" type="text" />
+						<!-- message content of the email (main part of email) in a text box with a default height of 30 rows -->
+						<label for="message">Message</label>
+						<textarea id="message" name="subject" placeholder="Your message to me" rows="30"></textarea>
+						<!-- finally a submit button that allows the user to submit the email and open a mailto link -->
+						<input type="submit" value="Submit" style="width: 100%;">
+					</form>
+				</div>
+			</div>
+		</main>
+		<!-- Footer -->
+		<footer class="footer">
+			<div class="grid c2">
+				<!-- contact section styled to align text to the right -->
+				<div class="contact">
+					<!-- h3 header category header -->
+					<h3>Contact Info</h3>
+					<hr>
+					<!-- unordered list containing links/infomration about contact methdos -->
+					<ul>
+						<!-- tel link to a phone number -->
+						<li class="col-md-2">Phone: <a href="tel:7888455555">+44 7888455555</a></li>
+						<!-- mailto link to email address -->
+						<li class="col-md-2">Email: <a href="mailto:raff@raffsimms.com">raff@raffsimms.com</a></li>
+						<!-- address text -->
+						<li class="col-md-2">Address: <a href="">57 Street name, Nottingham, p5t c0de</a></li>
+					</ul>
+				</div>
+				<!-- social links section styled to align text to the left -->
+				<div class="social-links" >
+					<!-- h3 header category header -->
+					<h3>Other Pages</h3>
+					<hr>
+					<!-- links to other available pages on the website -->
+					<ul>
+						<li class="col-md-2"><a href="index.html">Home Page</a></li>
+						<li class="col-md-2"><a href="./activities/cyber-challenges.html">TryHackMe Activities</a></li>
+						<li class="col-md-2"><a href="./activities/project-development.html">Personal Projects</a></li>
+						<li class="col-md-2"><a href="./activities/mentoring-sessions.html">Mentoring Sessions</a></li>
+						<li class="col-md-2"><a href="./activities/parttime-job.html">Part-Time Job</a></li>
+					</ul>
+				</div>
+			</div>
+			<!-- copyright text -->
+			<p style="text-align: center;">raff simms © 2021</p>
+		</footer>
+	</body>
+</html>

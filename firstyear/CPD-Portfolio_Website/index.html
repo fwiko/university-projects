@@ -1,0 +1,209 @@
+
+
+<!-- HTML doctype and language of webpages -->
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <!-- Meta tags used for compatibility -->
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>CPD Portfolio - Home</title>
+        <!-- Import of external CSS file -->
+        <link rel="stylesheet" href="assets/css/style.css">
+    </head>
+    <body>
+        <!-- Heading -->
+        <header class="header">
+            <div class="grid">
+                <div class="image">
+                    <!-- heading image - my face in this case - inclusion of alt tag for screen readers -->
+                    <img src="assets/images/portrait.png" alt="Rafferty Simms Portrait">
+                </div>
+                <!-- inline css for some finetuning in this area of the header -->
+                <div class="container" style="margin-top: 0">
+                    <!-- container located within the header for display reasons -->
+                    <div class="container-header">
+                        <!-- header title with inline css for finetuning -->
+                        <h1 style="margin: 0;">HELLO! I'M RAFFERTY!</h1>
+                    </div>
+                    <!-- container body - containing a paragraph tag with text -->
+                    <div class="container-body">
+                        <p>I AM A FIRST-YEAR UNIVERSITY STUDENT STUDYING A BACHELOR OF SCIENCE (HONS) IN CYBER SECURITY AT NOTTINGHAM TRENT UNIVERSITY. MY INTERESTS INCLUDE PROGRAMMING, COMPUTER SYSTEMS, OTHER AREAS OF TECHNOLOGY AND A RANGE OF CREATIVE AREAS. <br><br>I beleive that i am proficient in areas of computing such as programming, hardware, networking etc..</p>
+                    </div>
+                </div>
+            </div>
+        </header>
+        <!-- Navigation Bar -->
+        <nav class="nav" aria-label="Main Navigation">
+            <!-- grid layout within nav bar to structure properly - colwidth of 3 meaning 3 elements per row -->
+            <div class="grid c3">
+                <!-- first button is a contact me button linking to the contact me page -->
+                <a href="contact.html">Contact me</a>
+                <!-- second is a link to a file that will download my CPD report PDF -->
+                <a href="files/cpd-report.pdf" download="cpd-report.pdf" id="d">Download cpd</a>
+                <!-- third is a dropdown button - when hovered on it will display a dropdown of buttons that link to other CPD activity pages respectivley -->
+                <a class="dropdown-button">Activities ></a>
+                <div id="dropdown-content">
+                    <a href="./activities/cyber-challenges.html">TryHackMe Activities</a>
+                    <a href="./activities/project-development.html">Personal Project Development</a>
+                    <a href="./activities/mentoring-sessions.html">Mentoring Sessions</a>
+                    <a href="./activities/parttime-job.html">Part-Time Job</a>
+                </div>
+            </div>
+        </nav>
+        <!-- Main Page Content -->
+        <main class="main">
+            <!-- first subsection within the main content of the page - being a subheading for an explaination of what the website is -->
+            <div class="subsection">
+                <!-- h2 header -->
+                <h2>What is this?</h2>
+                <!-- line seperator -->
+                <hr>
+                <!-- paragraph -->
+                <p>The purpose of this site is to allow me to display details about activities that counted towards my Cpd. i have aimed to display all information in a way that is widely acessible to all audience and that provides the best viewing experience on a range of devices and screen resolutions. <br><br> Below you can find links to contact me, download the my original cpd log file, or view any projects that i have been working on. you will also find information about all activities i have taken part in that have been counted towards my cpd.</p>
+            </div>
+            <!-- another subsection - this one being an introduction to the activity concept including a summary of activities and links to view them -->
+            <div class="subsection">
+                <!-- h2 header -->
+                <h2>Activities</h2>
+                <!-- line seperator -->
+                <hr>
+                <!-- paragraph containing explaination -->
+                <p>BELOW IS A LIST OF ACTIVITIES THAT I HAVE PARTAKEN IN OVER THE PAST TERM THAT HAVE COUNTED TOWARDS MY CPD. IF YOU WISH TO HAVE A MORE DETAILED LOOK INTO ONE OF THE ACTIVITIES YOU CAN DO SO BY CLICKING THE "MORE INFORMATION" BUTTON UNDER THE ACTIVITY OF YOUR CHOICE.</p>
+                <!-- grid layout structure of colwidth 2 (2 elements per row) -->
+                <div class="grid c2">
+                    <!-- TryHackMe/HackTheBox activities section 
+                        Container used to centralise information about this particular activity
+                        -->
+                    <div class="container">
+                        <!-- container header -->
+                        <div class="container-header">
+                            <!-- inline css for finetuning in header of container -->
+                            <h2 class="article_title" style="display: inline;">TryHackMe Cyber<wbr>security Tasks</h2>
+                        </div>
+                        <!-- container body (actual information) -->
+                        <div class="container-body">
+                            <!-- summary DIV used for seperation of infomration -->
+                            <div class="summary">
+                                <p>Completed multiple pathways on TryHackMe and HackTheBox relating to areas of Cyber-Security. Gaining more experience in topics related to Cyber-Security such as Penetration Testing and Vulnerabilies.</p>
+                                <!-- anchpor link stylised as a button linking to the cyber challenge page -->
+                                <a class="information_button" href="activities/cyber-challenges.html">More Information</a>
+                            </div>
+                            <!-- container footer containing date posted stat and hours completed stat -->
+                            <div class="stats">
+                                <p class="section-hours">10 Hours Completed</p>
+                                <p class="section-date">Date Posted: 25.10.2021</p>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Personal projects section
+                        Container used to centralise information about this particular activity
+                        -->
+                    <div class="container">
+                        <!-- container header -->
+                        <div class="container-header">
+                            <!-- inline css for finetuning in header of container -->
+                            <h2 class="article_title" style="display: inline;">PERSONAL PROJECT DEVELOPMENT</h2>
+                        </div>
+                        <!-- container body (actual information) -->
+                        <div class="container-body">
+                            <!-- summary DIV used for seperation of infomration -->
+                            <div class="summary">
+                                <p>DEVELOPED AND MAINTAINED A NUMBER OF PERSONAL PROGRAMMING PROJECTS INVOLVING THE PROGRAMMING LANGUAGES PYTHON, JAVASCRIPT, HTML, AND CSS. IN ADDITION TO THINGS LIKE DOCKER, GITHUB, AND LINUX-BASED SYSTEMS.</p>
+                                <!-- anchpor link stylised as a button linking to the project page -->
+                                <a class="information_button" href="activities/project-development.html">More Information</a>
+                            </div>
+                            <!-- container footer containing date posted stat and hours completed stat -->
+                            <div class="stats">
+                                <p class="section-hours">8 Hours Completed</p>
+                                <p class="section-date">Date Posted: 30.10.2021</p>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Mentoring sessions section
+                        Container used to centralise information about this particular activity
+                        -->
+                    <div class="container">
+                        <!-- container header -->
+                        <div class="container-header">
+                            <!-- inline css for finetuning in header of container -->
+                            <h2 class="article_title" style="display: inline;">ATTENDING MENTORING SESSIONS</h2>
+                        </div>
+                        <!-- container body (actual information) -->
+                        <div class="container-body">
+                            <!-- summary DIV used for seperation of infomration -->
+                            <div class="summary">
+                                <p>ATTENDED A NUMBER OF MENTORING SESSIONS HOSTED BY JC BIDDLECOMBE AND MAKS MIKETA. THIS SUPPORTED ME AND HELPED ME UNDERSTAND MORE OF WHAT WOULD BE INVOLVED WITH THIS COURSE.</p>
+                                <a class="information_button" href="activities/mentoring-sessions.html">More Information</a>
+                            </div>
+                            <!-- container footer containing date posted stat and hours completed stat -->
+                            <div class="stats">
+                                <p class="section-hours">4 Hours Completed</p>
+                                <p class="section-date">Date Posted: 20.11.2021</p>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Part-Time Job section
+                        Container used to centralise information about this particular activity
+                        -->
+                    <div class="container">
+                        <!-- container header -->
+                        <div class="container-header">
+                            <!-- inline css for finetuning in header of container -->
+                            <h2 class="article_title" style="display: inline;">Work at my Part-time Job</h2>
+                        </div>
+                        <!-- container body (actual information) -->
+                        <div class="container-body">
+                            <!-- summary DIV used for seperation of infomration -->
+                            <div class="summary">
+                                <p>Completed work at my part time job doing online media-creation and management. Allowing me to gain even more experience using the Adobe Suite with applications such as Premiere Pro, Photoshop and Audition.</p>
+                                <a class="information_button" href="activities/parttime-job.html">More Information</a>
+                            </div>
+                            <!-- container footer containing date posted stat and hours completed stat -->
+                            <div class="stats">
+                                <p class="section-hours">10 Hours Completed</p>
+                                <p class="section-date">Date Posted: 02.11.2021</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+        <!-- Footer -->
+        <footer class="footer">
+            <div class="grid c2">
+                <!-- contact section styled to align text to the right -->
+                <div class="contact">
+                    <!-- h3 header category header -->
+                    <h3>Contact Info</h3>
+                    <hr>
+                    <!-- unordered list containing links/infomration about contact methdos -->
+                    <ul>
+                        <!-- tel link to a phone number -->
+                        <li class="col-md-2">Phone: <a href="tel:7888455555">+44 7888455555</a></li>
+                        <!-- mailto link to email address -->
+                        <li class="col-md-2">Email: <a href="mailto:raff@raffsimms.com">raff@raffsimms.com</a></li>
+                        <!-- address text -->
+                        <li class="col-md-2">Address: <a href="">57 Street name, Nottingham, p5t c0de</a></li>
+                    </ul>
+                </div>
+                <!-- social links section styled to align text to the left -->
+                <div class="social-links" >
+                    <!-- h3 header category header -->
+                    <h3>Other Pages</h3>
+                    <hr>
+                    <!-- links to other available pages on the website -->
+                    <ul>
+                        <li class="col-md-2"><a href="contact.html">Contact Form</a></li>
+                        <li class="col-md-2"><a href="activities/cyber-challenges.html">TryHackMe Activities</a></li>
+                        <li class="col-md-2"><a href="activities/project-development.html">Personal Projects</a></li>
+                        <li class="col-md-2"><a href="activities/mentoring-sessions.html">Mentoring Sessions</a></li>
+                        <li class="col-md-2"><a href="activities/parttime-job.html">Part-Time Job</a></li>
+                    </ul>
+                </div>
+            </div>
+            <p style="text-align: center;">raff simms © 2021</p>
+        </footer>
+    </body>
+</html>

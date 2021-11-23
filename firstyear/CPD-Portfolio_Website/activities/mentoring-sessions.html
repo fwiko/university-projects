@@ -1,0 +1,128 @@
+
+
+<!-- HTML doctype and language of webpages -->
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<!-- Meta tags used for compatibility -->
+		<meta charset="UTF-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<title>CPD Portfolio - Mentoring Sessions</title>
+		<!-- Import of external CSS file -->
+		<link rel="stylesheet" href="../assets/css/style.css">
+	</head>
+	<body>
+		<!-- Heading -->
+		<header class="header">
+			<div class="grid">
+				<!-- Container for the image/icon located in the header using div tags with an img within -->
+				<div class="image">
+					<!-- Adding the image from the images src folder, using img tags, also using an alt tag to add description to image to improve accessibility -->
+					<img src="../assets/images/teams.png" alt="Microsoft Teams Logo">
+				</div>
+				<!-- Container for the main content of the header - Title and text/introduction 
+					inline css being used in this instance to remove the margin from the top of the container and add a small amount of padding within the top above the header text -->
+				<div class="container" style="margin-top: 0;">
+					<!-- Main heading/title of page within header -->
+					<div class="container-header">
+						<h1 style="margin: 0;">Attending Mentoring Sessions</h1>
+					</div>
+					<!-- Introduction paragraph - additional part of header introducing user to the page -->
+					<div class="container-body">
+						<p>Mentoring sessions have been put in place at Nottingham Trent University to provide support to first year groups. These sessions happen on a weekly basis and last for around 1 hour. Students are able to add each session they attend to their CPD<br><br>
+							The sessions i attended happened once per week on a wednesday and were run by two 2nd year students.
+						</p>
+					</div>
+				</div>
+			</div>
+		</header>
+		<!-- Navigation Bar -->
+		<nav class="nav" aria-label="Main Navigation">
+			<!-- Grid layout, controlled via my external css - using the additional c3 class to state that i wish to have 3 columns per row of the grid -->
+			<div class="grid c3">
+				<!-- First item in grid/nav being "contact me" button -->
+				<a href="../contact.html">Contact me</a>
+				<!-- Second item in grid/nav being "home" button -->
+				<a href="../index.html" id="d">Home</a>
+				<!-- Third item in grid being an "activities" button that will display a dropdown once hovered over -->
+				<a class="dropdown-button">Activities ></a>
+				<!-- Dropdown content (content/links that will display when the dropdown button above is hovered over) -->
+				<div id="dropdown-content">
+					<a href="../activities/cyber-challenges.html">TryHackMe Challenges</a>
+					<a href="../activities/parttime-job.html">Part-Time Job</a>
+					<a href="../activities/project-development.html">Project Development</a>
+				</div>
+			</div>
+		</nav>
+		<!-- Main Page Content -->
+		<main class="main">
+			<!-- subsection for activity introduction -->
+			<div class="subsection">
+				<!-- What was involved subsection heading and introduction -->
+				<h2>What was involved?</h2>
+				<hr>
+				<p>I ATTENDED A NUMBER OF MENTORING SESSIONS HOSTED BY JC BIDDLECOMBE AND MAKS MIKETA. THIS SUPPORTED ME AND HELPED ME UNDERSTAND MORE OF WHAT WOULD BE INVOLVED WITH THIS COURSE.</p>
+				<!-- grid layout for containers containing activity infomration -->
+				<div class="grid c2">
+					<!-- Mentoring Meetings Container -->
+					<!-- Only a single container is used here -->
+					<div class="container" style="grid-column: 1 / span 2;">
+						<div class="container-header">
+							<h2 style="display: inline;">Mentoring Content</h2>
+						</div>
+						<!-- Container body containing formatted information about section of activity -->
+						<div class="container-body">
+							<p>The mentoring sessions covered many different topics, all of which were structured around things we needed to know or may like to know as a first-year student. In addition to support with planning, retaining knowledge, and being punctual in both attendance and when handing in work. Some of the methods used include:</p>
+							<ul>
+								<li>Using checklists to plan work</li>
+								<li>Giving a higher priority to lesser known topics</li>
+								<li>Taking Rest/Not overworking</li>
+								<li>Which content to include in assignments</li>
+								<li>How/what to revise for exams</li>
+							</ul>
+							<!-- mentoring session screenshot - Located in images folder -->
+							<img src="../assets/images/mentor.png" alt="Microsoft teams meeting schedule" style="min-width: 100%; max-width: 100%;" >
+						</div>
+					</div>
+				</div>
+			</div>
+		</main>
+		<!-- Footer -->
+		<footer class="footer">
+			<div class="grid c2">
+				<!-- contact section styled to align text to the right -->
+				<div class="contact">
+					<!-- h3 header category header -->
+					<h3>Contact Info</h3>
+					<hr>
+					<!-- unordered list containing links/infomration about contact methdos -->
+					<ul>
+						<!-- tel link to a phone number -->
+						<li class="col-md-2">Phone: <a href="tel:7888455555">+44 7888455555</a></li>
+						<!-- mailto link to email address -->
+						<li class="col-md-2">Email: <a href="mailto:raff@raffsimms.com">raff@raffsimms.com</a></li>
+						<!-- address text -->
+						<li class="col-md-2">Address: <a href="">57 Street name, Nottingham, p5t c0de</a></li>
+					</ul>
+				</div>
+				<!-- social links section styled to align text to the left -->
+				<div class="social-links" >
+					<!-- h3 header category header -->
+					<h3>Other Pages</h3>
+					<hr>
+					<!-- links to other available pages on the website -->
+					<ul>
+						<li class="col-md-2"><a href="../index.html">Home Page</a></li>
+						<li class="col-md-2"><a href="../contact.html">Contact Form</a></li>
+						<li class="col-md-2"><a href="../activities/project-development.html">Personal Projects</a></li>
+						<li class="col-md-2"><a href="../activities/cyber-challenges.html">TryHackMe Activities</a></li>
+						<li class="col-md-2"><a href="../activities/parttime-job.html">Part-Time Job</a></li>
+					</ul>
+				</div>
+			</div>
+			<!-- copyright text -->
+			<p style="text-align: center;">raff simms © 2021</p>
+		</footer>
+	</body>
+</html>

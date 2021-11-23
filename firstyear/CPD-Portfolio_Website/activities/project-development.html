@@ -1,0 +1,153 @@
+
+
+<!-- HTML doctype and language of webpages -->
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<!-- Meta tags used for compatibility -->
+		<meta charset="UTF-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<title>CPD Portfolio - Project Development</title>
+		<!-- Import of external CSS file -->
+		<link rel="stylesheet" href="../assets/css/style.css">
+	</head>
+	<body>
+		<!-- Heading -->
+		<header class="header">
+			<div class="grid">
+				<!-- Container for the image/icon located in the header using div tags with an img within -->
+				<div class="image">
+					<!-- Adding the image from the images src folder, using img tags, also using an alt tag to add description to image to improve accessibility -->
+					<img src="../assets/images/programming.jpg" alt="Photo of a monitor with PHP code">
+				</div>
+				<!-- Container for the main content of the header - Title and text/introduction 
+					inline css being used in this instance to remove the margin from the top of the container and add a small amount of padding within the top above the header text -->
+				<div class="container" style="margin-top: 0;">
+					<!-- Main heading/title of page within header -->
+					<div class="container-header">
+						<h1 style="margin: 0;">Personal Project Development</h1>
+					</div>
+					<!-- Introduction paragraph - additional part of header introducing user to the page -->
+					<div class="container-body">
+						<p>Over the past couple of months i have been working on a number of personal projects. I have both created new things and maintained and improved things i have previously worked on.<br><br>
+							I have always enjoyed working on personal projects and i beleive that doing this has helped me alot when learning programming concepts.
+						</p>
+					</div>
+				</div>
+			</div>
+		</header>
+		<!-- Navigation Bar -->
+		<nav class="nav" aria-label="Main Navigation">
+			<!-- Grid layout, controlled via my external css - using the additional c3 class to state that i wish to have 3 columns per row of the grid -->
+			<div class="grid c3">
+				<!-- First item in grid/nav being "contact me" button -->
+				<a href="../contact.html">Contact me</a>
+				<!-- Second item in grid/nav being "home" button -->
+				<a href="../index.html" id="d">Home</a>
+				<!-- Third item in grid being an "activities" button that will display a dropdown once hovered over -->
+				<a class="dropdown-button">Activities ></a>
+				<!-- Dropdown content (content/links that will display when the dropdown button above is hovered over) -->
+				<div id="dropdown-content">
+					<a href="../activities/cyber-challenges.html">TryHackMe Challenges</a>
+					<a href="../activities/mentoring-sessions.html">Mentoring Sessions</a>
+					<a href="../activities/parttime-job.html">Part-Time Job</a>
+				</div>
+			</div>
+		</nav>
+		<!-- Main Page Content -->
+		<main class="main">
+			<div class="subsection">
+				<!-- What was involved subsection heading and introduction -->
+				<h2>What was involved?</h2>
+				<hr>
+				<!-- Introduction paragraph -->
+				<p>On the rare occasion that i come up with an idea of a project that i would like to pursue,  i like to try and build something that fits my requirements whilst also trying to follow the best programming standards when building the application. <br>
+					The majority of my personal projects are written in either python, java, or javascript as those are the languages that i have used most often. My preference when building a project is to use oop (object oriented programming) where possible, because, i think it allows me to keep things much more organised and meet the "dry" (don't repeat yourself) principle easier.<br><br>Below are some summaries of the projects that i have recently worked on.
+				</p>
+				<div class="grid c2">
+					<!-- Social Scanner Container -->
+					<div class="container">
+						<div class="container-header">
+							<h2 style="display: inline;">Online social scanner</h2>
+						</div>
+						<div class="container-body">
+							<p>Online social scanner is a web application that i developed that allows users to check the availability of a specified username on a variety of online social media platforms, games, or forums in the click of a button.<br><br>this application was written using javascript (Node.js) for the back-end web server and html, css, and javascript for the front-end.The back end uses web requests to check the availablity of usernames using a mix of apis (where available) or a simple page request.</p>
+							<!-- Image of the social scanner webpage from images folder -->
+							<img src="../assets/images/checker.png" alt="Social Checker Webpage Screenshot" style="min-width: 100%; max-width: 100%;" >
+						</div>
+					</div>
+					<!-- Font Server Container -->
+					<div class="container">
+						<div class="container-header">
+							<h2 style="display: inline;">Font Serving API</h2>
+						</div>
+						<div class="container-body">
+							<p>When completing one of the first homework tasks for the web-development section of the essential skills section, i wanted to use a font that fit the theme of a newspaper headline. However the font i found was not available on services such as google fonts which meant i would have to include the font file in the homework submission. <br><br>This application allows me to import fonts into webpages via a simple url. And similar to the social scanner this also uses Node.js for the backend.</p>
+							<!-- Image of the font server webpage from images folder -->
+							<img src="../assets/images/fonts.png" alt="Font Server Webpage Screenshot" style="min-width: 100%; max-width: 100%;" >
+						</div>
+					</div>
+					<!-- Keylogger Container -->
+					<div class="container">
+						<div class="container-header">
+							<h2 style="display: inline;">Bind keylogger</h2>
+						</div>
+						<div class="container-body">
+							<p>When looking for cyber-security related projects, i decided to create a simple keylogger application but with some improvements. <br><br>I implemented sockets into my program which allows me to run a server that will accept connections from various possible clients. The client script will listen for keystrokes and send anything that is typed onto the keyboard over to the server. The data can then be viewed using the command line and saved to a file. <br><br>This program was written in python 3.9 and i plan to convert it to python 3.10 sometime in the future.</p>
+							<!-- Screenshot of the keylogger server CLI from images folder -->
+							<img src="../assets/images/keylogger.png" alt="Keylogger CLI Screenshot" style="min-width: 100%; max-width: 100%;" >
+						</div>
+					</div>
+				</div>
+			</div>
+			<!-- thoughts subsection - conclusion -->
+			<div class="subsection text-right">
+				<!-- Final thoughts heading and conclusion -->
+				<h2>Final thoughts</h2>
+				<hr>
+				<p>Although i think that i already had a good understanding of programming concepts prior to starting this degree course. I think that working on these personal projects over the past couple of weeks/months has helped to reinforce my knowledge and ensure that i try to follow the best possible practices. <br><br>I think that this will help when it comes to completing both my web development assignment and programming exams for this term.</p>
+				<!-- Github commit statistics from images folder -->
+				<img src="../assets/images/commits.png" alt="GitHub Commit Statistics" style="min-width: 100%; max-width: 100%;">
+				<p class="text-center">thank you for reading!</p>
+			</div>
+		</main>
+		<!-- Footer -->
+		<footer class="footer">
+			<div class="grid c2">
+				<!-- contact section styled to align text to the right -->
+				<div class="contact">
+					<!-- h3 header category header -->
+					<h3>Contact Info</h3>
+					<hr>
+					<!-- unordered list containing links/infomration about contact methdos -->
+					<ul>
+						<!-- tel link to a phone number -->
+						<li class="col-md-2">Phone: <a href="tel:7888455555">+44 7888455555</a></li>
+						<!-- mailto link to email address -->
+						<li class="col-md-2">Email: <a href="mailto:raff@raffsimms.com">raff@raffsimms.com</a></li>
+						<!-- address text -->
+						<li class="col-md-2">Address: <a href="">57 Street name, Nottingham, p5t c0de</a></li>
+					</ul>
+				</div>
+				<!-- social links section styled to align text to the left -->
+				<div class="social-links" >
+					<!-- h3 header category header -->
+					<h3>Other Pages</h3>
+					<hr>
+					<!-- links to other available pages on the website -->
+					<ul>
+						<li class="col-md-2"><a href="../index.html">Home Page</a></li>
+						<li class="col-md-2"><a href="../contact.html">Contact Form</a></li>
+						<li class="col-md-2"><a href="../activities/parttime-job.html">Part-Time Job</a></li>
+						<li class="col-md-2"><a href="../activities/cyber-challenges.html">TryHackMe Activities</a></li>
+						<li class="col-md-2"><a href="../activities/mentoring-sessions.html">Mentoring Sessions</a></li>
+					</ul>
+				</div>
+			</div>
+			<!-- copyright text -->
+			<p style="text-align: center;">raff simms © 2021</p>
+		</footer>
+	</body>
+</html>
+

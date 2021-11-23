@@ -120,7 +120,7 @@ class Client:
         self.game.start_quiz()
         
     def __username_command(self, *args) -> None:
-        if self.state != State.IN_MENU:
+        if self.state not in (State.IN_MENU, State.IN_LOBBY):
             return
         self.username = args[0]
         self.send("alert", {"message": f"Username set to {self.username}"})

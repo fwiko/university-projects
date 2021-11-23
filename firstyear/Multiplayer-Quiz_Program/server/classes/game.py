@@ -70,6 +70,7 @@ class Game:
         self.__manager.game_close(self)
         self.__current_quiz = None
         self.state_change(State.IN_MENU)
+        self.alert(f"Game {self.settings.code} has been closed")
         for client in self.settings.players:
             client.game = None
             

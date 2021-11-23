@@ -1,3 +1,5 @@
+import os
+
 # server addresses
 
 HOST = "127.0.0.1"

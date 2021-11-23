@@ -96,7 +96,7 @@ class Session:
         
     def _username(self, **kwargs):
         if not kwargs.get("args"):
-            print(f"> {Fore.RED}Missing <username> argument{Fore.RESET}\n")
+            print(f"{Fore.RED}Missing <username> argument{Fore.RESET}\n")
             return
         self.settings.username = kwargs.get("args")[0]
         self._send("command", f"username {self.settings.username}")
@@ -120,7 +120,7 @@ class Session:
 
     @staticmethod
     def _handle_question(data: dict) -> None:
-        cls()
+        clear_screen()
         print(f"{Fore.YELLOW}{data.get('question')}{Style.RESET_ALL}\n")
 
     def _handle_client_info(self, data: dict) -> None:
@@ -202,6 +202,7 @@ class Session:
             self._handle_received(decoded)
 
         self.settings.alive = False
+        clear_screen()
         print(f"\n{Fore.RED}Connection closed{Fore.RESET}\n")
 
     def _send(self, header: str, data: str):
@@ -220,13 +221,15 @@ class Session:
         handler = self._get_respective_handler(cmd)
         if handler:
             handler(command=cmd, args=args)
-        else:
+        elif self.settings.state == State.IN_GAME:
             self._answer(message)
+        else:
+            print(f"{Fore.RED}Invalid input, please try again.{Fore.RESET}\n")
 
 
 def main():
     """Main function"""
-    cls()
+    clear_screen()
     session = Session(settings.HOST, settings.PORT)
     session.start()
     if not session.settings.alive:
@@ -235,7 +238,7 @@ def main():
     session._help()
     while True:
         user_input = input(f"{session.prefix()} > " if session.settings.state != State.IN_GAME else "")
-        cls()
+        clear_screen()
         if len(user_input) < 1:
             continue
         if user_input == "exit":
@@ -250,4 +253,8 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    try:
+        main()
+    except Exception as e:
+        print(e)
+    input("\nPress enter to exit...")

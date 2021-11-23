@@ -1,0 +1,109 @@
+23-11-2021 13:45:02 - Logger:INFO - Connected to server
+23-11-2021 13:45:02 - Logger:DEBUG - Received data: {'header': 'state', 'data': {'state': 'inMenu'}}
+23-11-2021 13:45:02 - Logger:DEBUG - Received data: {'header': 'client_info', 'data': {'uid': 1}}
+23-11-2021 13:45:02 - Logger:INFO - Connected to server
+23-11-2021 13:45:02 - Logger:DEBUG - Received data: {'header': 'state', 'data': {'state': 'inMenu'}}
+23-11-2021 13:45:02 - Logger:DEBUG - Received data: {'header': 'client_info', 'data': {'uid': 2}}
+23-11-2021 13:45:14 - Logger:DEBUG - Received data: {'header': 'game_code', 'data': {'game_code': '2C5L1'}}
+23-11-2021 13:45:14 - Logger:DEBUG - Received data: {'header': 'state', 'data': {'state': 'inLobby'}}
+23-11-2021 13:45:14 - Logger:DEBUG - Received data: {'header': 'alert', 'data': {'message': 'Game created with code 2C5L1'}}
+23-11-2021 13:45:23 - Logger:DEBUG - Received data: {'header': 'game_list', 'data': {'game_list': [{'code': '2C5L1', 'player_count': 1}]}}
+23-11-2021 13:45:31 - Logger:DEBUG - Received data: {'header': 'game_code', 'data': {'game_code': '2C5L1'}}
+ned the game!'}}
+23-11-2021 13:45:31 - Logger:DEBUG - Received data: {'header': 'state', 'data': {'state': 'inLobby'}}
+23-11-2021 13:45:31 - Logger:DEBUG - Received data: {'header': 'alert', 'data': {'message': 'Joined game with code 2C5L1'}}
+23-11-2021 13:45:34 - Logger:DEBUG - Received data: {'header': 'game_list', 'data': {'game_list': [{'code': '2C5L1', 'player_count': 2}]}}
+23-11-2021 13:45:36 - Logger:DEBUG - Received data: {'header': 'alert', 'data': {'message': 'Client-1 has left the game.'}}
+23-11-2021 13:45:36 - Logger:DEBUG - Received data: {'header': 'state', 'data': {'state': 'inMenu'}}
+23-11-2021 13:45:36 - Logger:DEBUG - Received data: {'header': 'alert', 'data': {'message': 'Left game 2C5L1'}}
+23-11-2021 13:45:47 - Logger:DEBUG - Received data: {'header': 'game_list', 'data': {'game_list': [{'code': '2C5L1', 'player_count': 1}]}}
+23-11-2021 13:45:56 - Logger:DEBUG - Received data: {'header': 'game_code', 'data': {'game_code': '2C5L1'}}
+23-11-2021 13:45:56 - Logger:DEBUG - Received data: {'header': 'alert', 'data': {'message': 'Client-1 has joined the game!'}}
+23-11-2021 13:45:56 - Logger:DEBUG - Received data: {'header': 'state', 'data': {'state': 'inLobby'}}
+23-11-2021 13:45:56 - Logger:DEBUG - Received data: {'header': 'alert', 'data': {'message': 'Joined game with code 2C5L1'}}
+23-11-2021 13:46:03 - Logger:DEBUG - Received data: {'header': 'alert', 'data': {'message': 'Client-2 has left the game.'}}
+23-11-2021 13:46:03 - Logger:DEBUG - Received data: {'header': 'state', 'data': {'state': 'inMenu'}}
+23-11-2021 13:46:03 - Logger:DEBUG - Received data: {'header': 'state', 'data': {'state': 'inMenu'}}
+23-11-2021 13:46:03 - Logger:DEBUG - Received data: {'header': 'alert', 'data': {'message': 'Left game 2C5L1'}}
+23-11-2021 13:46:11 - Logger:DEBUG - Received data: {'header': 'game_list', 'data': {'game_list': []}}
+23-11-2021 13:48:20 - Logger:INFO - Connected to server
+23-11-2021 13:48:20 - Logger:DEBUG - Received data: {'header': 'state', 'data': {'state': 'inMenu'}}
+23-11-2021 13:48:20 - Logger:DEBUG - Received data: {'header': 'client_info', 'data': {'uid': 1}}
+23-11-2021 13:48:20 - Logger:INFO - Connected to server
+23-11-2021 13:48:20 - Logger:DEBUG - Received data: {'header': 'state', 'data': {'state': 'inMenu'}}
+23-11-2021 13:48:20 - Logger:DEBUG - Received data: {'header': 'client_info', 'data': {'uid': 2}}
+23-11-2021 13:48:23 - Logger:DEBUG - Received data: {'header': 'game_code', 'data': {'game_code': 'SKIUS'}}
+23-11-2021 13:48:23 - Logger:DEBUG - Received data: {'header': 'state', 'data': {'state': 'inLobby'}}
+23-11-2021 13:48:24 - Logger:DEBUG - Received data: {'header': 'alert', 'data': {'message': 'Game created with code SKIUS'}}
+23-11-2021 13:48:26 - Logger:DEBUG - Received data: {'header': 'game_list', 'data': {'game_list': [{'code': 'SKIUS', 'player_count': 1}]}}
+23-11-2021 13:48:30 - Logger:DEBUG - Received data: {'header': 'game_code', 'data': {'game_code': 'SKIUS'}}
+23-11-2021 13:48:30 - Logger:DEBUG - Received data: {'header': 'alert', 'data': {'message': 'Client-1 has joined the game!'}}
+23-11-2021 13:48:30 - Logger:DEBUG - Received data: {'header': 'state', 'data': {'state': 'inLobby'}}
+23-11-2021 13:48:30 - Logger:DEBUG - Received data: {'header': 'alert', 'data': {'message': 'Joined game with code SKIUS'}}
+23-11-2021 13:48:33 - Logger:DEBUG - Received data: {'header': 'state', 'data': {'state': 'inGame'}}
+23-11-2021 13:48:33 - Logger:DEBUG - Received data: {'header': 'state', 'data': {'state': 'inGame'}}
+23-11-2021 13:48:50 - Logger:ERROR - [WinError 10054] An existing connection was forcibly closed by the remote host
+23-11-2021 13:52:02 - Logger:INFO - Connected to server
+23-11-2021 13:52:02 - Logger:DEBUG - Received data: {'header': 'state', 'data': {'state': 'inMenu'}}
+23-11-2021 13:52:02 - Logger:DEBUG - Received data: {'header': 'client_info', 'data': {'uid': 1}}
+23-11-2021 13:52:02 - Logger:INFO - Connected to server
+23-11-2021 13:52:02 - Logger:DEBUG - Received data: {'header': 'state', 'data': {'state': 'inMenu'}}
+23-11-2021 13:52:02 - Logger:DEBUG - Received data: {'header': 'client_info', 'data': {'uid': 2}}
+23-11-2021 13:52:06 - Logger:DEBUG - Received data: {'header': 'game_code', 'data': {'game_code': '41G3N'}}
+23-11-2021 13:52:06 - Logger:DEBUG - Received data: {'header': 'state', 'data': {'state': 'inLobby'}}
+23-11-2021 13:52:06 - Logger:DEBUG - Received data: {'header': 'alert', 'data': {'message': 'Game created with code 41G3N'}}
+23-11-2021 13:52:09 - Logger:DEBUG - Received data: {'header': 'game_list', 'data': {'game_list': [{'code': '41G3N', 'player_count': 1}]}}
+23-11-2021 13:52:18 - Logger:DEBUG - Received data: {'header': 'game_code', 'data': {'game_code': '41G3N'}}
+23-11-2021 13:52:18 - Logger:DEBUG - Received data: {'header': 'alert', 'data': {'message': 'Client-2 has joined the game!'}}
+23-11-2021 13:52:18 - Logger:DEBUG - Received data: {'header': 'state', 'data': {'state': 'inLobby'}}
+23-11-2021 13:52:18 - Logger:DEBUG - Received data: {'header': 'alert', 'data': {'message': 'Joined game with code 41G3N'}}
+23-11-2021 13:52:22 - Logger:DEBUG - Received data: {'header': 'alert', 'data': {'message': 'Client-1 has left the game.'}}
+23-11-2021 13:52:22 - Logger:DEBUG - Received data: {'header': 'state', 'data': {'state': 'inMenu'}}
+23-11-2021 13:52:22 - Logger:DEBUG - Received data: {'header': 'alert', 'data': {'message': 'Game 41G3N has been closed'}}
+23-11-2021 13:52:22 - Logger:DEBUG - Received data: {'header': 'state', 'data': {'state': 'inMenu'}}
+23-11-2021 13:52:22 - Logger:DEBUG - Received data: {'header': 'alert', 'data': {'message': 'Left game 41G3N'}}
+23-11-2021 13:53:16 - Logger:ERROR - [WinError 10054] An existing connection was forcibly closed by the remote host
+23-11-2021 13:55:48 - Logger:INFO - Connected to server
+23-11-2021 13:55:48 - Logger:DEBUG - Received data: {'header': 'state', 'data': {'state': 'inMenu'}}
+23-11-2021 13:55:48 - Logger:DEBUG - Received data: {'header': 'client_info', 'data': {'uid': 1}}
+23-11-2021 13:55:48 - Logger:INFO - Connected to server
+23-11-2021 13:55:48 - Logger:DEBUG - Received data: {'header': 'state', 'data': {'state': 'inMenu'}}
+23-11-2021 13:55:48 - Logger:DEBUG - Received data: {'header': 'client_info', 'data': {'uid': 2}}
+23-11-2021 13:55:55 - Logger:DEBUG - Received data: {'header': 'game_code', 'data': {'game_code': 'AVB78'}}
+23-11-2021 13:55:55 - Logger:DEBUG - Received data: {'header': 'state', 'data': {'state': 'inLobby'}}
+23-11-2021 13:55:55 - Logger:DEBUG - Received data: {'header': 'alert', 'data': {'message': 'Game created with code AVB78'}}
+23-11-2021 13:56:03 - Logger:DEBUG - Received data: {'header': 'game_list', 'data': {'game_list': [{'code': 'AVB78', 'player_count': 1}]}}
+23-11-2021 13:56:11 - Logger:DEBUG - Received data: {'header': 'game_code', 'data': {'game_code': 'AVB78'}}
+23-11-2021 13:56:11 - Logger:DEBUG - Received data: {'header': 'alert', 'data': {'message': 'Client-1 has joined the game!'}}
+23-11-2021 13:56:11 - Logger:DEBUG - Received data: {'header': 'state', 'data': {'state': 'inLobby'}}
+23-11-2021 13:56:11 - Logger:DEBUG - Received data: {'header': 'alert', 'data': {'message': 'Joined game with code AVB78'}}
+23-11-2021 13:56:15 - Logger:DEBUG - Received data: {'header': 'alert', 'data': {'message': 'Client-2 has left the game.'}}
+23-11-2021 13:56:15 - Logger:DEBUG - Received data: {'header': 'state', 'data': {'state': 'inMenu'}}
+23-11-2021 13:56:15 - Logger:DEBUG - Received data: {'header': 'alert', 'data': {'message': 'Game AVB78 has been closed'}}
+23-11-2021 13:56:15 - Logger:DEBUG - Received data: {'header': 'state', 'data': {'state': 'inMenu'}}
+23-11-2021 13:56:15 - Logger:DEBUG - Received data: {'header': 'alert', 'data': {'message': 'Left game AVB78'}}
+23-11-2021 13:56:53 - Logger:ERROR - [WinError 10054] An existing connection was forcibly closed by the remote host
+23-11-2021 13:57:58 - Logger:INFO - Connected to server
+23-11-2021 13:57:58 - Logger:DEBUG - Received data: {'header': 'state', 'data': {'state': 'inMenu'}}
+23-11-2021 13:57:58 - Logger:DEBUG - Received data: {'header': 'client_info', 'data': {'uid': 1}}
+23-11-2021 13:57:58 - Logger:INFO - Connected to server
+23-11-2021 13:57:58 - Logger:DEBUG - Received data: {'header': 'state', 'data': {'state': 'inMenu'}}
+23-11-2021 13:57:58 - Logger:DEBUG - Received data: {'header': 'client_info', 'data': {'uid': 2}}
+23-11-2021 13:58:46 - Logger:INFO - Connected to server
+23-11-2021 13:58:46 - Logger:DEBUG - Received data: {'header': 'state', 'data': {'state': 'inMenu'}}
+23-11-2021 13:58:46 - Logger:DEBUG - Received data: {'header': 'client_info', 'data': {'uid': 1}}
+23-11-2021 13:58:46 - Logger:INFO - Connected to server
+23-11-2021 13:58:46 - Logger:DEBUG - Received data: {'header': 'state', 'data': {'state': 'inMenu'}}
+23-11-2021 13:58:46 - Logger:DEBUG - Received data: {'header': 'client_info', 'data': {'uid': 2}}
+23-11-2021 13:59:01 - Logger:INFO - Connected to server
+23-11-2021 13:59:01 - Logger:DEBUG - Received data: {'header': 'state', 'data': {'state': 'inMenu'}}
+23-11-2021 13:59:01 - Logger:DEBUG - Received data: {'header': 'client_info', 'data': {'uid': 1}}
+23-11-2021 13:59:01 - Logger:INFO - Connected to server
+23-11-2021 13:59:01 - Logger:DEBUG - Received data: {'header': 'state', 'data': {'state': 'inMenu'}}
+23-11-2021 13:59:01 - Logger:DEBUG - Received data: {'header': 'client_info', 'data': {'uid': 2}}
+23-11-2021 14:03:12 - Logger:DEBUG - Received data: {'header': 'game_code', 'data': {'game_code': '3ONF7'}}
+23-11-2021 14:03:12 - Logger:DEBUG - Received data: {'header': 'state', 'data': {'state': 'inLobby'}}
+23-11-2021 14:03:13 - Logger:DEBUG - Received data: {'header': 'alert', 'data': {'message': 'Game created with code 3ONF7'}}
+23-11-2021 14:03:14 - Logger:DEBUG - Received data: {'header': 'game_list', 'data': {'game_list': [{'code': '3ONF7', 'player_count': 1}]}}
+23-11-2021 14:03:19 - Logger:DEBUG - Received data: {'header': 'alert', 'data': {'message': 'Username set to syhr'}}
+23-11-2021 14:04:35 - Logger:ERROR - [WinError 10054] An existing connection was forcibly closed by the remote host

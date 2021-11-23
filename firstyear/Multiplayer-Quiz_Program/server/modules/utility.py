@@ -42,7 +42,10 @@ class Logger:
     
     def __log(self, prefix: str, message: str):
         """prints a final log"""
-        log_file = os.path.normpath(os.path.join(os.path.dirname(__file__)+ os.sep + os.pardir + os.sep + settings.LOG_PATH + os.sep + "server.log"))
+        log_path = os.path.normpath(os.path.join(os.path.dirname(__file__)+ os.sep + os.pardir + os.sep + settings.LOG_PATH + os.sep))
+        if not os.path.exists(log_path):
+            os.mkdir(log_path)
+        log_file = os.path.join(log_path, "server.log")
         log_string = f"{self.get_time().strftime('%d-%m-%Y %H:%M:%S')} - {self.logger_name}:{prefix} - {message}"
         with open(log_file, "a+") as log:
             log.write(log_string + "\n")

@@ -122,7 +122,7 @@ class Client:
     def __username_command(self, *args) -> None:
         if self.state != State.IN_MENU:
             return
-        self.username = args[0].capitalize()
+        self.username = args[0]
         self.send("alert", {"message": f"Username set to {self.username}"})
     
     def _get_handler(self, cmd: str) -> dict:

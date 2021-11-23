@@ -49,15 +49,23 @@ class Session:
             return self._username
 
     def _get_received_handler(self, header: str):
+        """return a method within the session class based on the 'header' argument value"""
         return {
+            # if the input is 'state' return _handle_state_change method
             "state": self._handle_state_change,
+            # if the input is 'game_code' return _handle_game_code_change method
             "game_code": self._handle_game_code_change,
+            # if the input is 'alert' return _handle_alert method
             "alert": self._handle_alert,
+            # if the input is 'question' return _handle_question method
             "question": self._handle_question,
+            # if the input is 'client_info' return _handle_client_info method
             "client_info": self._handle_client_info,
+            # if the input is 'game_list' return _handle_game_list method
             "game_list": self._handle_game_list,
+            # if the input is 'quiz_stats' return _handle_game_stats method
             "quiz_stats": self._handle_game_stats
-        }.get(header)
+        }.get(header) # get and return the relative value based on the header argument from the attached dictionary
 
     # command handlers --------------------------------------------------------
 
@@ -75,9 +83,9 @@ class Session:
             ]
         # finding the maximum length of a command string in the list above
         # calculated from len(command_name) + len(command_arguments)
-        max_len = max(map(len, [x[0] for x in parsed_commands]))
+        max_len = max(map(len, [x[0] for x in parsed_commands]))+1
         # finally print the help menu into the CLI
-        print("\n" + "\n".join(' ' * (max_len - len(x[0])) + x[0] + ' | ' + x[1] for x in parsed_commands) + "\n")
+        print("\n".join(' ' * (max_len - len(x[0])) + x[0] + ' | ' + x[1] for x in parsed_commands) + "\n")
 
     def _command(self, **kwargs):
         """called when the user enters a command that must be sent to the server for processing
@@ -88,7 +96,7 @@ class Session:
         
     def _username(self, **kwargs):
         if not kwargs.get("args"):
-            print(f"\n{Fore.RED}Please enter a username{Fore.RESET}\n")
+            print(f"> {Fore.RED}Missing <username> argument{Fore.RESET}\n")
             return
         self.settings.username = kwargs.get("args")[0]
         self._send("command", f"username {self.settings.username}")
@@ -194,7 +202,7 @@ class Session:
             self._handle_received(decoded)
 
         self.settings.alive = False
-        print("\nConnection closed\n")
+        print(f"\n{Fore.RED}Connection closed{Fore.RESET}\n")
 
     def _send(self, header: str, data: str):
         self._socket.send(json.dumps({"header": header, "data": {header: data}}).encode('utf-8'))
@@ -221,6 +229,9 @@ def main():
     cls()
     session = Session(settings.HOST, settings.PORT)
     session.start()
+    if not session.settings.alive:
+        input("Press enter to exit...")
+        return
     session._help()
     while True:
         user_input = input(f"{session.prefix()} > " if session.settings.state != State.IN_GAME else "")

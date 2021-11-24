@@ -8,7 +8,7 @@ from dataclasses import dataclass
 
 import classes.client as client
 import classes.manager as manager
-from modules import Logger, State, Helpers
+from utility import Logger, State, Helpers
 
 @dataclass
 class QuizData:

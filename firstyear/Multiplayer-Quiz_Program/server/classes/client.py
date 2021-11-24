@@ -9,7 +9,7 @@ import classes.game as game
 import classes.manager as manager
 import settings
 
-from modules import State, Logger
+from utility import State, Logger
 
 class Client:
     def __init__(self, manager: manager.Manager, uid: int, conn: socket.socket, addr):
@@ -92,8 +92,12 @@ class Client:
         if len(args) < 1:
             self.logger.error("No game code provided in join command")
             return
+        if self.game or self.state != State.IN_MENU:
+            self.logger.error("Cannot join another game whilst being in a game")
+            return
         g = self.__manager.get_game_from_code(args[0].upper())
         if not g or g.is_active():
+            self.send("alert", {"message": f"Game code \"{args[0].upper()}\" not found or game is already active"})
             self.logger.error(f"Game code \"{args[0].upper()}\" not found or game is already active")
             return
         self.game = g
@@ -122,7 +126,7 @@ class Client:
     def __username_command(self, *args) -> None:
         if self.state not in (State.IN_MENU, State.IN_LOBBY):
             return
-        self.username = args[0]
+        self.username = " ".join(args)
         self.send("alert", {"message": f"Username set to {self.username}"})
     
     def _get_handler(self, cmd: str) -> dict:
@@ -144,7 +148,10 @@ class Client:
         handler = self._get_handler(cmd)
         if handler:
             self.logger.debug(f"Handling command: {cmd}{' '+' '.join(args) if args else ''}")
-            handler(*args)
+            try:
+                handler(*args)
+            except TypeError:
+                handler()
         else:
             self.logger.debug(f"Unknown command: {cmd}{' '+' '.join(args) if args else ''}")
         

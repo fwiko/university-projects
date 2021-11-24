@@ -5,7 +5,7 @@ import threading
 import classes.game as game
 import classes.client as client
 
-from modules import Logger
+from utility import Logger
 
 class Manager:
     _next_uid: int = 1

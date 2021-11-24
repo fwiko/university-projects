@@ -107,3 +107,588 @@ ned the game!'}}
 23-11-2021 14:03:14 - Logger:DEBUG - Received data: {'header': 'game_list', 'data': {'game_list': [{'code': '3ONF7', 'player_count': 1}]}}
 23-11-2021 14:03:19 - Logger:DEBUG - Received data: {'header': 'alert', 'data': {'message': 'Username set to syhr'}}
 23-11-2021 14:04:35 - Logger:ERROR - [WinError 10054] An existing connection was forcibly closed by the remote host
+23-11-2021 20:08:25 - Logger:INFO - Connected to server
+23-11-2021 20:08:25 - Logger:DEBUG - Received data: {'header': 'state', 'data': {'state': 'inMenu'}}
+23-11-2021 20:08:25 - Logger:DEBUG - Received data: {'header': 'client_info', 'data': {'uid': 1}}
+23-11-2021 20:08:25 - Logger:DEBUG - Received data: {'header': 'state', 'data': {'state': 'inMenu'}}
+23-11-2021 20:08:25 - Logger:DEBUG - Received data: {'header': 'client_info', 'data': {'uid': 2}}
+23-11-2021 20:08:59 - Logger:DEBUG - Received data: {'header': 'game_code', 'data': {'game_code': '497O8'}}
+23-11-2021 20:08:59 - Logger:DEBUG - Received data: {'header': 'state', 'data': {'state': 'inLobby'}}
+23-11-2021 20:08:59 - Logger:DEBUG - Received data: {'header': 'alert', 'data': {'message': 'Game created with code 497O8'}}
+23-11-2021 20:09:00 - Logger:DEBUG - Received data: {'header': 'state', 'data': {'state': 'inGame'}}
+23-11-2021 20:09:14 - Logger:INFO - Connected to server
+23-11-2021 20:09:14 - Logger:DEBUG - Received data: {'header': 'state', 'data': {'state': 'inMenu'}}
+23-11-2021 20:09:14 - Logger:DEBUG - Received data: {'header': 'client_info', 'data': {'uid': 1}}
+23-11-2021 20:09:14 - Logger:INFO - Connected to server
+23-11-2021 20:09:14 - Logger:DEBUG - Received data: {'header': 'state', 'data': {'state': 'inMenu'}}
+23-11-2021 20:09:14 - Logger:DEBUG - Received data: {'header': 'client_info', 'data': {'uid': 2}}
+23-11-2021 20:09:20 - Logger:DEBUG - Received data: {'header': 'game_code', 'data': {'game_code': '63JSA'}}
+23-11-2021 20:09:20 - Logger:DEBUG - Received data: {'header': 'state', 'data': {'state': 'inLobby'}}
+23-11-2021 20:09:20 - Logger:DEBUG - Received data: {'header': 'alert', 'data': {'message': 'Game created with code 63JSA'}}
+23-11-2021 20:09:21 - Logger:DEBUG - Received data: {'header': 'state', 'data': {'state': 'inGame'}}
+23-11-2021 20:09:36 - Logger:ERROR - [WinError 10054] An existing connection was forcibly closed by the remote host
+23-11-2021 20:19:35 - Logger:INFO - Connected to server
+23-11-2021 20:19:35 - Logger:DEBUG - Received data: {'header': 'state', 'data': {'state': 'inMenu'}}
+23-11-2021 20:19:35 - Logger:DEBUG - Received data: {'header': 'client_info', 'data': {'uid': 1}}
+23-11-2021 20:19:35 - Logger:INFO - Connected to server
+23-11-2021 20:19:35 - Logger:DEBUG - Received data: {'header': 'state', 'data': {'state': 'inMenu'}}
+23-11-2021 20:19:35 - Logger:DEBUG - Received data: {'header': 'client_info', 'data': {'uid': 2}}
+23-11-2021 20:19:38 - Logger:DEBUG - Received data: {'header': 'game_code', 'data': {'game_code': 'W1ZUX'}}
+23-11-2021 20:19:38 - Logger:DEBUG - Received data: {'header': 'state', 'data': {'state': 'inLobby'}}
+23-11-2021 20:19:38 - Logger:DEBUG - Received data: {'header': 'alert', 'data': {'message': 'Game created with code W1ZUX'}}
+23-11-2021 20:19:39 - Logger:DEBUG - Received data: {'header': 'state', 'data': {'state': 'inGame'}}
+23-11-2021 20:19:39 - Logger:DEBUG - Received data: {'header': 'alert', 'data': {'message': 'Quiz starting in 5 seconds!'}}
+23-11-2021 20:19:44 - Logger:DEBUG - Received data: {'header': 'question', 'data': {'question': 'What is the capital of Brazil?'}}
+23-11-2021 20:19:45 - Logger:DEBUG - Received data: {'header': 'game_list', 'data': {'game_list': []}}
+23-11-2021 20:20:07 - Logger:DEBUG - Received data: {'header': 'game_code', 'data': {'game_code': '8LVHF'}}
+23-11-2021 20:20:07 - Logger:DEBUG - Received data: {'header': 'state', 'data': {'state': 'inLobby'}}
+23-11-2021 20:20:07 - Logger:DEBUG - Received data: {'header': 'alert', 'data': {'message': 'Game created with code 8LVHF'}}
+23-11-2021 20:20:08 - Logger:DEBUG - Received data: {'header': 'game_list', 'data': {'game_list': [{'code': '8LVHF', 'player_count': 1}]}}
+23-11-2021 20:20:11 - Logger:DEBUG - Received data: {'header': 'state', 'data': {'state': 'inMenu'}}
+23-11-2021 20:20:11 - Logger:DEBUG - Received data: {'header': 'alert', 'data': {'message': 'Left game 8LVHF'}}
+23-11-2021 20:20:13 - Logger:DEBUG - Received data: {'header': 'game_code', 'data': {'game_code': 'FOQ3C'}}
+23-11-2021 20:20:13 - Logger:DEBUG - Received data: {'header': 'state', 'data': {'state': 'inLobby'}}
+23-11-2021 20:20:13 - Logger:DEBUG - Received data: {'header': 'alert', 'data': {'message': 'Game created with code FOQ3C'}}
+23-11-2021 20:20:14 - Logger:DEBUG - Received data: {'header': 'game_list', 'data': {'game_list': [{'code': 'FOQ3C', 'player_count': 1}]}}
+23-11-2021 20:20:22 - Logger:DEBUG - Received data: {'header': 'game_code', 'data': {'game_code': 'FOQ3C'}}
+23-11-2021 20:20:22 - Logger:DEBUG - Received data: {'header': 'alert', 'data': {'message': 'Client-1 has joined the game!'}}
+23-11-2021 20:20:22 - Logger:DEBUG - Received data: {'header': 'state', 'data': {'state': 'inLobby'}}
+23-11-2021 20:20:22 - Logger:DEBUG - Received data: {'header': 'alert', 'data': {'message': 'Joined game with code FOQ3C'}}
+23-11-2021 20:20:34 - Logger:DEBUG - Received data: {'header': 'game_list', 'data': {'game_list': [{'code': 'FOQ3C', 'player_count': 2}]}}
+23-11-2021 20:20:36 - Logger:DEBUG - Received data: {'header': 'state', 'data': {'state': 'inGame'}}
+23-11-2021 20:20:36 - Logger:DEBUG - Received data: {'header': 'state', 'data': {'state': 'inGame'}}
+23-11-2021 20:20:36 - Logger:DEBUG - Received data: {'header': 'alert', 'data': {'message': 'Quiz starting in 5 seconds!'}}
+23-11-2021 20:20:36 - Logger:DEBUG - Received data: {'header': 'alert', 'data': {'message': 'Quiz starting in 5 seconds!'}}
+23-11-2021 20:20:41 - Logger:DEBUG - Received data: {'header': 'question', 'data': {'question': 'What is the capital of Brazil?'}}
+23-11-2021 20:20:41 - Logger:DEBUG - Received data: {'header': 'question', 'data': {'question': 'What is the capital of Brazil?'}}
+23-11-2021 20:20:42 - Logger:DEBUG - Received data: {'header': 'alert', 'data': {'message': 'Client-1 has left the game.'}}
+23-11-2021 20:20:42 - Logger:DEBUG - Received data: {'header': 'state', 'data': {'state': 'inMenu'}}
+23-11-2021 20:20:42 - Logger:DEBUG - Received data: {'header': 'alert', 'data': {'message': 'Left game FOQ3C'}}
+23-11-2021 20:20:45 - Logger:DEBUG - Received data: {'header': 'state', 'data': {'state': 'inMenu'}}
+23-11-2021 20:20:45 - Logger:DEBUG - Received data: {'header': 'alert', 'data': {'message': 'Left game FOQ3C'}}
+23-11-2021 20:46:22 - Logger:INFO - Connected to server
+23-11-2021 20:46:22 - Logger:DEBUG - Received data: {'header': 'state', 'data': {'state': 'inMenu'}}
+23-11-2021 20:46:22 - Logger:DEBUG - Received data: {'header': 'client_info', 'data': {'uid': 1}}
+23-11-2021 20:46:22 - Logger:INFO - Connected to server
+23-11-2021 20:46:22 - Logger:DEBUG - Received data: {'header': 'state', 'data': {'state': 'inMenu'}}
+23-11-2021 20:46:22 - Logger:DEBUG - Received data: {'header': 'client_info', 'data': {'uid': 2}}
+23-11-2021 20:46:26 - Logger:ERROR - [WinError 10054] An existing connection was forcibly closed by the remote host
+23-11-2021 20:46:26 - Logger:ERROR - [WinError 10054] An existing connection was forcibly closed by the remote host
+23-11-2021 20:47:28 - Logger:INFO - Connected to server
+23-11-2021 20:47:28 - Logger:DEBUG - Received data: {'header': 'state', 'data': {'state': 'inMenu'}}
+23-11-2021 20:47:28 - Logger:DEBUG - Received data: {'header': 'client_info', 'data': {'uid': 1}}
+23-11-2021 20:47:28 - Logger:INFO - Connected to server
+23-11-2021 20:47:28 - Logger:DEBUG - Received data: {'header': 'state', 'data': {'state': 'inMenu'}}
+23-11-2021 20:47:28 - Logger:DEBUG - Received data: {'header': 'client_info', 'data': {'uid': 2}}
+23-11-2021 20:47:35 - Logger:DEBUG - Received data: {'header': 'game_code', 'data': {'game_code': 'WA2GP'}}
+23-11-2021 20:47:35 - Logger:DEBUG - Received data: {'header': 'state', 'data': {'state': 'inLobby'}}
+23-11-2021 20:47:35 - Logger:DEBUG - Received data: {'header': 'alert', 'data': {'message': 'Game created with code WA2GP'}}
+23-11-2021 20:47:37 - Logger:DEBUG - Received data: {'header': 'game_list', 'data': {'game_list': [{'code': 'WA2GP', 'player_count': 1}]}}
+23-11-2021 20:47:44 - Logger:DEBUG - Received data: {'header': 'game_code', 'data': {'game_code': 'WA2GP'}}
+23-11-2021 20:47:44 - Logger:DEBUG - Received data: {'header': 'alert', 'data': {'message': 'Client-2 has joined the game!'}}
+23-11-2021 20:47:44 - Logger:DEBUG - Received data: {'header': 'state', 'data': {'state': 'inLobby'}}
+23-11-2021 20:47:44 - Logger:DEBUG - Received data: {'header': 'alert', 'data': {'message': 'Joined game with code WA2GP'}}
+23-11-2021 20:48:48 - Logger:DEBUG - Received data: {'header': 'alert', 'data': {'message': 'Client-1 has left the game.'}}
+23-11-2021 20:48:48 - Logger:DEBUG - Received data: {'header': 'state', 'data': {'state': 'inMenu'}}
+23-11-2021 20:48:48 - Logger:DEBUG - Received data: {'header': 'alert', 'data': {'message': 'Game WA2GP has been closed'}}
+23-11-2021 20:49:11 - Logger:INFO - Connected to server
+23-11-2021 20:49:11 - Logger:DEBUG - Received data: {'header': 'state', 'data': {'state': 'inMenu'}}
+23-11-2021 20:49:11 - Logger:DEBUG - Received data: {'header': 'client_info', 'data': {'uid': 1}}
+23-11-2021 20:49:11 - Logger:INFO - Connected to server
+23-11-2021 20:49:11 - Logger:DEBUG - Received data: {'header': 'state', 'data': {'state': 'inMenu'}}
+23-11-2021 20:49:11 - Logger:DEBUG - Received data: {'header': 'client_info', 'data': {'uid': 2}}
+23-11-2021 20:49:24 - Logger:DEBUG - Received data: {'header': 'game_code', 'data': {'game_code': '0858H'}}
+23-11-2021 20:49:24 - Logger:DEBUG - Received data: {'header': 'state', 'data': {'state': 'inLobby'}}
+23-11-2021 20:49:25 - Logger:DEBUG - Received data: {'header': 'alert', 'data': {'message': 'Game created with code 0858H'}}
+23-11-2021 20:49:27 - Logger:DEBUG - Received data: {'header': 'game_list', 'data': {'game_list': [{'code': '0858H', 'player_count': 1}]}}
+23-11-2021 20:49:33 - Logger:DEBUG - Received data: {'header': 'game_code', 'data': {'game_code': '0858H'}}
+23-11-2021 20:49:33 - Logger:DEBUG - Received data: {'header': 'alert', 'data': {'message': 'Client-1 has joined the game!'}}
+23-11-2021 20:49:33 - Logger:DEBUG - Received data: {'header': 'state', 'data': {'state': 'inLobby'}}
+23-11-2021 20:49:33 - Logger:DEBUG - Received data: {'header': 'alert', 'data': {'message': 'Joined game with code 0858H'}}
+23-11-2021 20:49:43 - Logger:DEBUG - Received data: {'header': 'state', 'data': {'state': 'inGame'}}
+23-11-2021 20:49:43 - Logger:DEBUG - Received data: {'header': 'state', 'data': {'state': 'inGame'}}
+23-11-2021 20:49:52 - Logger:DEBUG - Received data: {'header': 'alert', 'data': {'message': 'Client-1 has left the game.'}}
+23-11-2021 20:50:42 - Logger:INFO - Connected to server
+23-11-2021 20:50:42 - Logger:DEBUG - Received data: {'header': 'state', 'data': {'state': 'inMenu'}}
+23-11-2021 20:50:42 - Logger:DEBUG - Received data: {'header': 'client_info', 'data': {'uid': 1}}
+23-11-2021 20:50:42 - Logger:INFO - Connected to server
+23-11-2021 20:50:42 - Logger:DEBUG - Received data: {'header': 'state', 'data': {'state': 'inMenu'}}
+23-11-2021 20:50:42 - Logger:DEBUG - Received data: {'header': 'client_info', 'data': {'uid': 2}}
+23-11-2021 20:51:11 - Logger:DEBUG - Received data: {'header': 'game_code', 'data': {'game_code': '3LXU8'}}
+23-11-2021 20:51:11 - Logger:DEBUG - Received data: {'header': 'state', 'data': {'state': 'inLobby'}}
+23-11-2021 20:51:12 - Logger:DEBUG - Received data: {'header': 'alert', 'data': {'message': 'Game created with code 3LXU8'}}
+23-11-2021 20:51:20 - Logger:DEBUG - Received data: {'header': 'state', 'data': {'state': 'inMenu'}}
+23-11-2021 20:51:20 - Logger:DEBUG - Received data: {'header': 'alert', 'data': {'message': 'Left game 3LXU8'}}
+23-11-2021 20:51:29 - Logger:DEBUG - Received data: {'header': 'game_code', 'data': {'game_code': '7I2FB'}}
+23-11-2021 20:51:29 - Logger:DEBUG - Received data: {'header': 'state', 'data': {'state': 'inLobby'}}
+23-11-2021 20:51:29 - Logger:DEBUG - Received data: {'header': 'alert', 'data': {'message': 'Game created with code 7I2FB'}}
+23-11-2021 20:52:09 - Logger:INFO - Connected to server
+23-11-2021 20:52:09 - Logger:DEBUG - Received data: {'header': 'state', 'data': {'state': 'inMenu'}}
+23-11-2021 20:52:09 - Logger:DEBUG - Received data: {'header': 'client_info', 'data': {'uid': 1}}
+23-11-2021 20:52:09 - Logger:INFO - Connected to server
+23-11-2021 20:52:09 - Logger:DEBUG - Received data: {'header': 'state', 'data': {'state': 'inMenu'}}
+23-11-2021 20:52:09 - Logger:DEBUG - Received data: {'header': 'client_info', 'data': {'uid': 2}}
+23-11-2021 20:52:12 - Logger:DEBUG - Received data: {'header': 'alert', 'data': {'message': 'Game code "XXX" not found or game is already active'}}
+23-11-2021 20:52:29 - Logger:DEBUG - Received data: {'header': 'alert', 'data': {'message': 'Game code "H" not found or game is already active'}}
+23-11-2021 20:52:33 - Logger:DEBUG - Received data: {'header': 'alert', 'data': {'message': 'Game code "NIGGER" not found or game is already active'}}
+23-11-2021 20:52:40 - Logger:DEBUG - Received data: {'header': 'game_code', 'data': {'game_code': '1LBUW'}}
+23-11-2021 20:52:40 - Logger:DEBUG - Received data: {'header': 'state', 'data': {'state': 'inLobby'}}
+23-11-2021 20:52:41 - Logger:DEBUG - Received data: {'header': 'alert', 'data': {'message': 'Game created with code 1LBUW'}}
+23-11-2021 20:53:01 - Logger:DEBUG - Received data: {'header': 'alert', 'data': {'message': 'Username set to Client-2'}}
+23-11-2021 20:53:09 - Logger:DEBUG - Received data: {'header': 'alert', 'data': {'message': 'Username set to Client-2'}}
+23-11-2021 20:53:12 - Logger:DEBUG - Received data: {'header': 'alert', 'data': {'message': 'Username set to dfadasd'}}
+23-11-2021 20:53:18 - Logger:DEBUG - Received data: {'header': 'alert', 'data': {'message': 'Username set to nikker'}}
+23-11-2021 20:53:21 - Logger:DEBUG - Received data: {'header': 'game_list', 'data': {'game_list': [{'code': '1LBUW', 'player_count': 1}]}}
+23-11-2021 20:53:25 - Logger:DEBUG - Received data: {'header': 'game_code', 'data': {'game_code': '1LBUW'}}
+23-11-2021 20:53:25 - Logger:DEBUG - Received data: {'header': 'alert', 'data': {'message': 'nikker has joined the game!'}}
+23-11-2021 20:53:25 - Logger:DEBUG - Received data: {'header': 'state', 'data': {'state': 'inLobby'}}
+23-11-2021 20:53:25 - Logger:DEBUG - Received data: {'header': 'alert', 'data': {'message': 'Joined game with code 1LBUW'}}
+23-11-2021 20:53:27 - Logger:DEBUG - Received data: {'header': 'game_list', 'data': {'game_list': [{'code': '1LBUW', 'player_count': 2}]}}
+23-11-2021 20:53:39 - Logger:DEBUG - Received data: {'header': 'alert', 'data': {'message': 'nikker has left the game.'}}
+23-11-2021 20:53:39 - Logger:DEBUG - Received data: {'header': 'state', 'data': {'state': 'inMenu'}}
+23-11-2021 20:53:39 - Logger:DEBUG - Received data: {'header': 'alert', 'data': {'message': 'Left game 1LBUW'}}
+23-11-2021 20:53:55 - Logger:DEBUG - Received data: {'header': 'game_code', 'data': {'game_code': '1LBUW'}}
+23-11-2021 20:53:55 - Logger:DEBUG - Received data: {'header': 'alert', 'data': {'message': 'nikker has joined the game!'}}
+23-11-2021 20:53:55 - Logger:DEBUG - Received data: {'header': 'state', 'data': {'state': 'inLobby'}}
+23-11-2021 20:53:55 - Logger:DEBUG - Received data: {'header': 'alert', 'data': {'message': 'Joined game with code 1LBUW'}}
+23-11-2021 20:53:59 - Logger:DEBUG - Received data: {'header': 'game_code', 'data': {'game_code': '1LBUW'}}
+23-11-2021 20:53:59 - Logger:DEBUG - Received data: {'header': 'alert', 'data': {'message': 'nikker has joined the game!'}}
+23-11-2021 20:53:59 - Logger:DEBUG - Received data: {'header': 'state', 'data': {'state': 'inLobby'}}
+23-11-2021 20:53:59 - Logger:DEBUG - Received data: {'header': 'alert', 'data': {'message': 'Joined game with code 1LBUW'}}
+23-11-2021 20:54:01 - Logger:DEBUG - Received data: {'header': 'game_code', 'data': {'game_code': '1LBUW'}}
+23-11-2021 20:54:01 - Logger:DEBUG - Received data: {'header': 'alert', 'data': {'message': 'nikker has joined the game!'}}
+23-11-2021 20:54:01 - Logger:DEBUG - Received data: {'header': 'state', 'data': {'state': 'inLobby'}}
+23-11-2021 20:54:01 - Logger:DEBUG - Received data: {'header': 'alert', 'data': {'message': 'Joined game with code 1LBUW'}}
+23-11-2021 20:54:02 - Logger:DEBUG - Received data: {'header': 'game_code', 'data': {'game_code': '1LBUW'}}
+23-11-2021 20:54:02 - Logger:DEBUG - Received data: {'header': 'alert', 'data': {'message': 'nikker has joined the game!'}}
+23-11-2021 20:54:02 - Logger:DEBUG - Received data: {'header': 'state', 'data': {'state': 'inLobby'}}
+23-11-2021 20:54:02 - Logger:DEBUG - Received data: {'header': 'alert', 'data': {'message': 'Joined game with code 1LBUW'}}
+23-11-2021 20:54:03 - Logger:DEBUG - Received data: {'header': 'game_code', 'data': {'game_code': '1LBUW'}}
+23-11-2021 20:54:03 - Logger:DEBUG - Received data: {'header': 'alert', 'data': {'message': 'nikker has joined the game!'}}
+23-11-2021 20:54:03 - Logger:DEBUG - Received data: {'header': 'state', 'data': {'state': 'inLobby'}}
+23-11-2021 20:54:03 - Logger:DEBUG - Received data: {'header': 'alert', 'data': {'message': 'Joined game with code 1LBUW'}}
+23-11-2021 20:54:03 - Logger:DEBUG - Received data: {'header': 'game_code', 'data': {'game_code': '1LBUW'}}
+23-11-2021 20:54:03 - Logger:DEBUG - Received data: {'header': 'alert', 'data': {'message': 'nikker has joined the game!'}}
+23-11-2021 20:54:03 - Logger:DEBUG - Received data: {'header': 'state', 'data': {'state': 'inLobby'}}
+23-11-2021 20:54:03 - Logger:DEBUG - Received data: {'header': 'alert', 'data': {'message': 'Joined game with code 1LBUW'}}
+23-11-2021 20:54:04 - Logger:DEBUG - Received data: {'header': 'game_code', 'data': {'game_code': '1LBUW'}}
+23-11-2021 20:54:04 - Logger:DEBUG - Received data: {'header': 'alert', 'data': {'message': 'nikker has joined the game!'}}
+23-11-2021 20:54:04 - Logger:DEBUG - Received data: {'header': 'state', 'data': {'state': 'inLobby'}}
+23-11-2021 20:54:04 - Logger:DEBUG - Received data: {'header': 'alert', 'data': {'message': 'Joined game with code 1LBUW'}}
+23-11-2021 20:54:05 - Logger:DEBUG - Received data: {'header': 'game_code', 'data': {'game_code': '1LBUW'}}
+23-11-2021 20:54:05 - Logger:DEBUG - Received data: {'header': 'alert', 'data': {'message': 'nikker has joined the game!'}}
+23-11-2021 20:54:05 - Logger:DEBUG - Received data: {'header': 'state', 'data': {'state': 'inLobby'}}
+23-11-2021 20:54:05 - Logger:DEBUG - Received data: {'header': 'alert', 'data': {'message': 'Joined game with code 1LBUW'}}
+23-11-2021 20:54:06 - Logger:DEBUG - Received data: {'header': 'game_code', 'data': {'game_code': '1LBUW'}}
+23-11-2021 20:54:06 - Logger:DEBUG - Received data: {'header': 'alert', 'data': {'message': 'nikker has joined the game!'}}
+23-11-2021 20:54:06 - Logger:DEBUG - Received data: {'header': 'state', 'data': {'state': 'inLobby'}}
+23-11-2021 20:54:06 - Logger:DEBUG - Received data: {'header': 'alert', 'data': {'message': 'Joined game with code 1LBUW'}}
+23-11-2021 20:54:07 - Logger:DEBUG - Received data: {'header': 'game_code', 'data': {'game_code': '1LBUW'}}
+23-11-2021 20:54:07 - Logger:DEBUG - Received data: {'header': 'alert', 'data': {'message': 'nikker has joined the game!'}}
+23-11-2021 20:54:07 - Logger:DEBUG - Received data: {'header': 'state', 'data': {'state': 'inLobby'}}
+23-11-2021 20:54:07 - Logger:DEBUG - Received data: {'header': 'alert', 'data': {'message': 'Joined game with code 1LBUW'}}
+23-11-2021 20:54:07 - Logger:DEBUG - Received data: {'header': 'game_code', 'data': {'game_code': '1LBUW'}}
+23-11-2021 20:54:07 - Logger:DEBUG - Received data: {'header': 'alert', 'data': {'message': 'nikker has joined the game!'}}
+23-11-2021 20:54:07 - Logger:DEBUG - Received data: {'header': 'state', 'data': {'state': 'inLobby'}}
+23-11-2021 20:54:07 - Logger:DEBUG - Received data: {'header': 'alert', 'data': {'message': 'Joined game with code 1LBUW'}}
+23-11-2021 20:54:09 - Logger:DEBUG - Received data: {'header': 'game_list', 'data': {'game_list': [{'code': '1LBUW', 'player_count': 12}]}}
+23-11-2021 20:54:11 - Logger:DEBUG - Received data: {'header': 'game_list', 'data': {'game_list': [{'code': '1LBUW', 'player_count': 12}]}}
+23-11-2021 20:54:12 - Logger:DEBUG - Received data: {'header': 'game_list', 'data': {'game_list': [{'code': '1LBUW', 'player_count': 12}]}}
+23-11-2021 20:54:12 - Logger:DEBUG - Received data: {'header': 'game_list', 'data': {'game_list': [{'code': '1LBUW', 'player_count': 12}]}}
+23-11-2021 20:54:13 - Logger:DEBUG - Received data: {'header': 'game_list', 'data': {'game_list': [{'code': '1LBUW', 'player_count': 12}]}}
+23-11-2021 20:54:14 - Logger:DEBUG - Received data: {'header': 'game_list', 'data': {'game_list': [{'code': '1LBUW', 'player_count': 12}]}}
+23-11-2021 20:54:15 - Logger:DEBUG - Received data: {'header': 'game_list', 'data': {'game_list': [{'code': '1LBUW', 'player_count': 12}]}}
+23-11-2021 20:54:16 - Logger:DEBUG - Received data: {'header': 'game_list', 'data': {'game_list': [{'code': '1LBUW', 'player_count': 12}]}}
+23-11-2021 20:54:16 - Logger:DEBUG - Received data: {'header': 'game_list', 'data': {'game_list': [{'code': '1LBUW', 'player_count': 12}]}}
+23-11-2021 20:54:18 - Logger:DEBUG - Received data: {'header': 'game_code', 'data': {'game_code': '1LBUW'}}
+23-11-2021 20:54:18 - Logger:DEBUG - Received data: {'header': 'alert', 'data': {'message': 'nikker has joined the game!'}}
+23-11-2021 20:54:18 - Logger:DEBUG - Received data: {'header': 'state', 'data': {'state': 'inLobby'}}
+23-11-2021 20:54:18 - Logger:DEBUG - Received data: {'header': 'alert', 'data': {'message': 'Joined game with code 1LBUW'}}
+23-11-2021 20:54:19 - Logger:DEBUG - Received data: {'header': 'game_code', 'data': {'game_code': '1LBUW'}}
+23-11-2021 20:54:19 - Logger:DEBUG - Received data: {'header': 'alert', 'data': {'message': 'nikker has joined the game!'}}
+23-11-2021 20:54:19 - Logger:DEBUG - Received data: {'header': 'state', 'data': {'state': 'inLobby'}}
+23-11-2021 20:54:19 - Logger:DEBUG - Received data: {'header': 'alert', 'data': {'message': 'Joined game with code 1LBUW'}}
+23-11-2021 20:54:19 - Logger:DEBUG - Received data: {'header': 'game_code', 'data': {'game_code': '1LBUW'}}
+23-11-2021 20:54:19 - Logger:DEBUG - Received data: {'header': 'alert', 'data': {'message': 'nikker has joined the game!'}}
+23-11-2021 20:54:19 - Logger:DEBUG - Received data: {'header': 'state', 'data': {'state': 'inLobby'}}
+23-11-2021 20:54:19 - Logger:DEBUG - Received data: {'header': 'alert', 'data': {'message': 'Joined game with code 1LBUW'}}
+23-11-2021 20:54:20 - Logger:DEBUG - Received data: {'header': 'game_code', 'data': {'game_code': '1LBUW'}}
+23-11-2021 20:54:20 - Logger:DEBUG - Received data: {'header': 'alert', 'data': {'message': 'nikker has joined the game!'}}
+23-11-2021 20:54:20 - Logger:DEBUG - Received data: {'header': 'state', 'data': {'state': 'inLobby'}}
+23-11-2021 20:54:20 - Logger:DEBUG - Received data: {'header': 'alert', 'data': {'message': 'Joined game with code 1LBUW'}}
+23-11-2021 20:54:21 - Logger:DEBUG - Received data: {'header': 'game_code', 'data': {'game_code': '1LBUW'}}
+23-11-2021 20:54:21 - Logger:DEBUG - Received data: {'header': 'alert', 'data': {'message': 'nikker has joined the game!'}}
+23-11-2021 20:54:21 - Logger:DEBUG - Received data: {'header': 'state', 'data': {'state': 'inLobby'}}
+23-11-2021 20:54:21 - Logger:DEBUG - Received data: {'header': 'alert', 'data': {'message': 'Joined game with code 1LBUW'}}
+23-11-2021 20:54:22 - Logger:DEBUG - Received data: {'header': 'game_code', 'data': {'game_code': '1LBUW'}}
+23-11-2021 20:54:22 - Logger:DEBUG - Received data: {'header': 'alert', 'data': {'message': 'nikker has joined the game!'}}
+23-11-2021 20:54:22 - Logger:DEBUG - Received data: {'header': 'state', 'data': {'state': 'inLobby'}}
+23-11-2021 20:54:22 - Logger:DEBUG - Received data: {'header': 'alert', 'data': {'message': 'Joined game with code 1LBUW'}}
+23-11-2021 20:54:23 - Logger:DEBUG - Received data: {'header': 'game_code', 'data': {'game_code': '1LBUW'}}
+23-11-2021 20:54:23 - Logger:DEBUG - Received data: {'header': 'alert', 'data': {'message': 'nikker has joined the game!'}}
+23-11-2021 20:54:23 - Logger:DEBUG - Received data: {'header': 'state', 'data': {'state': 'inLobby'}}
+23-11-2021 20:54:23 - Logger:DEBUG - Received data: {'header': 'alert', 'data': {'message': 'Joined game with code 1LBUW'}}
+23-11-2021 20:54:23 - Logger:DEBUG - Received data: {'header': 'game_code', 'data': {'game_code': '1LBUW'}}
+23-11-2021 20:54:23 - Logger:DEBUG - Received data: {'header': 'alert', 'data': {'message': 'nikker has joined the game!'}}
+23-11-2021 20:54:23 - Logger:DEBUG - Received data: {'header': 'state', 'data': {'state': 'inLobby'}}
+23-11-2021 20:54:23 - Logger:DEBUG - Received data: {'header': 'alert', 'data': {'message': 'Joined game with code 1LBUW'}}
+23-11-2021 20:54:24 - Logger:DEBUG - Received data: {'header': 'game_code', 'data': {'game_code': '1LBUW'}}
+23-11-2021 20:54:24 - Logger:DEBUG - Received data: {'header': 'alert', 'data': {'message': 'nikker has joined the game!'}}
+23-11-2021 20:54:24 - Logger:DEBUG - Received data: {'header': 'state', 'data': {'state': 'inLobby'}}
+23-11-2021 20:54:24 - Logger:DEBUG - Received data: {'header': 'alert', 'data': {'message': 'Joined game with code 1LBUW'}}
+23-11-2021 20:54:25 - Logger:DEBUG - Received data: {'header': 'game_code', 'data': {'game_code': '1LBUW'}}
+23-11-2021 20:54:25 - Logger:DEBUG - Received data: {'header': 'alert', 'data': {'message': 'nikker has joined the game!'}}
+23-11-2021 20:54:25 - Logger:DEBUG - Received data: {'header': 'state', 'data': {'state': 'inLobby'}}
+23-11-2021 20:54:25 - Logger:DEBUG - Received data: {'header': 'alert', 'data': {'message': 'Joined game with code 1LBUW'}}
+23-11-2021 20:54:26 - Logger:DEBUG - Received data: {'header': 'game_code', 'data': {'game_code': '1LBUW'}}
+23-11-2021 20:54:26 - Logger:DEBUG - Received data: {'header': 'alert', 'data': {'message': 'nikker has joined the game!'}}
+23-11-2021 20:54:26 - Logger:DEBUG - Received data: {'header': 'state', 'data': {'state': 'inLobby'}}
+23-11-2021 20:54:26 - Logger:DEBUG - Received data: {'header': 'alert', 'data': {'message': 'Joined game with code 1LBUW'}}
+23-11-2021 20:54:29 - Logger:DEBUG - Received data: {'header': 'game_list', 'data': {'game_list': [{'code': '1LBUW', 'player_count': 23}]}}
+23-11-2021 20:54:43 - Logger:DEBUG - Received data: {'header': 'alert', 'data': {'message': 'Client-1 has left the game.'}}
+23-11-2021 20:54:43 - Logger:DEBUG - Received data: {'header': 'alert', 'data': {'message': 'Client-1 has left the game.'}}
+23-11-2021 20:54:43 - Logger:DEBUG - Received data: {'header': 'alert', 'data': {'message': 'Client-1 has left the game.'}}
+23-11-2021 20:54:43 - Logger:DEBUG - Received data: {'header': 'alert', 'data': {'message': 'Client-1 has left the game.'}}
+23-11-2021 20:54:43 - Logger:DEBUG - Received data: {'header': 'alert', 'data': {'message': 'Client-1 has left the game.'}}
+23-11-2021 20:54:43 - Logger:DEBUG - Received data: {'header': 'alert', 'data': {'message': 'Client-1 has left the game.'}}
+23-11-2021 20:54:43 - Logger:DEBUG - Received data: {'header': 'alert', 'data': {'message': 'Client-1 has left the game.'}}
+23-11-2021 20:54:43 - Logger:DEBUG - Received data: {'header': 'alert', 'data': {'message': 'Client-1 has left the game.'}}
+23-11-2021 20:54:43 - Logger:DEBUG - Received data: {'header': 'alert', 'data': {'message': 'Client-1 has left the game.'}}
+23-11-2021 20:54:43 - Logger:DEBUG - Received data: {'header': 'alert', 'data': {'message': 'Client-1 has left the game.'}}
+23-11-2021 20:54:43 - Logger:DEBUG - Received data: {'header': 'alert', 'data': {'message': 'Client-1 has left the game.'}}
+23-11-2021 20:54:43 - Logger:DEBUG - Received data: {'header': 'alert', 'data': {'message': 'Client-1 has left the game.'}}
+23-11-2021 20:54:43 - Logger:DEBUG - Received data: {'header': 'alert', 'data': {'message': 'Client-1 has left the game.'}}
+23-11-2021 20:54:43 - Logger:DEBUG - Received data: {'header': 'alert', 'data': {'message': 'Client-1 has left the game.'}}
+23-11-2021 20:54:43 - Logger:DEBUG - Received data: {'header': 'alert', 'data': {'message': 'Client-1 has left the game.'}}
+23-11-2021 20:54:43 - Logger:DEBUG - Received data: {'header': 'alert', 'data': {'message': 'Client-1 has left the game.'}}
+23-11-2021 20:54:43 - Logger:DEBUG - Received data: {'header': 'alert', 'data': {'message': 'Client-1 has left the game.'}}
+23-11-2021 20:54:43 - Logger:DEBUG - Received data: {'header': 'alert', 'data': {'message': 'Client-1 has left the game.'}}
+23-11-2021 20:54:43 - Logger:DEBUG - Received data: {'header': 'alert', 'data': {'message': 'Client-1 has left the game.'}}
+23-11-2021 20:54:43 - Logger:DEBUG - Received data: {'header': 'alert', 'data': {'message': 'Client-1 has left the game.'}}
+23-11-2021 20:54:43 - Logger:DEBUG - Received data: {'header': 'alert', 'data': {'message': 'Client-1 has left the game.'}}
+23-11-2021 20:54:43 - Logger:DEBUG - Received data: {'header': 'alert', 'data': {'message': 'Client-1 has left the game.'}}
+23-11-2021 20:54:43 - Logger:DEBUG - Received data: {'header': 'state', 'data': {'state': 'inMenu'}}
+23-11-2021 20:54:43 - Logger:DEBUG - Received data: {'header': 'state', 'data': {'state': 'inMenu'}}
+23-11-2021 20:54:43 - Logger:DEBUG - Received data: {'header': 'state', 'data': {'state': 'inMenu'}}
+23-11-2021 20:54:44 - Logger:DEBUG - Received data: {'header': 'state', 'data': {'state': 'inMenu'}}
+23-11-2021 20:54:44 - Logger:DEBUG - Received data: {'header': 'state', 'data': {'state': 'inMenu'}}
+23-11-2021 20:54:44 - Logger:DEBUG - Received data: {'header': 'state', 'data': {'state': 'inMenu'}}
+23-11-2021 20:54:44 - Logger:DEBUG - Received data: {'header': 'state', 'data': {'state': 'inMenu'}}
+23-11-2021 20:54:44 - Logger:DEBUG - Received data: {'header': 'state', 'data': {'state': 'inMenu'}}
+23-11-2021 20:54:44 - Logger:DEBUG - Received data: {'header': 'state', 'data': {'state': 'inMenu'}}
+23-11-2021 20:54:44 - Logger:DEBUG - Received data: {'header': 'state', 'data': {'state': 'inMenu'}}
+23-11-2021 20:54:44 - Logger:DEBUG - Received data: {'header': 'state', 'data': {'state': 'inMenu'}}
+23-11-2021 20:54:44 - Logger:DEBUG - Received data: {'header': 'state', 'data': {'state': 'inMenu'}}
+23-11-2021 20:54:44 - Logger:DEBUG - Received data: {'header': 'state', 'data': {'state': 'inMenu'}}
+23-11-2021 20:54:44 - Logger:DEBUG - Received data: {'header': 'state', 'data': {'state': 'inMenu'}}
+23-11-2021 20:54:44 - Logger:DEBUG - Received data: {'header': 'state', 'data': {'state': 'inMenu'}}
+23-11-2021 20:54:44 - Logger:DEBUG - Received data: {'header': 'state', 'data': {'state': 'inMenu'}}
+23-11-2021 20:54:44 - Logger:DEBUG - Received data: {'header': 'state', 'data': {'state': 'inMenu'}}
+23-11-2021 20:54:44 - Logger:DEBUG - Received data: {'header': 'state', 'data': {'state': 'inMenu'}}
+23-11-2021 20:54:44 - Logger:DEBUG - Received data: {'header': 'state', 'data': {'state': 'inMenu'}}
+23-11-2021 20:54:44 - Logger:DEBUG - Received data: {'header': 'state', 'data': {'state': 'inMenu'}}
+23-11-2021 20:54:44 - Logger:DEBUG - Received data: {'header': 'state', 'data': {'state': 'inMenu'}}
+23-11-2021 20:54:44 - Logger:DEBUG - Received data: {'header': 'state', 'data': {'state': 'inMenu'}}
+23-11-2021 20:54:44 - Logger:DEBUG - Received data: {'header': 'alert', 'data': {'message': 'Game 1LBUW has been closed'}}
+23-11-2021 20:54:44 - Logger:DEBUG - Received data: {'header': 'alert', 'data': {'message': 'Game 1LBUW has been closed'}}
+23-11-2021 20:54:44 - Logger:DEBUG - Received data: {'header': 'alert', 'data': {'message': 'Game 1LBUW has been closed'}}
+23-11-2021 20:54:44 - Logger:DEBUG - Received data: {'header': 'alert', 'data': {'message': 'Game 1LBUW has been closed'}}
+23-11-2021 20:54:44 - Logger:DEBUG - Received data: {'header': 'alert', 'data': {'message': 'Game 1LBUW has been closed'}}
+23-11-2021 20:54:44 - Logger:DEBUG - Received data: {'header': 'alert', 'data': {'message': 'Game 1LBUW has been closed'}}
+23-11-2021 20:54:44 - Logger:DEBUG - Received data: {'header': 'alert', 'data': {'message': 'Game 1LBUW has been closed'}}
+23-11-2021 20:54:44 - Logger:DEBUG - Received data: {'header': 'alert', 'data': {'message': 'Game 1LBUW has been closed'}}
+23-11-2021 20:54:44 - Logger:DEBUG - Received data: {'header': 'alert', 'data': {'message': 'Game 1LBUW has been closed'}}
+23-11-2021 20:54:44 - Logger:DEBUG - Received data: {'header': 'alert', 'data': {'message': 'Game 1LBUW has been closed'}}
+23-11-2021 20:54:44 - Logger:DEBUG - Received data: {'header': 'alert', 'data': {'message': 'Game 1LBUW has been closed'}}
+23-11-2021 20:54:44 - Logger:DEBUG - Received data: {'header': 'alert', 'data': {'message': 'Game 1LBUW has been closed'}}
+23-11-2021 20:54:44 - Logger:DEBUG - Received data: {'header': 'alert', 'data': {'message': 'Game 1LBUW has been closed'}}
+23-11-2021 20:54:44 - Logger:DEBUG - Received data: {'header': 'alert', 'data': {'message': 'Game 1LBUW has been closed'}}
+23-11-2021 20:54:44 - Logger:DEBUG - Received data: {'header': 'alert', 'data': {'message': 'Game 1LBUW has been closed'}}
+23-11-2021 20:54:44 - Logger:DEBUG - Received data: {'header': 'alert', 'data': {'message': 'Game 1LBUW has been closed'}}
+23-11-2021 20:54:44 - Logger:DEBUG - Received data: {'header': 'alert', 'data': {'message': 'Game 1LBUW has been closed'}}
+23-11-2021 20:54:44 - Logger:DEBUG - Received data: {'header': 'alert', 'data': {'message': 'Game 1LBUW has been closed'}}
+23-11-2021 20:54:44 - Logger:DEBUG - Received data: {'header': 'alert', 'data': {'message': 'Game 1LBUW has been closed'}}
+23-11-2021 20:54:44 - Logger:DEBUG - Received data: {'header': 'alert', 'data': {'message': 'Game 1LBUW has been closed'}}
+23-11-2021 20:54:44 - Logger:DEBUG - Received data: {'header': 'alert', 'data': {'message': 'Game 1LBUW has been closed'}}
+23-11-2021 20:54:44 - Logger:DEBUG - Received data: {'header': 'alert', 'data': {'message': 'Game 1LBUW has been closed'}}
+23-11-2021 20:54:44 - Logger:DEBUG - Received data: {'header': 'state', 'data': {'state': 'inMenu'}}
+23-11-2021 20:54:44 - Logger:DEBUG - Received data: {'header': 'alert', 'data': {'message': 'Left game 1LBUW'}}
+23-11-2021 20:59:03 - Logger:INFO - Connected to server
+23-11-2021 20:59:03 - Logger:DEBUG - Received data: {'header': 'state', 'data': {'state': 'inMenu'}}
+23-11-2021 20:59:03 - Logger:DEBUG - Received data: {'header': 'client_info', 'data': {'uid': 1}}
+23-11-2021 20:59:03 - Logger:INFO - Connected to server
+23-11-2021 20:59:03 - Logger:DEBUG - Received data: {'header': 'state', 'data': {'state': 'inMenu'}}
+23-11-2021 20:59:03 - Logger:DEBUG - Received data: {'header': 'client_info', 'data': {'uid': 2}}
+23-11-2021 20:59:12 - Logger:DEBUG - Received data: {'header': 'game_list', 'data': {'game_list': []}}
+23-11-2021 20:59:40 - Logger:INFO - Connected to server
+23-11-2021 20:59:40 - Logger:DEBUG - Received data: {'header': 'state', 'data': {'state': 'inMenu'}}
+23-11-2021 20:59:40 - Logger:DEBUG - Received data: {'header': 'client_info', 'data': {'uid': 1}}
+23-11-2021 20:59:40 - Logger:INFO - Connected to server
+23-11-2021 20:59:40 - Logger:DEBUG - Received data: {'header': 'state', 'data': {'state': 'inMenu'}}
+23-11-2021 20:59:40 - Logger:DEBUG - Received data: {'header': 'client_info', 'data': {'uid': 2}}
+23-11-2021 21:00:02 - Logger:DEBUG - Received data: {'header': 'alert', 'data': {'message': 'Username set to nigger'}}
+23-11-2021 21:02:23 - Logger:INFO - Connected to server
+23-11-2021 21:02:23 - Logger:DEBUG - Received data: {'header': 'state', 'data': {'state': 'inMenu'}}
+23-11-2021 21:02:23 - Logger:DEBUG - Received data: {'header': 'client_info', 'data': {'uid': 1}}
+23-11-2021 21:02:23 - Logger:INFO - Connected to server
+23-11-2021 21:02:23 - Logger:DEBUG - Received data: {'header': 'state', 'data': {'state': 'inMenu'}}
+23-11-2021 21:02:23 - Logger:DEBUG - Received data: {'header': 'client_info', 'data': {'uid': 2}}
+23-11-2021 21:02:31 - Logger:DEBUG - Received data: {'header': 'alert', 'data': {'message': 'Username set to pog man ganzoor'}}
+23-11-2021 21:05:03 - Logger:INFO - Connected to server
+23-11-2021 21:05:03 - Logger:DEBUG - Received data: {'header': 'state', 'data': {'state': 'inMenu'}}
+23-11-2021 21:05:03 - Logger:DEBUG - Received data: {'header': 'client_info', 'data': {'uid': 1}}
+23-11-2021 21:05:03 - Logger:INFO - Connected to server
+23-11-2021 21:05:03 - Logger:DEBUG - Received data: {'header': 'state', 'data': {'state': 'inMenu'}}
+23-11-2021 21:05:03 - Logger:DEBUG - Received data: {'header': 'client_info', 'data': {'uid': 2}}
+23-11-2021 21:05:07 - Logger:DEBUG - Received data: {'header': 'game_code', 'data': {'game_code': '89IAY'}}
+23-11-2021 21:05:07 - Logger:DEBUG - Received data: {'header': 'state', 'data': {'state': 'inLobby'}}
+23-11-2021 21:05:07 - Logger:DEBUG - Received data: {'header': 'alert', 'data': {'message': 'Game created with code 89IAY'}}
+23-11-2021 21:05:25 - Logger:DEBUG - Received data: {'header': 'game_list', 'data': {'game_list': [{'code': '89IAY', 'player_count': 1}]}}
+23-11-2021 21:05:30 - Logger:DEBUG - Received data: {'header': 'game_code', 'data': {'game_code': '89IAY'}}
+23-11-2021 21:05:30 - Logger:DEBUG - Received data: {'header': 'alert', 'data': {'message': 'Client-2 has joined the game!'}}
+23-11-2021 21:05:30 - Logger:DEBUG - Received data: {'header': 'state', 'data': {'state': 'inLobby'}}
+23-11-2021 21:05:30 - Logger:DEBUG - Received data: {'header': 'alert', 'data': {'message': 'Joined game with code 89IAY'}}
+23-11-2021 21:05:47 - Logger:DEBUG - Received data: {'header': 'game_list', 'data': {'game_list': [{'code': '89IAY', 'player_count': 2}]}}
+23-11-2021 21:05:49 - Logger:DEBUG - Received data: {'header': 'alert', 'data': {'message': 'Client-2 has left the game.'}}
+23-11-2021 21:05:50 - Logger:DEBUG - Received data: {'header': 'state', 'data': {'state': 'inMenu'}}
+23-11-2021 21:05:50 - Logger:DEBUG - Received data: {'header': 'alert', 'data': {'message': 'Left game 89IAY'}}
+23-11-2021 21:05:52 - Logger:DEBUG - Received data: {'header': 'state', 'data': {'state': 'inMenu'}}
+23-11-2021 21:05:52 - Logger:DEBUG - Received data: {'header': 'alert', 'data': {'message': 'Left game 89IAY'}}
+23-11-2021 21:24:06 - Logger:INFO - Connected to server
+23-11-2021 21:24:06 - Logger:DEBUG - Received data: {'header': 'state', 'data': {'state': 'inMenu'}}
+23-11-2021 21:24:06 - Logger:DEBUG - Received data: {'header': 'client_info', 'data': {'uid': 1}}
+23-11-2021 21:24:06 - Logger:INFO - Connected to server
+23-11-2021 21:24:06 - Logger:DEBUG - Received data: {'header': 'state', 'data': {'state': 'inMenu'}}
+23-11-2021 21:24:06 - Logger:DEBUG - Received data: {'header': 'client_info', 'data': {'uid': 2}}
+23-11-2021 21:24:08 - Logger:DEBUG - Received data: {'header': 'game_code', 'data': {'game_code': '7OMCN'}}
+23-11-2021 21:24:08 - Logger:DEBUG - Received data: {'header': 'state', 'data': {'state': 'inLobby'}}
+23-11-2021 21:24:08 - Logger:DEBUG - Received data: {'header': 'alert', 'data': {'message': 'Game created with code 7OMCN'}}
+23-11-2021 21:24:19 - Logger:DEBUG - Received data: {'header': 'alert', 'data': {'message': 'Username set to nigger'}}
+23-11-2021 21:24:40 - Logger:INFO - Connected to server
+23-11-2021 21:24:40 - Logger:DEBUG - Received data: {'header': 'state', 'data': {'state': 'inMenu'}}
+23-11-2021 21:24:40 - Logger:DEBUG - Received data: {'header': 'client_info', 'data': {'uid': 1}}
+23-11-2021 21:24:41 - Logger:INFO - Connected to server
+23-11-2021 21:24:41 - Logger:DEBUG - Received data: {'header': 'state', 'data': {'state': 'inMenu'}}
+23-11-2021 21:24:41 - Logger:DEBUG - Received data: {'header': 'client_info', 'data': {'uid': 2}}
+23-11-2021 21:24:43 - Logger:DEBUG - Received data: {'header': 'game_code', 'data': {'game_code': 'TJ3V4'}}
+23-11-2021 21:24:43 - Logger:DEBUG - Received data: {'header': 'state', 'data': {'state': 'inLobby'}}
+23-11-2021 21:24:43 - Logger:DEBUG - Received data: {'header': 'alert', 'data': {'message': 'Game created with code TJ3V4'}}
+23-11-2021 21:24:49 - Logger:DEBUG - Received data: {'header': 'game_code', 'data': {'game_code': 'TJ3V4'}}
+23-11-2021 21:24:49 - Logger:DEBUG - Received data: {'header': 'alert', 'data': {'message': 'Client-1 has joined the game!'}}
+23-11-2021 21:24:49 - Logger:DEBUG - Received data: {'header': 'state', 'data': {'state': 'inLobby'}}
+23-11-2021 21:24:49 - Logger:DEBUG - Received data: {'header': 'alert', 'data': {'message': 'Joined game with code TJ3V4'}}
+23-11-2021 21:24:52 - Logger:DEBUG - Received data: {'header': 'state', 'data': {'state': 'inGame'}}
+23-11-2021 21:24:52 - Logger:DEBUG - Received data: {'header': 'state', 'data': {'state': 'inGame'}}
+23-11-2021 21:24:52 - Logger:DEBUG - Received data: {'header': 'alert', 'data': {'message': 'Quiz starting in 5 seconds!'}}
+23-11-2021 21:24:52 - Logger:DEBUG - Received data: {'header': 'alert', 'data': {'message': 'Quiz starting in 5 seconds!'}}
+23-11-2021 21:24:54 - Logger:DEBUG - Received data: {'header': 'alert', 'data': {'message': 'Client-1 has left the game.'}}
+23-11-2021 21:24:54 - Logger:DEBUG - Received data: {'header': 'state', 'data': {'state': 'inMenu'}}
+23-11-2021 21:24:54 - Logger:DEBUG - Received data: {'header': 'alert', 'data': {'message': 'Left game TJ3V4'}}
+23-11-2021 21:24:57 - Logger:DEBUG - Received data: {'header': 'question', 'data': {'question': 'In what year was the first car movie released?'}}
+23-11-2021 21:25:00 - Logger:DEBUG - Received data: {'header': 'question', 'data': {'question': 'Which animal features in the logo for Lamborghini?'}}
+23-11-2021 21:25:02 - Logger:DEBUG - Received data: {'header': 'question', 'data': {'question': 'What is the original colour of Ferraris?'}}
+23-11-2021 21:25:05 - Logger:DEBUG - Received data: {'header': 'state', 'data': {'state': 'inMenu'}}
+23-11-2021 21:25:05 - Logger:DEBUG - Received data: {'header': 'alert', 'data': {'message': 'Left game TJ3V4'}}
+23-11-2021 21:25:07 - Logger:DEBUG - Received data: {'header': 'game_list', 'data': {'game_list': []}}
+23-11-2021 21:56:07 - Logger:INFO - Connected to server
+23-11-2021 21:56:07 - Logger:DEBUG - Received data: {'header': 'state', 'data': {'state': 'inMenu'}}
+23-11-2021 21:56:07 - Logger:DEBUG - Received data: {'header': 'client_info', 'data': {'uid': 1}}
+23-11-2021 21:56:07 - Logger:INFO - Connected to server
+23-11-2021 21:56:07 - Logger:DEBUG - Received data: {'header': 'state', 'data': {'state': 'inMenu'}}
+23-11-2021 21:56:07 - Logger:DEBUG - Received data: {'header': 'client_info', 'data': {'uid': 2}}
+23-11-2021 21:56:09 - Logger:DEBUG - Received data: {'header': 'game_code', 'data': {'game_code': '7QK2M'}}
+23-11-2021 21:56:09 - Logger:DEBUG - Received data: {'header': 'state', 'data': {'state': 'inLobby'}}
+23-11-2021 21:56:09 - Logger:DEBUG - Received data: {'header': 'alert', 'data': {'message': 'Game created with code 7QK2M'}}
+23-11-2021 21:56:12 - Logger:ERROR - [WinError 10054] An existing connection was forcibly closed by the remote host
+23-11-2021 21:56:12 - Logger:ERROR - [WinError 10054] An existing connection was forcibly closed by the remote host
+23-11-2021 22:04:26 - Logger:INFO - Connected to server
+23-11-2021 22:04:26 - Logger:DEBUG - Received data: {'header': 'state', 'data': {'state': 'inMenu'}}
+23-11-2021 22:04:26 - Logger:DEBUG - Received data: {'header': 'client_info', 'data': {'uid': 1}}
+23-11-2021 22:04:26 - Logger:INFO - Connected to server
+23-11-2021 22:04:26 - Logger:DEBUG - Received data: {'header': 'state', 'data': {'state': 'inMenu'}}
+23-11-2021 22:04:26 - Logger:DEBUG - Received data: {'header': 'client_info', 'data': {'uid': 2}}
+23-11-2021 22:04:44 - Logger:DEBUG - Received data: {'header': 'game_code', 'data': {'game_code': 'X9ULT'}}
+23-11-2021 22:04:44 - Logger:DEBUG - Received data: {'header': 'state', 'data': {'state': 'inLobby'}}
+23-11-2021 22:04:44 - Logger:DEBUG - Received data: {'header': 'alert', 'data': {'message': 'Game created with code X9ULT'}}
+24-11-2021 07:09:32 - Logger:INFO - Session stopped
+24-11-2021 07:09:41 - Logger:INFO - Connected to server
+24-11-2021 07:09:41 - Logger:INFO - Connected to server
+24-11-2021 07:09:41 - Logger:DEBUG - Received data: {'header': 'state', 'data': {'state': 'inMenu'}}
+24-11-2021 07:09:41 - Logger:DEBUG - Received data: {'header': 'client_info', 'data': {'uid': 1}}
+24-11-2021 07:09:41 - Logger:DEBUG - Received data: {'header': 'state', 'data': {'state': 'inMenu'}}
+24-11-2021 07:09:41 - Logger:DEBUG - Received data: {'header': 'client_info', 'data': {'uid': 2}}
+24-11-2021 07:09:45 - Logger:DEBUG - Received data: {'header': 'game_code', 'data': {'game_code': 'GLL9W'}}
+24-11-2021 07:09:45 - Logger:DEBUG - Received data: {'header': 'state', 'data': {'state': 'inLobby'}}
+24-11-2021 07:09:45 - Logger:DEBUG - Received data: {'header': 'alert', 'data': {'message': 'Game created with code GLL9W'}}
+24-11-2021 07:09:49 - Logger:DEBUG - Received data: {'header': 'state', 'data': {'state': 'inMenu'}}
+24-11-2021 07:09:49 - Logger:DEBUG - Received data: {'header': 'alert', 'data': {'message': 'Left game GLL9W'}}
+24-11-2021 07:09:53 - Logger:DEBUG - Received data: {'header': 'game_list', 'data': {'game_list': []}}
+24-11-2021 07:09:56 - Logger:DEBUG - Received data: {'header': 'game_code', 'data': {'game_code': 'NBBYS'}}
+24-11-2021 07:09:56 - Logger:DEBUG - Received data: {'header': 'state', 'data': {'state': 'inLobby'}}
+24-11-2021 07:09:56 - Logger:DEBUG - Received data: {'header': 'alert', 'data': {'message': 'Game created with code NBBYS'}}
+24-11-2021 07:10:00 - Logger:DEBUG - Received data: {'header': 'game_list', 'data': {'game_list': [{'code': 'NBBYS', 'player_count': 1}]}}
+24-11-2021 07:10:02 - Logger:DEBUG - Received data: {'header': 'state', 'data': {'state': 'inGame'}}
+24-11-2021 07:10:02 - Logger:DEBUG - Received data: {'header': 'alert', 'data': {'message': 'Quiz starting in 5 seconds!'}}
+24-11-2021 07:10:04 - Logger:DEBUG - Received data: {'header': 'state', 'data': {'state': 'inMenu'}}
+24-11-2021 07:10:04 - Logger:DEBUG - Received data: {'header': 'alert', 'data': {'message': 'Left game NBBYS'}}
+24-11-2021 07:25:20 - Logger:INFO - Connected to server
+24-11-2021 07:25:20 - Logger:DEBUG - Received data: {'header': 'state', 'data': {'state': 'inMenu'}}
+24-11-2021 07:25:20 - Logger:DEBUG - Received data: {'header': 'client_info', 'data': {'uid': 1}}
+24-11-2021 07:25:20 - Logger:INFO - Connected to server
+24-11-2021 07:25:20 - Logger:DEBUG - Received data: {'header': 'state', 'data': {'state': 'inMenu'}}
+24-11-2021 07:25:20 - Logger:DEBUG - Received data: {'header': 'client_info', 'data': {'uid': 2}}
+24-11-2021 07:25:22 - Logger:DEBUG - Received data: {'header': 'game_code', 'data': {'game_code': 'CFJPE'}}
+24-11-2021 07:25:22 - Logger:DEBUG - Received data: {'header': 'state', 'data': {'state': 'inLobby'}}
+24-11-2021 07:25:22 - Logger:DEBUG - Received data: {'header': 'alert', 'data': {'message': 'Game created with code CFJPE'}}
+24-11-2021 07:25:25 - Logger:DEBUG - Received data: {'header': 'game_list', 'data': {'game_list': [{'code': 'CFJPE', 'player_count': 1}]}}
+24-11-2021 07:29:51 - Logger:DEBUG - Received data: {'header': 'game_list', 'data': {'game_list': [{'code': 'CFJPE', 'player_count': 1}]}}
+24-11-2021 07:29:54 - Logger:DEBUG - Received data: {'header': 'game_code', 'data': {'game_code': 'CFJPE'}}
+24-11-2021 07:29:54 - Logger:DEBUG - Received data: {'header': 'alert', 'data': {'message': 'Client-1 has joined the game!'}}
+24-11-2021 07:29:54 - Logger:DEBUG - Received data: {'header': 'state', 'data': {'state': 'inLobby'}}
+24-11-2021 07:29:54 - Logger:DEBUG - Received data: {'header': 'alert', 'data': {'message': 'Joined game with code CFJPE'}}
+24-11-2021 07:29:57 - Logger:DEBUG - Received data: {'header': 'state', 'data': {'state': 'inGame'}}
+24-11-2021 07:29:57 - Logger:DEBUG - Received data: {'header': 'state', 'data': {'state': 'inGame'}}
+24-11-2021 07:29:57 - Logger:DEBUG - Received data: {'header': 'alert', 'data': {'message': 'Quiz starting in 5 seconds!'}}
+24-11-2021 07:29:57 - Logger:DEBUG - Received data: {'header': 'alert', 'data': {'message': 'Quiz starting in 5 seconds!'}}
+24-11-2021 07:30:02 - Logger:DEBUG - Received data: {'header': 'question', 'data': {'question': 'In what year was the first car movie released?'}}
+24-11-2021 07:30:02 - Logger:DEBUG - Received data: {'header': 'question', 'data': {'question': 'In what year was the first car movie released?'}}
+24-11-2021 07:30:06 - Logger:DEBUG - Received data: {'header': 'question', 'data': {'question': 'Which animal features in the logo for Lamborghini?'}}
+24-11-2021 07:30:06 - Logger:DEBUG - Received data: {'header': 'question', 'data': {'question': 'Which animal features in the logo for Lamborghini?'}}
+24-11-2021 07:30:10 - Logger:DEBUG - Received data: {'header': 'question', 'data': {'question': 'What is the original colour of Ferraris?'}}
+24-11-2021 07:30:10 - Logger:DEBUG - Received data: {'header': 'question', 'data': {'question': 'What is the original colour of Ferraris?'}}
+24-11-2021 07:30:14 - Logger:DEBUG - Received data: {'header': 'quiz_stats', 'data': {'1': {'score': 3, 'username': 'Client-1'}, '2': {'score': 1, 'username': 'Client-2'}}}
+24-11-2021 07:30:14 - Logger:DEBUG - Received data: {'header': 'quiz_stats', 'data': {'1': {'score': 3, 'username': 'Client-1'}, '2': {'score': 1, 'username': 'Client-2'}}}
+24-11-2021 07:30:14 - Logger:DEBUG - Received data: {'header': 'state', 'data': {'state': 'inLobby'}}
+24-11-2021 07:30:14 - Logger:DEBUG - Received data: {'header': 'state', 'data': {'state': 'inLobby'}}
+24-11-2021 07:33:58 - Logger:ERROR - [WinError 10054] An existing connection was forcibly closed by the remote host
+24-11-2021 07:33:58 - Logger:ERROR - [WinError 10054] An existing connection was forcibly closed by the remote host
+24-11-2021 07:34:07 - Logger:INFO - Connected to server
+24-11-2021 07:34:07 - Logger:DEBUG - Received data: {'header': 'state', 'data': {'state': 'inMenu'}}
+24-11-2021 07:34:07 - Logger:DEBUG - Received data: {'header': 'client_info', 'data': {'uid': 1}}
+24-11-2021 07:34:07 - Logger:INFO - Connected to server
+24-11-2021 07:34:07 - Logger:DEBUG - Received data: {'header': 'state', 'data': {'state': 'inMenu'}}
+24-11-2021 07:34:07 - Logger:DEBUG - Received data: {'header': 'client_info', 'data': {'uid': 2}}
+24-11-2021 07:34:15 - Logger:INFO - Session stopped
+24-11-2021 07:34:20 - Logger:INFO - Session stopped
+24-11-2021 07:34:41 - Logger:INFO - Session stopped
+24-11-2021 07:35:15 - Logger:INFO - Session stopped
+24-11-2021 07:35:28 - Logger:INFO - Connected to server
+24-11-2021 07:35:28 - Logger:DEBUG - Received data: {'header': 'state', 'data': {'state': 'inMenu'}}
+24-11-2021 07:35:28 - Logger:DEBUG - Received data: {'header': 'client_info', 'data': {'uid': 1}}
+24-11-2021 07:35:28 - Logger:INFO - Connected to server
+24-11-2021 07:35:28 - Logger:DEBUG - Received data: {'header': 'state', 'data': {'state': 'inMenu'}}
+24-11-2021 07:35:28 - Logger:DEBUG - Received data: {'header': 'client_info', 'data': {'uid': 2}}
+24-11-2021 07:35:29 - Logger:ERROR - [WinError 10054] An existing connection was forcibly closed by the remote host
+24-11-2021 07:35:29 - Logger:ERROR - [WinError 10054] An existing connection was forcibly closed by the remote host
+24-11-2021 07:35:37 - Logger:INFO - Connected to server
+24-11-2021 07:35:37 - Logger:DEBUG - Received data: {'header': 'state', 'data': {'state': 'inMenu'}}
+24-11-2021 07:35:37 - Logger:DEBUG - Received data: {'header': 'client_info', 'data': {'uid': 1}}
+24-11-2021 07:35:37 - Logger:INFO - Connected to server
+24-11-2021 07:35:37 - Logger:DEBUG - Received data: {'header': 'state', 'data': {'state': 'inMenu'}}
+24-11-2021 07:35:37 - Logger:DEBUG - Received data: {'header': 'client_info', 'data': {'uid': 2}}
+24-11-2021 07:35:44 - Logger:INFO - Connected to server
+24-11-2021 07:35:44 - Logger:DEBUG - Received data: {'header': 'state', 'data': {'state': 'inMenu'}}
+24-11-2021 07:35:44 - Logger:DEBUG - Received data: {'header': 'client_info', 'data': {'uid': 1}}
+24-11-2021 07:35:44 - Logger:INFO - Connected to server
+24-11-2021 07:35:44 - Logger:DEBUG - Received data: {'header': 'state', 'data': {'state': 'inMenu'}}
+24-11-2021 07:35:44 - Logger:DEBUG - Received data: {'header': 'client_info', 'data': {'uid': 2}}
+24-11-2021 07:35:44 - Logger:ERROR - [WinError 10054] An existing connection was forcibly closed by the remote host
+24-11-2021 07:35:44 - Logger:ERROR - [WinError 10054] An existing connection was forcibly closed by the remote host
+24-11-2021 07:36:02 - Logger:INFO - Connected to server
+24-11-2021 07:36:02 - Logger:DEBUG - Received data: {'header': 'state', 'data': {'state': 'inMenu'}}
+24-11-2021 07:36:02 - Logger:DEBUG - Received data: {'header': 'client_info', 'data': {'uid': 1}}
+24-11-2021 07:36:02 - Logger:INFO - Connected to server
+24-11-2021 07:36:02 - Logger:DEBUG - Received data: {'header': 'state', 'data': {'state': 'inMenu'}}
+24-11-2021 07:36:02 - Logger:DEBUG - Received data: {'header': 'client_info', 'data': {'uid': 2}}
+24-11-2021 07:36:02 - Logger:ERROR - [WinError 10054] An existing connection was forcibly closed by the remote host
+24-11-2021 07:36:02 - Logger:ERROR - [WinError 10054] An existing connection was forcibly closed by the remote host
+24-11-2021 07:46:40 - Logger:INFO - Connected to server
+24-11-2021 07:46:40 - Logger:DEBUG - Received data: {'header': 'state', 'data': {'state': 'inMenu'}}
+24-11-2021 07:46:40 - Logger:DEBUG - Received data: {'header': 'client_info', 'data': {'uid': 1}}
+24-11-2021 07:46:40 - Logger:INFO - Connected to server
+24-11-2021 07:46:40 - Logger:DEBUG - Received data: {'header': 'state', 'data': {'state': 'inMenu'}}
+24-11-2021 07:46:40 - Logger:DEBUG - Received data: {'header': 'client_info', 'data': {'uid': 2}}
+24-11-2021 07:46:54 - Logger:DEBUG - Received data: {'header': 'game_list', 'data': {'game_list': []}}
+24-11-2021 07:47:03 - Logger:DEBUG - Received data: {'header': 'alert', 'data': {'message': 'Username set to awdawda'}}
+24-11-2021 07:47:17 - Logger:DEBUG - Received data: {'header': 'alert', 'data': {'message': 'Username set to cunt jerry'}}
+24-11-2021 07:47:24 - Logger:DEBUG - Received data: {'header': 'alert', 'data': {'message': 'Game code "X" not found or game is already active'}}
+24-11-2021 07:47:27 - Logger:DEBUG - Received data: {'header': 'game_code', 'data': {'game_code': 'XPK55'}}
+24-11-2021 07:47:27 - Logger:DEBUG - Received data: {'header': 'state', 'data': {'state': 'inLobby'}}
+24-11-2021 07:47:27 - Logger:DEBUG - Received data: {'header': 'alert', 'data': {'message': 'Game created with code XPK55'}}
+24-11-2021 07:48:02 - Logger:DEBUG - Received data: {'header': 'game_list', 'data': {'game_list': []}}
+24-11-2021 07:48:06 - Logger:INFO - Session stopped
+24-11-2021 07:48:06 - Logger:ERROR - [WinError 10053] An established connection was aborted by the software in your host machine
+24-11-2021 07:48:28 - Logger:INFO - Connected to server
+24-11-2021 07:48:28 - Logger:DEBUG - Received data: {'header': 'state', 'data': {'state': 'inMenu'}}
+24-11-2021 07:48:28 - Logger:DEBUG - Received data: {'header': 'client_info', 'data': {'uid': 1}}
+24-11-2021 07:48:28 - Logger:INFO - Connected to server
+24-11-2021 07:48:28 - Logger:DEBUG - Received data: {'header': 'state', 'data': {'state': 'inMenu'}}
+24-11-2021 07:48:28 - Logger:DEBUG - Received data: {'header': 'client_info', 'data': {'uid': 2}}
+24-11-2021 07:48:29 - Logger:ERROR - [WinError 10053] An established connection was aborted by the software in your host machine
+24-11-2021 07:48:29 - Logger:INFO - Session stopped
+24-11-2021 07:50:55 - Logger:INFO - Connected to server
+24-11-2021 07:50:55 - Logger:DEBUG - Received data: {'header': 'state', 'data': {'state': 'inMenu'}}
+24-11-2021 07:50:55 - Logger:DEBUG - Received data: {'header': 'client_info', 'data': {'uid': 1}}
+24-11-2021 07:50:55 - Logger:INFO - Connected to server
+24-11-2021 07:50:55 - Logger:DEBUG - Received data: {'header': 'state', 'data': {'state': 'inMenu'}}
+24-11-2021 07:50:55 - Logger:DEBUG - Received data: {'header': 'client_info', 'data': {'uid': 2}}
+24-11-2021 07:50:59 - Logger:INFO - Session stopped
+24-11-2021 07:50:59 - Logger:ERROR - [WinError 10053] An established connection was aborted by the software in your host machine
+24-11-2021 07:52:07 - Logger:INFO - Connected to server
+24-11-2021 07:52:07 - Logger:DEBUG - Received data: {'header': 'state', 'data': {'state': 'inMenu'}}
+24-11-2021 07:52:07 - Logger:DEBUG - Received data: {'header': 'client_info', 'data': {'uid': 1}}
+24-11-2021 07:52:07 - Logger:INFO - Connected to server
+24-11-2021 07:52:07 - Logger:DEBUG - Received data: {'header': 'state', 'data': {'state': 'inMenu'}}
+24-11-2021 07:52:07 - Logger:DEBUG - Received data: {'header': 'client_info', 'data': {'uid': 2}}
+24-11-2021 07:52:13 - Logger:DEBUG - Received data: {'header': 'game_code', 'data': {'game_code': 'AAM6X'}}
+24-11-2021 07:52:13 - Logger:DEBUG - Received data: {'header': 'state', 'data': {'state': 'inLobby'}}
+24-11-2021 07:52:13 - Logger:DEBUG - Received data: {'header': 'alert', 'data': {'message': 'Game created with code AAM6X'}}
+24-11-2021 07:52:30 - Logger:INFO - Connected to server
+24-11-2021 07:52:30 - Logger:DEBUG - Received data: {'header': 'state', 'data': {'state': 'inMenu'}}
+24-11-2021 07:52:30 - Logger:DEBUG - Received data: {'header': 'client_info', 'data': {'uid': 1}}
+24-11-2021 07:52:30 - Logger:INFO - Connected to server
+24-11-2021 07:52:30 - Logger:DEBUG - Received data: {'header': 'state', 'data': {'state': 'inMenu'}}
+24-11-2021 07:52:30 - Logger:DEBUG - Received data: {'header': 'client_info', 'data': {'uid': 2}}
+24-11-2021 07:52:44 - Logger:INFO - Connected to server
+24-11-2021 07:52:44 - Logger:DEBUG - Received data: {'header': 'state', 'data': {'state': 'inMenu'}}
+24-11-2021 07:52:44 - Logger:DEBUG - Received data: {'header': 'client_info', 'data': {'uid': 1}}
+24-11-2021 07:52:44 - Logger:INFO - Connected to server
+24-11-2021 07:52:44 - Logger:DEBUG - Received data: {'header': 'state', 'data': {'state': 'inMenu'}}
+24-11-2021 07:52:44 - Logger:DEBUG - Received data: {'header': 'client_info', 'data': {'uid': 2}}
+24-11-2021 07:53:07 - Logger:INFO - Session stopped
+24-11-2021 07:53:07 - Logger:ERROR - [WinError 10053] An established connection was aborted by the software in your host machine
+24-11-2021 07:55:04 - Logger:INFO - Connected to server
+24-11-2021 07:55:04 - Logger:DEBUG - Received data: {'header': 'state', 'data': {'state': 'inMenu'}}
+24-11-2021 07:55:04 - Logger:DEBUG - Received data: {'header': 'client_info', 'data': {'uid': 1}}
+24-11-2021 07:55:04 - Logger:INFO - Connected to server
+24-11-2021 07:55:04 - Logger:DEBUG - Received data: {'header': 'state', 'data': {'state': 'inMenu'}}
+24-11-2021 07:55:04 - Logger:DEBUG - Received data: {'header': 'client_info', 'data': {'uid': 2}}
+24-11-2021 07:55:05 - Logger:INFO - Session stopped
+24-11-2021 07:55:05 - Logger:ERROR - [WinError 10053] An established connection was aborted by the software in your host machine
+24-11-2021 07:55:07 - Logger:ERROR - [WinError 10053] An established connection was aborted by the software in your host machine
+24-11-2021 07:55:07 - Logger:INFO - Session stopped
+24-11-2021 22:32:52 - Logger:INFO - Connected to server
+24-11-2021 22:32:52 - Logger:DEBUG - Received data: {'header': 'state', 'data': {'state': 'inMenu'}}
+24-11-2021 22:32:52 - Logger:DEBUG - Received data: {'header': 'client_info', 'data': {'uid': 1}}
+24-11-2021 22:32:52 - Logger:INFO - Connected to server
+24-11-2021 22:32:52 - Logger:DEBUG - Received data: {'header': 'state', 'data': {'state': 'inMenu'}}
+24-11-2021 22:32:52 - Logger:DEBUG - Received data: {'header': 'client_info', 'data': {'uid': 2}}
+24-11-2021 22:32:56 - Logger:DEBUG - Received data: {'header': 'game_code', 'data': {'game_code': '3LQ4H'}}
+24-11-2021 22:32:56 - Logger:DEBUG - Received data: {'header': 'state', 'data': {'state': 'inLobby'}}
+24-11-2021 22:32:56 - Logger:DEBUG - Received data: {'header': 'alert', 'data': {'message': 'Game created with code 3LQ4H'}}
+24-11-2021 22:32:59 - Logger:DEBUG - Received data: {'header': 'game_code', 'data': {'game_code': 'VJ09E'}}
+24-11-2021 22:32:59 - Logger:DEBUG - Received data: {'header': 'state', 'data': {'state': 'inLobby'}}
+24-11-2021 22:32:59 - Logger:DEBUG - Received data: {'header': 'alert', 'data': {'message': 'Game created with code VJ09E'}}
+24-11-2021 22:33:00 - Logger:DEBUG - Received data: {'header': 'game_list', 'data': {'game_list': [{'code': '3LQ4H', 'player_count': 1}, {'code': 'VJ09E', 'player_count': 1}]}}
+24-11-2021 22:33:01 - Logger:DEBUG - Received data: {'header': 'state', 'data': {'state': 'inMenu'}}
+24-11-2021 22:33:01 - Logger:DEBUG - Received data: {'header': 'alert', 'data': {'message': 'Left game VJ09E'}}
+24-11-2021 22:33:02 - Logger:DEBUG - Received data: {'header': 'game_list', 'data': {'game_list': [{'code': '3LQ4H', 'player_count': 1}]}}
+24-11-2021 22:33:06 - Logger:DEBUG - Received data: {'header': 'game_code', 'data': {'game_code': '3LQ4H'}}
+24-11-2021 22:33:06 - Logger:DEBUG - Received data: {'header': 'alert', 'data': {'message': 'Client-2 has joined the game!'}}
+24-11-2021 22:33:06 - Logger:DEBUG - Received data: {'header': 'state', 'data': {'state': 'inLobby'}}
+24-11-2021 22:33:06 - Logger:DEBUG - Received data: {'header': 'alert', 'data': {'message': 'Joined game with code 3LQ4H'}}
+24-11-2021 22:33:11 - Logger:DEBUG - Received data: {'header': 'state', 'data': {'state': 'inGame'}}
+24-11-2021 22:33:11 - Logger:DEBUG - Received data: {'header': 'state', 'data': {'state': 'inGame'}}
+24-11-2021 22:33:11 - Logger:DEBUG - Received data: {'header': 'alert', 'data': {'message': 'Quiz starting in 5 seconds!'}}
+24-11-2021 22:33:11 - Logger:DEBUG - Received data: {'header': 'alert', 'data': {'message': 'Quiz starting in 5 seconds!'}}
+24-11-2021 22:33:15 - Logger:DEBUG - Received data: {'header': 'alert', 'data': {'message': 'Client-2 has left the game.'}}

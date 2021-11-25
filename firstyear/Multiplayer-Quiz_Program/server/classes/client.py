@@ -155,21 +155,32 @@ class Client:
     
     def __games_command(self) -> None:
         """method used to handle the games command once received by the server"""
+        # a list comprehension to create a list of dictionaries containing the game code and player count of all idle lobbies
         game_list = [{"code": g.settings.code, "player_count": len(g.settings.players)} for g in self.__manager.get_games() if not g.is_active()]
+        # send the generated list back to the client who executed the command
         self.send("game_list", {"game_list": game_list})
     
     def __start_command(self) -> None:
+        """method used to handle the start command once received by the server"""
+        # if the client instances state is not IN_LOBBY, or they are not the owner of the lobby they are in
         if self.state != State.IN_LOBBY or not self.game or self != self.game.settings.owner:
+            # return, cancelling the start command
             return
+        # otherwise, start a quiz with the current players in the game/lobby
         self.game.start_quiz()
         
     def __username_command(self, *args) -> None:
-        if self.state not in (State.IN_MENU, State.IN_LOBBY):
+        """method used to handle the username command once received by the server"""
+        # if the clients state is not IN_MENU, or IN_LOBBY
+        if self.state not in (State.IN_MENU, State.IN_LOBBY):#
+            # return, cancelling the username command
             return
+        # otherwise, set the clients username to the specified username
         self.username = " ".join(args)
         self.send("alert", {"message": f"Username set to {self.username}"})
     
     def _get_handler(self, cmd: str) -> dict:
+        """method used to fetch a command handler method based on the command that was sent to the server"""
         return {
             "host": self.__host_command,
             "join": self.__join_command,
@@ -177,65 +188,100 @@ class Client:
             "games": self.__games_command,
             "start": self.__start_command,
             "username": self.__username_command
+            # fetch a class method based on the passed in 'cmd' argument, otherwise return None
         }.get(cmd)
     
     # command and answer processing methods
     
     def __process_command(self, command: str) -> None:
+        """method used to process a command sent to the server"""
+        # sanitise the command string - remove any extra spaces and split the string up into a list of single words
         sanitised_command: list[str] = (re.sub(' +', ' ', command.strip())).lower().split(" ")
+        # set the first element of the sanitised command list to the 'cmd' variable
         cmd: str = sanitised_command[0]
+        # set all elements after the first index (index 0) to the 'args' variable
         args: list[str] = sanitised_command[1:]
+        # fetch the command handler method based on the 'cmd' variable
         handler = self._get_handler(cmd)
+        # if there is a handler based on the sent command
         if handler:
             self.logger.debug(f"Handling command: {cmd}{' '+' '.join(args) if args else ''}")
             try:
+                # try to call the handler method passing in the list of arguments 'args'
                 handler(*args)
+            # if the handler doesn't accept arguments, an exception will be thrown
             except TypeError:
+                # in that case, call the handler without arguments
                 handler()
+        # if the command is not recognised, log an unknown command message
         else:
             self.logger.debug(f"Unknown command: {cmd}{' '+' '.join(args) if args else ''}")
         
     def __process_answer(self, answer: str) -> None:
+        """method used to process answers sent by the client when answering questions in a quiz"""
+        # sanitise the answer - remove all extra spaces/white space in the string
         sanitised_answer: str = (re.sub(' +', ' ', answer.strip())).lower()
+        # pass the sanitised answer to the game instance's answer handler
+        # to check whether it is correct and update the leaderboard
         self.game.handle_answer(self, sanitised_answer)
     
     # client interaction methods
     
     def send(self, header: str, data: dict) -> None:
+        """method used to to send data back to local clients which are connected to the server"""
         self.logger.debug(f"Sending data: {data}")
+        # send a JSON string of the data encoded in UTF-8 to the client socket of the client instance
         self.conn.send(json.dumps({"header": header, "data": data}).encode("utf-8"))
     
     # data receiver methods
     
     def listen(self) -> None:
+        """method used to start the client listener which will listen for data (commands and answers)
+        sent from clients that are connected to the server"""
+        # send data to the client instances socket including the UID value of the client instance
         self.send("client_info", {"uid": self.uid})
-        self._alive = True
-        while self._alive:
+        # while the client is still alive (i.e. not disconnected from the server)
+        while True:
             try:
+                # attempt to receive data from the client socket
                 data = self.conn.recv(1024).decode("utf-8")
+                # if the data is empty (usually because of a critical error or client disconnect)
                 if not data:
+                    # break, exiting the client listener
                     break
+                # otherwise attempt to decode the data into a dictionary object
                 decoded: dict = json.loads(data)
+                # log the received data
                 self.logger.debug(f"Received data: {decoded}")
                 
+            # if there is an OSError (usually because of a critical error or client disconnect)
             except OSError as error:
+                # log the error
                 self.logger.error(error)
-                self._alive = False
-                continue
-            
+                # exit the client listener
+                break
+            # if there is a JSONDecodeError (the data sent by the client is not a valid JSON string)
             except json.decoder.JSONDecodeError as error:
+                # log the error
                 self.logger.error(error)
+                # reset to the top of the data fetch loop
                 continue
-            
+            # if the decoded dictionary is not correctly formatted
             if not decoded.get("header", None) or not decoded.get("data", None):
+                # reset to the top of the data fetch loop
                 continue
-            
+            # if the header of the decoded data indicates that a command has been sent
             if decoded.get("header") == "command":
+                # log the received data/command
                 self.logger.debug(f"Handling command: {decoded.get('data')}")
+                # pass the data into the client instances command processor method
                 self.__process_command(decoded.get("data").get("command"))
+            # if the header of the decoded data indicaties that an answer has been sent
             elif decoded.get("header") == "answer" and self.state == State.IN_GAME and self.game:
+                # log the received data/answer
                 self.logger.debug(f"Handling answer: {decoded.get('data')}")
+                # pass the data into the client instances answer processor method
                 self.__process_answer(decoded.get("data").get("answer"))
-
+                
+        # when the client listener exits, notify the server manager that the client has disconnected
         self.__manager.client_exit(self)
-        

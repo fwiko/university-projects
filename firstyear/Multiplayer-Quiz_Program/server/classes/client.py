@@ -12,109 +12,149 @@ import settings
 from utility import State, Logger
 
 class Client:
-    def __init__(self, manager: manager.Manager, uid: int, conn: socket.socket, addr):
-        self.username = f"Client-{uid}"
-        self.logger = Logger(self.username)
+    def __init__(self, manager: manager.Manager, uid: int, conn: socket.socket, addr: tuple):
         self.__uid = uid
         self.__conn = conn
         self.__addr = addr
         self.__manager = manager
+        self.username = f"Client-{uid}"
+        self.logger = Logger(self.username)
         self.game = None
         self.state = State.IN_MENU
-        
-        
-    def __repr__(self):
-        return f"{self.__class__.__name__}-{self.uid}"
-    
+
     # properties (attribute getters and setters)
     
     @property
     def uid(self) -> int:
+        """property method to fetch the uid value of the client"""
         return self.__uid
     
     @property
     def conn(self) -> socket.socket:
+        """property method to fetch the socket connection of the client"""
         return self.__conn
     
     @property
     def addr(self) -> tuple:
+        """property method to fetch the address information of the client (ip and port)"""
         return self.__addr
     
     @property
-    def username(self):
+    def username(self) -> str:
+        """property method to fetch the username value of the client"""
         return self._username
 
     @property
-    def state(self):
+    def state(self) -> State:
+        """property method to fetch the state value of the client"""
         return self._state
     
     @property
-    def game(self):
+    def game(self) -> game.Game or None:
+        """property method to fetch the game value of the client"""
         return self._game
 
     @username.setter
     def username(self, username: str):
+        """property setter method to set the username value of the client"""
+        # check whether the specified username argument is between 3 and 16 characters in length
         if 3 <= len(username) <= 16:
+            # if it is, set the username value of the client to the specified username argument
             self._username = username
         else:
+            # if it isn't, log an error message and do not set the username value of the client
             self.logger.error(f"Attempted to set invalid username \"{username}\"")
             
     @state.setter
     def state(self, state: State):
+        """property setter method to set the state value of the client"""
+        # check whether the specified state argument is a valid state
         if isinstance(state, State):
+            # if it is, set the state value of the client to the specified state argument
             self._state = state
+            # send a state packet to the connected client with the new state value
             self.send("state", {"state": state.value})
         else:
+            # if it isn't, log an error message and do not set the state value of the client
             self.logger.error(f"Attempted to set invalid state \"{state}\"")
             
     @game.setter
     def game(self, g: game.Game or None):
+        """property setter method to set the game value of the client"""
+        # check whether the specified game argument is a valid game or is None
         if g is None or isinstance(g, game.Game):
+            # if it is, set the game value of the client to the specified game argument
             self._game = g
+            # if the specified game argument is an instance of the game class (not None)
             if g:
+                # send the new game code to the local client
                 self.send("game_code", {"game_code": g.settings.code})
+        # if the specified game argument is not a valid game or is not None
         else:
+            # log an error message and do not set the game value of the client
             self.logger.error(f"Attempted to set invalid game \"{g}\"")
             
     # command handler methods
     
     def __host_command(self) -> None:
+        """method used to handle the host command once sent to the server"""
+        # if the client is already in a game, do not allow them to host a new game
         if self.game:
             return
+        # if the client is not in a game, create a new game with the client as the owner
         g = game.Game(self.__manager, self)
+        # set the clients game value to the newly created game
         self.game = g
+        # add the newly created game to the server manager
         self.__manager.add_game(g)
+        # set the clients state to IN_LOBBY
         self.state = State.IN_LOBBY
+        # wait a tenth of a second (safety)
         time.sleep(0.1)
+        # alert the client that a game has been created
         self.send("alert", {"message": f"Game created with code {self.game.settings.code}"})
     
     def __join_command(self, *args) -> None:
+        """method used to handle the join command once received by the server"""
+        # if no game code was specified, do not allow the client to join a game
         if len(args) < 1:
-            self.logger.error("No game code provided in join command")
             return
+        # if the client is already in a game, do not allow them to join another game
         if self.game or self.state != State.IN_MENU:
-            self.logger.error("Cannot join another game whilst being in a game")
             return
+        # if the client is not in a game, try to find the game with the specified game code
         g = self.__manager.get_game_from_code(args[0].upper())
+        # if the game was not found or is already mid game
         if not g or g.is_active():
+            # alert the client of the error
             self.send("alert", {"message": f"Game code \"{args[0].upper()}\" not found or game is already active"})
+            # log the error
             self.logger.error(f"Game code \"{args[0].upper()}\" not found or game is already active")
             return
+        # if the game was found and is not active, add the client to the game
         self.game = g
         g.add_client(self)
+        # set the clients state to IN_LOBBY
         self.state = State.IN_LOBBY
+        # alert the client that they have joined the game
         self.send("alert", {"message": f"Joined game with code {self.game.settings.code}"})
         
     def __leave_command(self) -> None:
+        """method used to handle the leave command once received by the server"""
+        # if the client is not in a game, cancel the handlers operation
         if self.state not in (State.IN_GAME, State.IN_LOBBY) or not self.game:
             return
+        # if the client is in a game, trigger that games leave handler passing in the client
         self.game.client_leave(self)
-        code = self.game.settings.code
+        # set the client class' game value to None
         self.game = None
+        # set the clients state to IN_MENU
         self.state = State.IN_MENU
-        self.send("alert", {"message": f"Left game {code}"})
+        # Alert the client that they have left the game
+        self.send("alert", {"message": f"Left game {self.game.settings.code}"})
     
     def __games_command(self) -> None:
+        """method used to handle the games command once received by the server"""
         game_list = [{"code": g.settings.code, "player_count": len(g.settings.players)} for g in self.__manager.get_games() if not g.is_active()]
         self.send("game_list", {"game_list": game_list})
     

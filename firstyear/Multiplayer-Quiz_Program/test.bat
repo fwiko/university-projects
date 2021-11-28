@@ -1,4 +1,4 @@
 @echo off
-start "SERVER" python server/main.py
+start "SERVER" python %~dp0/server/main.py
 timeout 0
-start "CLIENT-1" client/env/Scripts/python client/main.py & timeout 0 & start "CLIENT-2" client/env/Scripts/python client/main.py
+start "CLIENT-1" %~dp0/client/env/Scripts/python %~dp0/client/main.py & timeout 0 & start "CLIENT-2" %~dp0/client/env/Scripts/python %~dp0/client/main.py

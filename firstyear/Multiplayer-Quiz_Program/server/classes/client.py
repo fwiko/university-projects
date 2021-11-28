@@ -100,6 +100,7 @@ class Client:
         """method used to handle the host command once sent to the server"""
         # if the client is already in a game, do not allow them to host a new game
         if self.game:
+            self.send("alert", {"message": f"You are already in a game/lobby and cannot currently host another."})
             return
         # if the client is not in a game, create a new game with the client as the owner
         g = game.Game(self.__manager, self)
@@ -147,11 +148,12 @@ class Client:
         # if the client is in a game, trigger that games leave handler passing in the client
         self.game.client_leave(self)
         # set the client class' game value to None
+        game_code = self.game.settings.code
         self.game = None
         # set the clients state to IN_MENU
         self.state = State.IN_MENU
         # Alert the client that they have left the game
-        self.send("alert", {"message": f"Left game {self.game.settings.code}"})
+        self.send("alert", {"message": f"Left game {game_code}"})
     
     def __games_command(self) -> None:
         """method used to handle the games command once received by the server"""

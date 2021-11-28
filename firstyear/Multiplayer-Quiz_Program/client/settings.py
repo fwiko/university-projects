@@ -1,3 +1,5 @@
+import os
+
 # server addresses
 
 HOST = "127.0.0.1"
@@ -8,12 +10,12 @@ LOG_PATH = "data\\logs\\"
 
 # help commands
 
-HELP_COMMANDS = {
-    "host": {"desc": "Host a game"},
-    "join": {"desc": "Join a game", "args": ["game_id"]},
-    "leave": {"desc": "Leave a game"},
-    "games": {"desc": "List available games"},
-    "start": {"desc": "Start a quiz"},
-    "username": {"desc": "Set username", "args": ["username"]},
-    "help": {"desc": "Show help menu"},
+COMMANDS = {
+    "host": {"description": "Host a game"},
+    "join": {"description": "Join a game", "args": ["<game_id>"]},
+    "leave": {"description": "Leave a game"},
+    "games": {"description": "List available games"},
+    "start": {"description": "Start a quiz"},
+    "username": {"description": "Set username", "args": ["<username>"]},
+    "help": {"description": "Show help menu"},
 }

@@ -32,7 +32,7 @@ def main() -> None:
     # create a manager class instance
     m = manager.Manager()
     # create a thread to listen for incoming connections with the connection_listener function
-    threading.Thread(target=connection_listener, args=[m]).start()
+    connection_listener(m)
 
 # if this file is run directly
 if __name__ == "__main__":

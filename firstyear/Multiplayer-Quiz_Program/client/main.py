@@ -387,7 +387,10 @@ class Session:
         args = sanitised_input[1:]
         handler = self._get_respective_handler(cmd)
         if handler:
-            handler(command=cmd, args=args)
+            try:
+                handler(command=cmd, args=args)
+            except TypeError:
+                handler()
         elif self.settings.state == State.IN_GAME:
             self._answer(message)
         else:
@@ -429,7 +432,10 @@ def main():
     
 
 if __name__ == "__main__":
-    main()
+    try:
+        main()
+    except Exception as error:
+        input(error)
     time.sleep(0.5)
     print(f"\n{Fore.RED}Connection closed{Fore.RESET}\n")
     input("\nPress enter to exit...")

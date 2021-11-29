@@ -1,13 +1,20 @@
 from __future__ import annotations
 
+# importing python packages
 import socket
 import settings
 
+# importing custom classes/files
 from utility import Logger
 from classes import manager
 
 
 def connection_listener(m: manager.Manager) -> None:
+    """the main connection listener, will wait for incoming connections from clients and send them to be processed
+
+    Args:
+        m (manager.Manager): the manager object for the server
+    """
     # create a socket object
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
         # bind the socket to the address and port specified in the settings file
@@ -23,16 +30,10 @@ def connection_listener(m: manager.Manager) -> None:
             # pass the connection into the manager class to handle the client from here on
             m.add_client(conn, addr)
             
-            
-def main() -> None:
-    # create a manager class instance
-    m = manager.Manager()
-    # create a thread to listen for incoming connections with the connection_listener function
-    connection_listener(m)
 
 # if this file is run directly
 if __name__ == "__main__":
     # create a logger object
     logger = Logger("Listener")
-    # run the main function
-    main()
+    # run the listner function while passing in a new manager object
+    connection_listener(manager.Manager())

@@ -1,18 +1,27 @@
 from __future__ import annotations
 
+# importing python packages
 import re
 import json
 import time
 import socket
 
+# importing custom classes/files
 import classes.game as game
 import classes.manager as manager
 import settings
-
 from utility import State, Logger
 
 class Client:
     def __init__(self, manager: manager.Manager, uid: int, conn: socket.socket, addr: tuple):
+        """initialize the client object
+
+        Args:
+            manager (manager.Manager): server manager, controller of clients and games
+            uid (int): unique identifier of the client object
+            conn (socket.socket): socket the client is connected on
+            addr (tuple): address information of the client
+        """
         self.__uid = uid
         self.__conn = conn
         self.__addr = addr
@@ -26,37 +35,65 @@ class Client:
     
     @property
     def uid(self) -> int:
-        """property method to fetch the uid value of the client"""
+        """property method to fetch the uid value of the client
+
+        Returns:
+            int: uid of the client object
+        """
         return self.__uid
     
     @property
     def conn(self) -> socket.socket:
-        """property method to fetch the socket connection of the client"""
+        """property method to fetch the socket connection of the client
+
+        Returns:
+            socket.socket: socket connection of the client object
+        """
         return self.__conn
     
     @property
     def addr(self) -> tuple:
-        """property method to fetch the address information of the client (ip and port)"""
+        """property method to fetch the address information of the client (ip and port)
+
+        Returns:
+            tuple: address information of the client objects socket connection
+        """
         return self.__addr
     
     @property
     def username(self) -> str:
-        """property method to fetch the username value of the client"""
+        """property method to fetch the username value of the client
+
+        Returns:
+            str: username attribute of the client object
+        """
         return self._username
 
     @property
     def state(self) -> State:
-        """property method to fetch the state value of the client"""
+        """property method to fetch the state value of the client
+
+        Returns:
+            State: state value of the client object
+        """
         return self._state
     
     @property
     def game(self) -> game.Game or None:
-        """property method to fetch the game value of the client"""
+        """property method to fetch the game value of the client
+
+        Returns:
+            game.Game or None: game object of the client object or None
+        """
         return self._game
 
     @username.setter
     def username(self, username: str):
-        """property setter method to set the username value of the client"""
+        """property setter method to set the username value of the client
+
+        Args:
+            username (str): username value to set the client object's username attribute to
+        """
         # check whether the specified username argument is between 3 and 16 characters in length
         if 3 <= len(username) <= 16:
             # if it is, set the username value of the client to the specified username argument
@@ -67,7 +104,11 @@ class Client:
             
     @state.setter
     def state(self, state: State):
-        """property setter method to set the state value of the client"""
+        """property setter method to set the state value of the client
+
+        Args:
+            state (State): state value to set the client object's state attribute to
+        """
         # check whether the specified state argument is a valid state
         if isinstance(state, State):
             # if it is, set the state value of the client to the specified state argument
@@ -80,7 +121,11 @@ class Client:
             
     @game.setter
     def game(self, g: game.Game or None):
-        """property setter method to set the game value of the client"""
+        """property setter method to set the game value of the client[summary]
+
+        Args:
+            g (game.Game or None): game object to set the client object's game attribute to
+        """
         # check whether the specified game argument is a valid game or is None
         if g is None or isinstance(g, game.Game):
             # if it is, set the game value of the client to the specified game argument
@@ -196,7 +241,11 @@ class Client:
     # command and answer processing methods
     
     def __process_command(self, command: str) -> None:
-        """method used to process a command sent to the server"""
+        """method used to process a command sent to the server
+
+        Args:
+            command (str): command string sent to the server from the client
+        """
         # sanitise the command string - remove any extra spaces and split the string up into a list of single words
         sanitised_command: list[str] = (re.sub(' +', ' ', command.strip())).lower().split(" ")
         # set the first element of the sanitised command list to the 'cmd' variable
@@ -220,7 +269,11 @@ class Client:
             self.logger.debug(f"Unknown command: {cmd}{' '+' '.join(args) if args else ''}")
         
     def __process_answer(self, answer: str) -> None:
-        """method used to process answers sent by the client when answering questions in a quiz"""
+        """method used to process answers sent by the client when answering questions in a quiz
+
+        Args:
+            answer (str): answer string sent to the server from the client
+        """
         # sanitise the answer - remove all extra spaces/white space in the string
         sanitised_answer: str = (re.sub(' +', ' ', answer.strip())).lower()
         # pass the sanitised answer to the game instance's answer handler
@@ -230,7 +283,12 @@ class Client:
     # client interaction methods
     
     def send(self, header: str, data: dict) -> None:
-        """method used to to send data back to local clients which are connected to the server"""
+        """method used to to send data back to local clients which are connected to the server
+
+        Args:
+            header (str): header of the data to be sent to the client object
+            data (dict): data to be sent to the client object
+        """
         self.logger.debug(f"Sending data: {data}")
         # send a JSON string of the data encoded in UTF-8 to the client socket of the client instance
         self.conn.send(json.dumps({"header": header, "data": data}).encode("utf-8"))

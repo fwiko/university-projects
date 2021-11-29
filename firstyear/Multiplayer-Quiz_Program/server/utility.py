@@ -1,3 +1,5 @@
+
+# import python packages
 import os
 import json
 import random
@@ -46,8 +48,12 @@ class Helpers:
                 return None
             else:
                 # if the data could be loaded - return a random set of questions from the database
-                return random.choice(loaded_data.get("_questions", []))
-        
+                question_set = random.choice(loaded_data.get("_questions", []))
+                try:
+                    final_set = random.sample(question_set.items(), 15)
+                except ValueError:
+                    final_set = question_set.items()
+                return final_set
 
 class Logger:
     """Logger used throughout the server files to debug and log errors"""

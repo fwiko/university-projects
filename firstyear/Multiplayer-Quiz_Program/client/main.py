@@ -1,16 +1,23 @@
+
+# import python packages
 import re
 import time
 import json
 import socket
 import threading
 import settings
-from colorama import Fore, Style
 from dataclasses import dataclass
+
+# import third party packages
+from colorama import Fore, Style
+
+# import custom packages/files
 from utility import *
 
 
 @dataclass()
 class SessionData:
+    """dataclass for storing session/local client data"""
     state: State
     game_code: str or None
     username: str or None
@@ -19,7 +26,9 @@ class SessionData:
 
 
 class Session:
+    # creation of logger object
     logger = Logger()
+    # creation of SessionData object for storage of config
     settings = SessionData(State.IN_MENU, None, None, None)
 
     def __init__(self, host, port):
@@ -30,6 +39,11 @@ class Session:
     # client side helpers ------------------------------------------------------
 
     def prefix(self):
+        """method to return the prefix for the input prompt
+
+        Returns:
+            str: formatted prefix string which will be used in the input prompt
+        """
         if self.settings.state in (State.IN_LOBBY, State.IN_GAME):
             location = f"{self.settings.state.value[2:]}-{self.settings.game_code}"
         else:
@@ -39,6 +53,14 @@ class Session:
     # handler processing ---------------------------------------------------------
 
     def _get_respective_handler(self, command: str):
+        """method used to get the respective handler method for the input by the user
+
+        Args:
+            command (str): executed command by the user
+
+        Returns:
+            function: the respective handler method for the input by the user
+        """
         if command in ("host", "join", "leave", "start", "games"): 
             return self._command
         elif command == "help":
@@ -47,7 +69,14 @@ class Session:
             return self._username
 
     def _get_received_handler(self, header: str):
-        """return a method within the session class based on the 'header' argument value"""
+        """return a method within the session class based on the 'header' argument value
+
+        Args:
+            header (str): header of the received data
+
+        Returns:
+            function: the respective handler method for the received data
+        """
         return {
             # if the input is 'state' return _handle_state_change method
             "state": self._handle_state_change,
@@ -68,7 +97,7 @@ class Session:
     # command handlers --------------------------------------------------------
 
     @staticmethod
-    def _help(**kwargs):
+    def _help():
         """fetch and display the help menu in a readable format"""
         # create a list of tuples that contain the full length command and its description
         parsed_commands = [
@@ -114,7 +143,11 @@ class Session:
     # received data handlers ---------------------------------------------------
 
     def _handle_state_change(self, data: dict) -> None:
-        """handles incoming data with a 'state' header - used to set the state of the client locally (inMenu, inGame, inLobby)"""
+        """handles incoming data with a 'state' header - used to set the state of the client locally (inMenu, inGame, inLobby)
+
+        Args:
+            data (dict): received state packet from the server
+        """
         try:
             # try to fetch the Enum value from the State enum class
             state = State(data.get("state"))
@@ -126,38 +159,57 @@ class Session:
             self.settings.state = State(state)
 
     def _handle_game_code_change(self, data: dict) -> None:
-        """handles incoming data with the 'game_code' header - used to set the game code value locally for use in the input prefix"""
+        """handles incoming data with the 'game_code' header - used to set the game code value locally for use in the input prefix
+
+        Args:
+            data (dict): received game code packet from the server
+        """
         # set the local game_code value to the value of the 'game_code' key in the received data
         self.settings.game_code = data.get("game_code")
 
     @staticmethod
     def _handle_alert(data: dict) -> None:
-        """handles incoming data with the 'alert' header"""
+        """handles incoming data with the 'alert' header
+
+        Args:
+            data (dict): alert data packet from the server
+        """
         # simply prints the alert message to the CLI - colouring the text in red with the colorama module
         print(f"{Fore.RED}{data.get('message')}{Style.RESET_ALL}\n")
 
     @staticmethod
     def _handle_question(data: dict) -> None:
-        """handles incoming data with the 'question' header"""
+        """handles incoming data with the 'question' header
+
+        Args:
+            data (dict): received question packet from the server
+        """
         # clear the CLI
         clear_screen()
         # print the question to the CLI - colouring the text in yellow with the colorama module
         print(f"{Fore.YELLOW}{data.get('question')}{Style.RESET_ALL}\n")
 
     def _handle_client_info(self, data: dict) -> None:
-        """handles incoming data with the 'client_info' header - used to set the local UID value of the client"""
+        """handles incoming data with the 'client_info' header - used to set the local UID value of the client
+
+        Args:
+            data (dict): received client info packet from the server
+        """
         # set the local uid value to the value of the 'uid' key in the received data
         self.uid = int(data.get("uid"))
 
     @staticmethod
     def _handle_game_list(data: dict) -> None:
-        """organise and display the list of available games (if any) from the server in a tabular format"""
+        """handles incoming data with the 'game_list' header - used to display the list of games in the lobby
         
+        Args:
+            data (dict): received game list packet from the server
+        """
         # use a list comprehension to create a list of formatted strings based on game data
         # formatted as "<game code> | <player count>"
         # this list is then 'joined' into a single string with a newline character between each item
         game_list = "\n".join([f"{g.get('code')} | {Fore.GREEN if g.get('player_count') < 10 else Fore.RED}"
-                            f"{g.get('player_count')}/10{Fore.RESET} players"
+                            f"{g.get('player_count')}{Fore.RESET} players"
                             for g in data.get("game_list")])
         # if the list is not empty, print the list with the header "Available Games"
         # Otherwise print "No games available" under that header
@@ -172,8 +224,8 @@ class Session:
 
         ──────────────────
 
-        CFJPE | 1/10 players
-        JPTXQ | 9/10 players
+        CFJPE | 1 players
+        JPTXQ | 9 players
 
         ──────────────────
         """
@@ -182,7 +234,11 @@ class Session:
 
     @staticmethod
     def _handle_game_stats(data: dict) -> None:
-        """organise and display quiz game statistics sent from the server in a tabular format"""
+        """organise and display quiz game statistics sent from the server in a tabular format
+        
+        Args:
+            data (dict): dictionary of game statistics/leaderboard
+        """
         # use a list comprehension to create a list of formatted strings based on the final statistics
         # formatted as "<position> | <username> | <score>"
         # this list is then 'joined' into a single string with a newline character between each item
@@ -236,7 +292,11 @@ class Session:
     # send/receive -------------------------------------------------------------
 
     def _handle_received(self, received: dict):
-        """handles received data from the quiz server"""
+        """handles received data from the quiz server
+
+        Args:
+            received (dict): received data from the server
+        """
         # if the received data has a 'header' key, fetch the 'header' data
         header = received.get("header")
         # if the received data has a 'data' key, fetch the 'data' data
@@ -294,21 +354,34 @@ class Session:
         
 
     def _send(self, header: str, data: str):
-        """called to send a data packet to the server (commands)"""
+        """called to send a data packet to the server (commands)
+
+        Args:
+            header (str): header of data to be sent
+            data (str): data to be sent
+        """
         # send a JSON string to the server - data is passed in as two parameters
         # combined into a dictionary object and encoded as a string then into bytes
         # data sent over the socket connection to the server with self._socket.send()
         self._socket.send(json.dumps({"header": header, "data": {header: data}}).encode('utf-8'))
 
     def _answer(self, answer: str):
-        """used to send answer data to the server (easier than specifying values) will call the above _send function"""
+        """used to send answer data to the server (easier than specifying values) will call the above _send function
+
+        Args:
+            answer (str): answer string to sent to server
+        """
         # calls the _send function with the 'answer' header and the answer data
         self._send("answer", answer)
 
     # client message --------------------------------------------------------------
 
     def input(self, message: str):
-        """message and send it to the quiz server"""
+        """message and send it to the quiz server
+
+        Args:
+            message (str): raw input given by the user
+        """
         sanitised_input: list[str] = (re.sub(' +', ' ', message.strip())).lower().split(" ")
         cmd = sanitised_input[0]
         args = sanitised_input[1:]
@@ -322,30 +395,41 @@ class Session:
 
 
 def main():
-    """Main function"""
+    """main function for the client"""
+    # clear the CLI
     clear_screen()
+    # create a new session object
     session = Session(settings.HOST, settings.PORT)
+    # connect to the server through the session object
     session.start()
+    # if the session fais to connect to the server, cancel
     if not session.settings.alive:
         return
+    # display the help menu in the CLI
     session._help()
+    # while the connection is alive (client is still connected to the server)
     while session.settings.alive:
+        # accept input from the user
         user_input = input(f"{session.prefix()} > " if session.settings.state != State.IN_GAME else "")
+        # clear the CLI
         clear_screen()
+        # if the length of the input is below 1, reset the loop (accept different input)
         if len(user_input) < 1:
             continue
+        # otherwise
+        # if the input is 'exit', stop the connection and exit the program
         if user_input == "exit":
             session.stop()
             break
-        try:
-            session.input(user_input)
-        except Exception as e:
-            print(e)
-            input("Press enter to continue...")
+        # otherwise
+        # pass the input into the session object
+        session.input(user_input)
+        # wait half a second
         time.sleep(0.5)
-
+    
 
 if __name__ == "__main__":
     main()
+    time.sleep(0.5)
     print(f"\n{Fore.RED}Connection closed{Fore.RESET}\n")
     input("\nPress enter to exit...")

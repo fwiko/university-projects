@@ -97,7 +97,7 @@ class Client:
     # command handler methods
     
     def __host_command(self) -> None:
-        """method used to handle the host command once sent to the server"""
+        """method used to handle the host command once received by the server"""
         # if the client is already in a game, do not allow them to host a new game
         if self.game:
             self.send("alert", {"message": f"You are already in a game/lobby and cannot currently host another."})

@@ -1,11 +1,9 @@
 import re
-import sys
 import time
 import json
 import socket
 import threading
 import settings
-import pyfiglet
 from colorama import Fore, Style
 from dataclasses import dataclass
 from utility import *

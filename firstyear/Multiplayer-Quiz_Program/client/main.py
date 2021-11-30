@@ -49,7 +49,7 @@ class Session:
         else:
             location = self.settings.state.value[2:]
         default_username = 'Client-' + (str(self.settings.uid) if self.settings.uid else '\b')
-        return f"{Fore.GREEN}{self.settings.username or default_username}{Fore.RESET} $ {location}"
+        return f"{Fore.GREEN}{self.settings.username.capitalize() if self.settings.username else default_username}{Fore.RESET} $ {location}"
 
     # handler processing ---------------------------------------------------------
 

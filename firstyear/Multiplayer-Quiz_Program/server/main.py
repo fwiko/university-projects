@@ -26,7 +26,7 @@ def connection_listener(m: manager.Manager) -> None:
         while True:
             # accept connections from clients
             conn, addr = sock.accept()
-            logger.info("Client connect: {}:{}".format(*addr))
+            logger.info("Connection from client at {}:{}".format(*addr))
             # pass the connection into the manager class to handle the client from here on
             m.add_client(conn, addr)
             

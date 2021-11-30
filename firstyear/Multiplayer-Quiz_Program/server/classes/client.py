@@ -26,8 +26,8 @@ class Client:
         self.__conn = conn
         self.__addr = addr
         self.__manager = manager
+        self.logger = Logger(f"Client-{uid}")
         self.username = f"Client-{uid}"
-        self.logger = Logger(self.username)
         self.game = None
         self.state = State.IN_MENU
 
@@ -98,6 +98,7 @@ class Client:
         if 3 <= len(username) <= 16:
             # if it is, set the username value of the client to the specified username argument
             self._username = username
+            self.logger.info(f"Username set to \"{username}\"")
         else:
             # if it isn't, log an error message and do not set the username value of the client
             self.logger.error(f"Attempted to set invalid username \"{username}\"")
@@ -115,6 +116,7 @@ class Client:
             self._state = state
             # send a state packet to the connected client with the new state value
             self.send("state", {"state": state.value})
+            self.logger.info(f"State set to {state.value}")
         else:
             # if it isn't, log an error message and do not set the state value of the client
             self.logger.error(f"Attempted to set invalid state \"{state}\"")
@@ -134,6 +136,7 @@ class Client:
             if g:
                 # send the new game code to the local client
                 self.send("game_code", {"game_code": g.settings.code})
+            self.logger.info(f"Game set to {g.settings.code if g else None}")
         # if the specified game argument is not a valid game or is not None
         else:
             # log an error message and do not set the game value of the client
@@ -199,6 +202,7 @@ class Client:
         self.state = State.IN_MENU
         # Alert the client that they have left the game
         self.send("alert", {"message": f"Left game {game_code}"})
+        self.logger.info(f"Left game {game_code}")
     
     def __games_command(self) -> None:
         """method used to handle the games command once received by the server"""
@@ -266,7 +270,7 @@ class Client:
                 handler()
         # if the command is not recognised, log an unknown command message
         else:
-            self.logger.debug(f"Unknown command: {cmd}{' '+' '.join(args) if args else ''}")
+            self.logger.error(f"Unknown command: {cmd}{' '+' '.join(args) if args else ''}")
         
     def __process_answer(self, answer: str) -> None:
         """method used to process answers sent by the client when answering questions in a quiz

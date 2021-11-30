@@ -435,7 +435,7 @@ if __name__ == "__main__":
     try:
         main()
     except Exception as error:
-        input(error)
+        print(f"{Fore.RED}Error: {error}{Fore.RESET}")
     time.sleep(0.5)
     print(f"\n{Fore.RED}Connection closed{Fore.RESET}\n")
     input("\nPress enter to exit...")

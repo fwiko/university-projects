@@ -60,6 +60,7 @@ class Game:
         if isinstance(settings, GameData):
             # if it is, set the objects settings property to the passed in value
             self.__settings = settings
+            self.logger.info(f"Game settings have been updated: {settings.__dict__}")
         else:
             # if not, log an error and do nothing
             self.logger.error(f"Attempted to set invalid settings \"{settings}\"")
@@ -89,7 +90,7 @@ class Game:
         # if not, add the client to the game objects list of players
         self.settings.players.append(client_object)
         self.alert(f"{client_object.username} has joined the game!", [client_object])
-        self.logger.debug(f"Added client {client_object.username}")
+        self.logger.info(f"Added client {client_object.username}")
     
     def remove_client(self, client: client.Client) -> None:
         """method to remove a client from the game
@@ -104,7 +105,7 @@ class Game:
         # if it is, remove the client from the game objects list of players
         self.settings.players.remove(client)
         self.alert(f"{client.username} has left the game.")
-        self.logger.debug(f"Removed client {client.username}")
+        self.logger.info(f"Removed client {client.username}")
     
     def close_game(self) -> None:
         """method to close the game and remove it from the manager"""
@@ -187,6 +188,7 @@ class Game:
         self.__current_quiz = QuizData(scores_table, chosen_question_set, None)
         # start the quiz sequence as a new thread
         threading.Thread(target=self._quiz_sequence).start()
+        self.logger.info("Quiz has started")
     
     def end_quiz(self) -> None:
         """method to end the quiz within the current game object"""

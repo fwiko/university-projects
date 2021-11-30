@@ -48,7 +48,8 @@ class Session:
             location = f"{self.settings.state.value[2:]}-{self.settings.game_code}"
         else:
             location = self.settings.state.value[2:]
-        return f"{Fore.GREEN}{self.settings.username or 'Client'}{Fore.RESET} $ {location}"
+        default_username = 'Client-' + (str(self.settings.uid) if self.settings.uid else '\b')
+        return f"{Fore.GREEN}{self.settings.username or default_username}{Fore.RESET} $ {location}"
 
     # handler processing ---------------------------------------------------------
 
@@ -196,7 +197,7 @@ class Session:
             data (dict): received client info packet from the server
         """
         # set the local uid value to the value of the 'uid' key in the received data
-        self.uid = int(data.get("uid"))
+        self.settings.uid = int(data.get("uid"))
 
     @staticmethod
     def _handle_game_list(data: dict) -> None:

@@ -50,9 +50,9 @@ class Helpers:
                 # if the data could be loaded - return a random set of questions from the database
                 question_set = random.choice(loaded_data.get("_questions", []))
                 try:
-                    final_set = random.sample(question_set.items(), 15)
+                    final_set = {"topic": question_set["topic"], "questions": random.sample(question_set["questions"].items(), settings.QUESTIONS_PER_QUIZ)}
                 except ValueError:
-                    final_set = question_set.items()
+                    final_set = question_set
                 return final_set
 
 class Logger:

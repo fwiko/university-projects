@@ -1,70 +1,179 @@
 {
     "_questions": [
         {
-            "What is the capital of Brazil?": ["brasilia"],
-            "What is the capital of India?": ["new delhi"],
-            "What is the capital of China?": ["beijing"],
-            "What is the capital of France?": ["paris"],
-            "What is the capital of Italy?": ["rome"],
-            "What is the capital of the United States?": ["washington dc", "washington d.c.", "washington"],
-            "What is the capital of the England?": ["london"],
-            "What is the capital of Germany?": ["berlin"],
-            "What is the capital of Russia?": ["moscow"],
-            "What is the capital of Spain?": ["madrid"],
-            "What is the capital of the Netherlands?": ["amsterdam"],
-            "What is the capital of the United Arab Emirates?": ["abu dhabi"],
-            "What is the capital of Belgium?": ["brussels"],
-            "What is the capical of Egypt?": ["cairo"],
-            "What is the capital of Japan?": ["tokyo"],
-            "What is the capital of Ireland?": ["dublin"],
-            "What is the capital of Nothern Ireland?": ["belfast"]
+            "topic": "geography",
+            "questions": {
+                "Montreal is in which Canadian province?": [
+                    "quebec"
+                ],
+                "What is the capital of Chile?": [
+                    "santiago"
+                ],
+                "What is the capital of Denmark?": [
+                    "copenhagen"
+                ],
+                "What is the only state in the United States that does not have a flag in a shape with 4 edges?": [
+                    "ohio"
+                ],
+                "Which US state has the highest population?": [
+                    "california"
+                ],
+                "Which UK country features a dragon on their flag?": [
+                    "wales"
+                ],
+                "What is the right way to spell the capital of Hungary?": [
+                    "budapest"
+                ],
+                "Llanfair\u00adpwllgwyngyll\u00adgogery\u00adchwyrn\u00addrobwll\u00adllan\u00adtysilio\u00adgogo\u00adgoch is located on which Welsh island?": [
+                    "anglesey"
+                ],
+                "What tiny principality lies between Spain and France?": [
+                    "andorra"
+                ],
+                "What is the name of New Zealand's indigenous people?": [
+                    "maori"
+                ],
+                "What is the capital city of Slovenia?": [
+                    "ljubljana"
+                ],
+                "What is the capital of Brazil?": [
+                    "brasilia"
+                ],
+                "What is the capital of India?": [
+                    "new delhi"
+                ],
+                "What is the capital of China?": [
+                    "beijing"
+                ],
+                "What is the capital of France?": [
+                    "paris"
+                ],
+                "What is the capital of Italy?": [
+                    "rome"
+                ],
+                "What is the capital of the United States?": [
+                    "washington dc",
+                    "washington d.c.",
+                    "washington"
+                ],
+                "What is the capital of the England?": [
+                    "london"
+                ],
+                "What is the capital of Germany?": [
+                    "berlin"
+                ],
+                "What is the capital of Russia?": [
+                    "moscow"
+                ],
+                "What is the capital of Spain?": [
+                    "madrid"
+                ],
+                "What is the capital of the Netherlands?": [
+                    "amsterdam"
+                ],
+                "What is the capital of the United Arab Emirates?": [
+                    "abu dhabi"
+                ],
+                "What is the capital of Belgium?": [
+                    "brussels"
+                ],
+                "What is the capical of Egypt?": [
+                    "cairo"
+                ],
+                "What is the capital of Japan?": [
+                    "tokyo"
+                ],
+                "What is the capital of Ireland?": [
+                    "dublin"
+                ],
+                "What is the capital of Nothern Ireland?": [
+                    "belfast"
+                ]
+            }
         },
         {
-            "Where are the cars of the brand \"Ferrari\" manufactured?": [
-                "italy"
-            ],
-            "The Italian automaker Lamborghini uses what animal as its logo?": [
-                "bull"
-            ],
-            "Which Italian city is home of the car manufacturer 'Fiat'?": [
-                "turin"
-            ],
-            "Which of the following car manufacturers had a war named after it?": [
-                "toyota"
-            ],
-            "Jaguar Cars was previously owned by which car manfacturer?": [
-                "ford"
-            ],
-            "What UK Train does NOT go over 125MPH?": [
-                "sprinter"
-            ],
-            "Which of the following collision avoidance systems helps airplanes avoid colliding with each other?": [
-                "tcas"
-            ],
-            "Which of these companies does NOT manufacture motorcycles?": [
-                "toyota"
-            ],
-            "Automobiles produced by Telsa Motors operate on which form of energy?": [
-                "electricity"
-            ],
-            "Which car tire manufacturer is famous for its \"Eagle\" brand of tires, and is the official tire supplier of NASCAR?": [
-                "goodyear"
-            ],
-            "Which car tire manufacturer is famous for its \"P Zero\" line?": [
-                "pirelli"
-            ],
-            "What are the cylinder-like parts that pump up and down within the engine?": [
-                "pistons"
-            ],
-            "What is the name of Nissan's most popular electric car?": [
-                "leaf"
-            ],
-            "What country was the Trabant 601 manufactured in?": [
-                "east germany"
-            ],
-            "What is the fastest road legal car in the world?": [
-                "koenigsegg agera rs"
-            ]
+            "topic": "vehicles",
+            "questions": {
+                "Where are the cars of the brand \"Ferrari\" manufactured?": [
+                    "italy"
+                ],
+                "The Italian automaker Lamborghini uses what animal as its logo?": [
+                    "bull"
+                ],
+                "Which Italian city is home of the car manufacturer 'Fiat'?": [
+                    "turin"
+                ],
+                "Which of the following car manufacturers had a war named after it?": [
+                    "toyota"
+                ],
+                "Jaguar Cars was previously owned by which car manfacturer?": [
+                    "ford"
+                ],
+                "What UK Train does NOT go over 125MPH?": [
+                    "sprinter"
+                ],
+                "Automobiles produced by Telsa Motors operate on which form of energy?": [
+                    "electricity"
+                ],
+                "Which car tire manufacturer is famous for its \"Eagle\" brand of tires, and is the official tire supplier of NASCAR?": [
+                    "goodyear"
+                ],
+                "Which car tire manufacturer is famous for its \"P Zero\" line?": [
+                    "pirelli"
+                ],
+                "What are the cylinder-like parts that pump up and down within the engine?": [
+                    "pistons"
+                ],
+                "What is the name of Nissan's most popular electric car?": [
+                    "leaf"
+                ],
+                "What country was the Trabant 601 manufactured in?": [
+                    "east germany",
+                    "germany"
+                ],
+                "What is the fastest road legal car in the world?": [
+                    "koenigsegg agera rs"
+                ]
+            }
+        },
+        {
+            "topic": "computing",
+            "questions": {
+                "What does the \"MP\" stand for in MP3?": [
+                    "moving picture"
+                ],
+                "What amount of bits commonly equals one byte?": [
+                    "8"
+                ],
+                "How many cores does the Intel i7-6950X have?": [
+                    "10"
+                ],
+                "Which coding language was the #1 programming language in terms of usage on GitHub in 2015?": [
+                    "javascript"
+                ],
+                "Which computer language would you associate Django framework with?": [
+                    "python"
+                ],
+                "What does the term GPU stand for?": [
+                    "graphics processing unit",
+                    "graphic processor unit"
+                ],
+                "What internet protocol was documented in RFC 1459?": [
+                    "irc"
+                ],
+                "Which programming language was developed by Sun Microsystems in 1995?": [
+                    "java"
+                ],
+                "In programming, what do you call functions with the same name but different implementations?": [
+                    "overloading"
+                ],
+                "What does RAID stand for?": [
+                    "redundant array of independent disks"
+                ],
+                "What is the codename of the eighth generation Intel Core micro-architecture launched in October 2017?": [
+                    "coffee lake"
+                ]
+            }
         }
     ]
 }

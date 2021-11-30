@@ -232,7 +232,7 @@ class Game:
     def _quiz_sequence(self) -> None:
         """method to run the quiz sequence within the current game object (asks questions until all questions have been asked)"""
         # alert all clients that the quiz will be starting in 5 seconds
-        self.alert("Quiz starting in 5 seconds!")
+        self.alert(f"Quiz starting in 5 seconds! TOPIC: {self.__current_quiz.questions.get('topic').capitalize()}")
         # wait 5 seconds
         time.sleep(5)
         # if the quiz has been cancelled, game closed, etc..
@@ -240,7 +240,7 @@ class Game:
             # cancel the quiz sequence
             return
         # for each question in the chosen set of questions
-        for num, (q, a) in enumerate(self.__current_quiz.questions):
+        for num, (q, a) in enumerate(self.__current_quiz.questions.get("questions")):
             # set the current question to the question relative to the current question index
             self.__current_quiz.current_question = {
                 "question": q,

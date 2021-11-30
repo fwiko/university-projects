@@ -35,8 +35,10 @@ class Game:
             manager (manager.Manager): the manager object of the game server which will be used to manage the game
             creator (client.Client): the client object which created the game
         """
+        code = Helpers.generate_code(5)
+        self.logger = Logger(f"{self.__class__.__name__}-{code}")
         self.__manager = manager
-        self.settings = GameData(Helpers.generate_code(5), creator, [creator])
+        self.settings = GameData(code, creator, [creator])
         self.logger = Logger(f"{self.__class__.__name__}-{self.settings.code}")
         self.logger.info("Game has been created")
         

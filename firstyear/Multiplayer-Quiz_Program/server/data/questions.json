@@ -88,6 +88,33 @@
                 ],
                 "What is the capital of Nothern Ireland?": [
                     "belfast"
+                ],
+                "In which English county is Stonehenge?": [
+                    "wiltshire"
+                ],
+                "How many countries does the United States share a land border with?": [
+                    "2"
+                ],
+                "The historical city Timbuktu is located in which West African country?": [
+                    "mali"
+                ],
+                "What is the official language of Bhutan?": [
+                    "dzongkha"
+                ],
+                "What is the name of the peninsula containing Spain and Portugal?": [
+                    "iberian peninsula"
+                ],
+                "How many timezones does Russia have?": [
+                    "11"
+                ],
+                "What is the capital of Lithuania?": [
+                    "vilnius"
+                ],
+                "Into which basin does the Jordan River flow into?": [
+                    "dead sea"
+                ],
+                "The formerly East-Prussian city of K\u00f6nigsberg is known as which Russian City today?": [
+                    "kaliningrad"
                 ]
             }
         },
@@ -133,6 +160,18 @@
                 ],
                 "What is the fastest road legal car in the world?": [
                     "koenigsegg agera rs"
+                ],
+                "Which car manufacturer created the \"Aventador\"?": [
+                    "lamborghini"
+                ],
+                "What car manufacturer gave away their patent for the seat-belt in the interest of saving lives?": [
+                    "volvo"
+                ],
+                "Which country has the international vehicle registration letter 'A'?": [
+                    "austria"
+                ],
+                "Which Japanese company is the world's largest manufacturer of motorcycles?": [
+                    "honda"
                 ]
             }
         },
@@ -172,6 +211,57 @@
                 ],
                 "What is the codename of the eighth generation Intel Core micro-architecture launched in October 2017?": [
                     "coffee lake"
+                ],
+                "Moore's law originally stated that the number of transistors on a microprocessor chip would double every...": [
+                    "year"
+                ],
+                "Which computer hardware device provides an interface for all other connected devices to communicate?": [
+                    "motherboard"
+                ],
+                "How many kilobytes in one gigabyte (in decimal)?": [
+                    "1000000"
+                ],
+                "Who is the original author of the realtime physics engine called PhysX?": [
+                    "novodex"
+                ],
+                "What was the first Android version specifically optimized for tablets?": [
+                    "honeycomb"
+                ],
+                "The C programming language was created by this American computer scientist. ": [
+                    "dennis ritchie"
+                ],
+                "The name of technology company HP stands for what?": [
+                    "hewlett-packard"
+                ],
+                "In computing, what does LAN stand for?": [
+                    "local area network"
+                ],
+                "What was the name of the security vulnerability found in Bash in 2014?": [
+                    "shellshock"
+                ],
+                "Whistler was the codename of this Microsoft Operating System.": [
+                    "windows xp"
+                ],
+                "Which of the following languages is used as a scripting language in the Unity 3D game engine?": [
+                    "c#"
+                ],
+                "What does the acronym CDN stand for in terms of networking?": [
+                    "content delivery network"
+                ],
+                "Released in 2001, the first edition of Apple's Mac OS X operating system (version 10.0) was given what animal code name?": [
+                    "cheetah"
+                ],
+                "Who invented the \"Spanning Tree Protocol\"?": [
+                    "radia perlman"
+                ],
+                "Which programming language shares its name with an island in Indonesia?": [
+                    "java"
+                ],
+                "Which of the following computer components can be built using only NAND gates?": [
+                    "alu"
+                ],
+                "Who is the founder of Palantir?": [
+                    "peter thiel"
                 ]
             }
         }

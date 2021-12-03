@@ -1,4 +1,3 @@
-
 # import python packages
 import re
 import time
@@ -18,6 +17,7 @@ from utility import *
 @dataclass()
 class SessionData:
     """dataclass for storing session/local client data"""
+
     state: State
     game_code: str or None
     username: str or None
@@ -48,7 +48,9 @@ class Session:
             location = f"{self.settings.state.value[2:]}-{self.settings.game_code}"
         else:
             location = self.settings.state.value[2:]
-        default_username = 'Client-' + (str(self.settings.uid) if self.settings.uid else '\b')
+        default_username = "Client-" + (
+            str(self.settings.uid) if self.settings.uid else "\b"
+        )
         return f"{Fore.GREEN}{self.settings.username.capitalize() if self.settings.username else default_username}{Fore.RESET} $ {location}"
 
     # handler processing ---------------------------------------------------------
@@ -62,7 +64,7 @@ class Session:
         Returns:
             function: the respective handler method for the input by the user
         """
-        if command in ("host", "join", "leave", "start", "games"): 
+        if command in ("host", "join", "leave", "start", "games"):
             return self._command
         elif command == "help":
             return self._help
@@ -92,8 +94,10 @@ class Session:
             # if the input is 'game_list' return _handle_game_list method
             "game_list": self._handle_game_list,
             # if the input is 'quiz_stats' return _handle_game_stats method
-            "quiz_stats": self._handle_game_stats
-        }.get(header) # get and return the relative value based on the header argument from the attached dictionary
+            "quiz_stats": self._handle_game_stats,
+        }.get(
+            header
+        )  # get and return the relative value based on the header argument from the attached dictionary
 
     # command handlers --------------------------------------------------------
 
@@ -104,16 +108,24 @@ class Session:
         parsed_commands = [
             # tuple generation
             # formatted as ("<command name> <command arguments>", "<command description>")
-            (f"{key}{' ' if value.get('args') else ''}{''.join(arg for arg in value.get('args', []))}",
-            value.get('description'))
+            (
+                f"{key}{' ' if value.get('args') else ''}{''.join(arg for arg in value.get('args', []))}",
+                value.get("description"),
+            )
             # for each command specified in the settings
             for key, value in settings.COMMANDS.items()
-            ]
+        ]
         # finding the maximum length of a command string in the list above
         # calculated from len(command_name) + len(command_arguments)
-        max_len = max(map(len, [x[0] for x in parsed_commands]))+1
+        max_len = max(map(len, [x[0] for x in parsed_commands])) + 1
         # finally print the help menu into the CLI
-        print("\n".join(' ' * (max_len - len(x[0])) + x[0] + ' | ' + x[1] for x in parsed_commands) + "\n")
+        print(
+            "\n".join(
+                " " * (max_len - len(x[0])) + x[0] + " | " + x[1]
+                for x in parsed_commands
+            )
+            + "\n"
+        )
 
     def _command(self, **kwargs):
         """called when the user enters a command that must be sent to the server for processing
@@ -121,7 +133,7 @@ class Session:
         cmd = kwargs.get("command")
         args = kwargs.get("args")
         self._send("command", f"{cmd}{' ' + ' '.join(args) if args else ''}")
-        
+
     def _username(self, **kwargs):
         """called when the user enters the username command - set the username locally - then send it to the server"""
         # if the kwargs value 'args' is empty or None, return as the username is not specified
@@ -130,7 +142,7 @@ class Session:
             print(f"{Fore.RED}Missing <username> argument{Fore.RESET}\n")
             return
         # if the kwargs value 'args' is not empty or None, fetch the username value by concatenating the args
-        uname = ' '.join(kwargs.get("args"))
+        uname = " ".join(kwargs.get("args"))
         # if the final username value is between 3 and 16 characters long, set it locally and send it to the server
         if 3 <= len(uname) <= 16:
             # set the username locally
@@ -139,7 +151,9 @@ class Session:
             self._send("command", f"username {self.settings.username}")
         # if the final username value is not between 3 and 16 characters long, return as the username is invalid
         else:
-            print(f"{Fore.RED}Entered username is too {'short' if len(uname) < 3 else 'long'}{Style.RESET_ALL}\n")
+            print(
+                f"{Fore.RED}Entered username is too {'short' if len(uname) < 3 else 'long'}{Style.RESET_ALL}\n"
+            )
 
     # received data handlers ---------------------------------------------------
 
@@ -202,22 +216,29 @@ class Session:
     @staticmethod
     def _handle_game_list(data: dict) -> None:
         """handles incoming data with the 'game_list' header - used to display the list of games in the lobby
-        
+
         Args:
             data (dict): received game list packet from the server
         """
         # use a list comprehension to create a list of formatted strings based on game data
         # formatted as "<game code> | <player count>"
         # this list is then 'joined' into a single string with a newline character between each item
-        game_list = "\n".join([f"{g.get('code')} | {Fore.GREEN if g.get('player_count') < 10 else Fore.RED}"
-                            f"{g.get('player_count')}{Fore.RESET} players"
-                            for g in data.get("game_list")])
+        game_list = "\n".join(
+            [
+                f"{g.get('code')} | {Fore.GREEN if g.get('player_count') < 10 else Fore.RED}"
+                f"{g.get('player_count')}{Fore.RESET} players"
+                for g in data.get("game_list")
+            ]
+        )
         # if the list is not empty, print the list with the header "Available Games"
         # Otherwise print "No games available" under that header
 
-        output_string = f"Available Games\n\n──────────────────\n\n{game_list}\n\n──────────────────\n" if game_list \
-            else f"──────────────────\n\n{Fore.RED}No games available{Fore.RESET}\n\n──────────────────\n"  
-        
+        output_string = (
+            f"Available Games\n\n──────────────────\n\n{game_list}\n\n──────────────────\n"
+            if game_list
+            else f"──────────────────\n\n{Fore.RED}No games available{Fore.RESET}\n\n──────────────────\n"
+        )
+
         """
         Example output:
         
@@ -230,13 +251,13 @@ class Session:
 
         ──────────────────
         """
-        
+
         print(output_string)
 
     @staticmethod
     def _handle_game_stats(data: dict) -> None:
         """organise and display quiz game statistics sent from the server in a tabular format
-        
+
         Args:
             data (dict): dictionary of game statistics/leaderboard
         """
@@ -244,11 +265,16 @@ class Session:
         # formatted as "<position> | <username> | <score>"
         # this list is then 'joined' into a single string with a newline character between each item
         leaderboard = "\n".join(
-            [f"#{i + 1}. {Fore.LIGHTBLUE_EX}{p.get('username')}{Fore.RESET} | {p.get('score')} points" for i, p in
-            enumerate(data.values())])
+            [
+                f"#{i + 1}. {Fore.LIGHTBLUE_EX}{p.get('username')}{Fore.RESET} | {p.get('score')} points"
+                for i, p in enumerate(data.values())
+            ]
+        )
         # print a beautified leaderboard table with a "Final Leaderboard" header and line dividers
-        output_string = f"{Fore.GREEN}Final Leaderboard{Fore.RESET}\n\n──────────────────\n\n{leaderboard}\n\n" \
-                        f"──────────────────\n "
+        output_string = (
+            f"{Fore.GREEN}Final Leaderboard{Fore.RESET}\n\n──────────────────\n\n{leaderboard}\n\n"
+            f"──────────────────\n "
+        )
         """
         Example output:
         
@@ -260,7 +286,7 @@ class Session:
         #2. Client-2 | 1 points
 
         ──────────────────
-        """                
+        """
         print(output_string)
 
     # connection management -----------------------------------------------------
@@ -352,7 +378,6 @@ class Session:
         self.settings.alive = False
         # clear the CLI
         clear_screen()
-        
 
     def _send(self, header: str, data: str):
         """called to send a data packet to the server (commands)
@@ -364,7 +389,9 @@ class Session:
         # send a JSON string to the server - data is passed in as two parameters
         # combined into a dictionary object and encoded as a string then into bytes
         # data sent over the socket connection to the server with self._socket.send()
-        self._socket.send(json.dumps({"header": header, "data": {header: data}}).encode('utf-8'))
+        self._socket.send(
+            json.dumps({"header": header, "data": {header: data}}).encode("utf-8")
+        )
 
     def _answer(self, answer: str):
         """used to send answer data to the server (easier than specifying values) will call the above _send function
@@ -383,7 +410,9 @@ class Session:
         Args:
             message (str): raw input given by the user
         """
-        sanitised_input: list[str] = (re.sub(' +', ' ', message.strip())).lower().split(" ")
+        sanitised_input: list[str] = (
+            (re.sub(" +", " ", message.strip())).lower().split(" ")
+        )
         cmd = sanitised_input[0]
         args = sanitised_input[1:]
         handler = self._get_respective_handler(cmd)
@@ -414,7 +443,9 @@ def main():
     # while the connection is alive (client is still connected to the server)
     while session.settings.alive:
         # accept input from the user
-        user_input = input(f"{session.prefix()} > " if session.settings.state != State.IN_GAME else "")
+        user_input = input(
+            f"{session.prefix()} > " if session.settings.state != State.IN_GAME else ""
+        )
         # clear the CLI
         clear_screen()
         # if the length of the input is below 1, reset the loop (accept different input)
@@ -430,7 +461,7 @@ def main():
         session.input(user_input)
         # wait half a second
         time.sleep(0.5)
-    
+
 
 if __name__ == "__main__":
     try:

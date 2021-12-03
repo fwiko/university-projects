@@ -29,7 +29,7 @@ def connection_listener(m: manager.Manager) -> None:
             logger.info("Connection from client at {}:{}".format(*addr))
             # pass the connection into the manager class to handle the client from here on
             m.add_client(conn, addr)
-            
+
 
 # if this file is run directly
 if __name__ == "__main__":

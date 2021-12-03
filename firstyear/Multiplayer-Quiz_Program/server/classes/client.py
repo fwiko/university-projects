@@ -12,8 +12,11 @@ import classes.manager as manager
 import settings
 from utility import State, Logger
 
+
 class Client:
-    def __init__(self, manager: manager.Manager, uid: int, conn: socket.socket, addr: tuple):
+    def __init__(
+        self, manager: manager.Manager, uid: int, conn: socket.socket, addr: tuple
+    ):
         """initialize the client object
 
         Args:
@@ -32,7 +35,7 @@ class Client:
         self.state = State.IN_MENU
 
     # properties (attribute getters and setters)
-    
+
     @property
     def uid(self) -> int:
         """property method to fetch the uid value of the client
@@ -41,7 +44,7 @@ class Client:
             int: uid of the client object
         """
         return self.__uid
-    
+
     @property
     def conn(self) -> socket.socket:
         """property method to fetch the socket connection of the client
@@ -50,7 +53,7 @@ class Client:
             socket.socket: socket connection of the client object
         """
         return self.__conn
-    
+
     @property
     def addr(self) -> tuple:
         """property method to fetch the address information of the client (ip and port)
@@ -59,7 +62,7 @@ class Client:
             tuple: address information of the client objects socket connection
         """
         return self.__addr
-    
+
     @property
     def username(self) -> str:
         """property method to fetch the username value of the client
@@ -77,7 +80,7 @@ class Client:
             State: state value of the client object
         """
         return self._state
-    
+
     @property
     def game(self) -> game.Game or None:
         """property method to fetch the game value of the client
@@ -98,11 +101,11 @@ class Client:
         if 3 <= len(username) <= 16:
             # if it is, set the username value of the client to the specified username argument
             self._username = username
-            self.logger.info(f"Username set to \"{username}\"")
+            self.logger.info(f'Username set to "{username}"')
         else:
             # if it isn't, log an error message and do not set the username value of the client
-            self.logger.error(f"Attempted to set invalid username \"{username}\"")
-            
+            self.logger.error(f'Attempted to set invalid username "{username}"')
+
     @state.setter
     def state(self, state: State):
         """property setter method to set the state value of the client
@@ -119,8 +122,8 @@ class Client:
             self.logger.info(f"State set to {state.value}")
         else:
             # if it isn't, log an error message and do not set the state value of the client
-            self.logger.error(f"Attempted to set invalid state \"{state}\"")
-            
+            self.logger.error(f'Attempted to set invalid state "{state}"')
+
     @game.setter
     def game(self, g: game.Game or None):
         """property setter method to set the game value of the client[summary]
@@ -140,15 +143,20 @@ class Client:
         # if the specified game argument is not a valid game or is not None
         else:
             # log an error message and do not set the game value of the client
-            self.logger.error(f"Attempted to set invalid game \"{g}\"")
-            
+            self.logger.error(f'Attempted to set invalid game "{g}"')
+
     # command handler methods
-    
+
     def __host_command(self) -> None:
         """method used to handle the host command once received by the server"""
         # if the client is already in a game, do not allow them to host a new game
         if self.game:
-            self.send("alert", {"message": f"You are already in a game/lobby and cannot currently host another."})
+            self.send(
+                "alert",
+                {
+                    "message": f"You are already in a game/lobby and cannot currently host another."
+                },
+            )
             return
         # if the client is not in a game, create a new game with the client as the owner
         g = game.Game(self.__manager, self)
@@ -161,8 +169,10 @@ class Client:
         # wait a tenth of a second (safety)
         time.sleep(0.1)
         # alert the client that a game has been created
-        self.send("alert", {"message": f"Game created with code {self.game.settings.code}"})
-    
+        self.send(
+            "alert", {"message": f"Game created with code {self.game.settings.code}"}
+        )
+
     def __join_command(self, *args) -> None:
         """method used to handle the join command once received by the server"""
         # if no game code was specified, do not allow the client to join a game
@@ -176,9 +186,16 @@ class Client:
         # if the game was not found or is already mid game
         if not g or g.is_active():
             # alert the client of the error
-            self.send("alert", {"message": f"Game code \"{args[0].upper()}\" not found or game is already active"})
+            self.send(
+                "alert",
+                {
+                    "message": f'Game code "{args[0].upper()}" not found or game is already active'
+                },
+            )
             # log the error
-            self.logger.error(f"Game code \"{args[0].upper()}\" not found or game is already active")
+            self.logger.error(
+                f'Game code "{args[0].upper()}" not found or game is already active'
+            )
             return
         # if the game was found and is not active, add the client to the game
         self.game = g
@@ -186,8 +203,10 @@ class Client:
         # set the clients state to IN_LOBBY
         self.state = State.IN_LOBBY
         # alert the client that they have joined the game
-        self.send("alert", {"message": f"Joined game with code {self.game.settings.code}"})
-        
+        self.send(
+            "alert", {"message": f"Joined game with code {self.game.settings.code}"}
+        )
+
     def __leave_command(self) -> None:
         """method used to handle the leave command once received by the server"""
         # if the client is not in a game, cancel the handlers operation
@@ -203,33 +222,41 @@ class Client:
         # Alert the client that they have left the game
         self.send("alert", {"message": f"Left game {game_code}"})
         self.logger.info(f"Left game {game_code}")
-    
+
     def __games_command(self) -> None:
         """method used to handle the games command once received by the server"""
         # a list comprehension to create a list of dictionaries containing the game code and player count of all idle lobbies
-        game_list = [{"code": g.settings.code, "player_count": len(g.settings.players)} for g in self.__manager.get_games() if not g.is_active()]
+        game_list = [
+            {"code": g.settings.code, "player_count": len(g.settings.players)}
+            for g in self.__manager.get_games()
+            if not g.is_active()
+        ]
         # send the generated list back to the client who executed the command
         self.send("game_list", {"game_list": game_list})
-    
+
     def __start_command(self) -> None:
         """method used to handle the start command once received by the server"""
         # if the client instances state is not IN_LOBBY, or they are not the owner of the lobby they are in
-        if self.state != State.IN_LOBBY or not self.game or self != self.game.settings.owner:
+        if (
+            self.state != State.IN_LOBBY
+            or not self.game
+            or self != self.game.settings.owner
+        ):
             # return, cancelling the start command
             return
         # otherwise, start a quiz with the current players in the game/lobby
         self.game.start_quiz()
-        
+
     def __username_command(self, *args) -> None:
         """method used to handle the username command once received by the server"""
         # if the clients state is not IN_MENU, or IN_LOBBY
-        if self.state not in (State.IN_MENU, State.IN_LOBBY):#
+        if self.state not in (State.IN_MENU, State.IN_LOBBY):  #
             # return, cancelling the username command
             return
         # otherwise, set the clients username to the specified username
         self.username = " ".join(args)
         self.send("alert", {"message": f"Username set to {self.username}"})
-    
+
     def _get_handler(self, cmd: str) -> dict:
         """method used to fetch a command handler method based on the command that was sent to the server"""
         return {
@@ -241,9 +268,9 @@ class Client:
             "username": self.__username_command
             # fetch a class method based on the passed in 'cmd' argument, otherwise return None
         }.get(cmd)
-    
+
     # command and answer processing methods
-    
+
     def __process_command(self, command: str) -> None:
         """method used to process a command sent to the server
 
@@ -251,7 +278,9 @@ class Client:
             command (str): command string sent to the server from the client
         """
         # sanitise the command string - remove any extra spaces and split the string up into a list of single words
-        sanitised_command: list[str] = (re.sub(' +', ' ', command.strip())).lower().split(" ")
+        sanitised_command: list[str] = (
+            (re.sub(" +", " ", command.strip())).lower().split(" ")
+        )
         # set the first element of the sanitised command list to the 'cmd' variable
         cmd: str = sanitised_command[0]
         # set all elements after the first index (index 0) to the 'args' variable
@@ -260,7 +289,9 @@ class Client:
         handler = self._get_handler(cmd)
         # if there is a handler based on the sent command
         if handler:
-            self.logger.debug(f"Handling command: {cmd}{' '+' '.join(args) if args else ''}")
+            self.logger.debug(
+                f"Handling command: {cmd}{' '+' '.join(args) if args else ''}"
+            )
             try:
                 # try to call the handler method passing in the list of arguments 'args'
                 handler(*args)
@@ -270,8 +301,10 @@ class Client:
                 handler()
         # if the command is not recognised, log an unknown command message
         else:
-            self.logger.error(f"Unknown command: {cmd}{' '+' '.join(args) if args else ''}")
-        
+            self.logger.error(
+                f"Unknown command: {cmd}{' '+' '.join(args) if args else ''}"
+            )
+
     def __process_answer(self, answer: str) -> None:
         """method used to process answers sent by the client when answering questions in a quiz
 
@@ -279,13 +312,13 @@ class Client:
             answer (str): answer string sent to the server from the client
         """
         # sanitise the answer - remove all extra spaces/white space in the string
-        sanitised_answer: str = (re.sub(' +', ' ', answer.strip())).lower()
+        sanitised_answer: str = (re.sub(" +", " ", answer.strip())).lower()
         # pass the sanitised answer to the game instance's answer handler
         # to check whether it is correct and update the leaderboard
         self.game.handle_answer(self, sanitised_answer)
-    
+
     # client interaction methods
-    
+
     def send(self, header: str, data: dict) -> None:
         """method used to to send data back to local clients which are connected to the server
 
@@ -296,9 +329,9 @@ class Client:
         self.logger.debug(f"Sending data: {data}")
         # send a JSON string of the data encoded in UTF-8 to the client socket of the client instance
         self.conn.send(json.dumps({"header": header, "data": data}).encode("utf-8"))
-    
+
     # data receiver methods
-    
+
     def listen(self) -> None:
         """method used to start the client listener which will listen for data (commands and answers)
         sent from clients that are connected to the server"""
@@ -317,7 +350,7 @@ class Client:
                 decoded: dict = json.loads(data)
                 # log the received data
                 self.logger.debug(f"Received data: {decoded}")
-                
+
             # if there is an OSError (usually because of a critical error or client disconnect)
             except OSError as error:
                 # log the error
@@ -341,11 +374,15 @@ class Client:
                 # pass the data into the client instances command processor method
                 self.__process_command(decoded.get("data").get("command"))
             # if the header of the decoded data indicaties that an answer has been sent
-            elif decoded.get("header") == "answer" and self.state == State.IN_GAME and self.game:
+            elif (
+                decoded.get("header") == "answer"
+                and self.state == State.IN_GAME
+                and self.game
+            ):
                 # log the received data/answer
                 self.logger.debug(f"Handling answer: {decoded.get('data')}")
                 # pass the data into the client instances answer processor method
                 self.__process_answer(decoded.get("data").get("answer"))
-                
+
         # when the client listener exits, notify the server manager that the client has disconnected
         self.__manager.client_exit(self)

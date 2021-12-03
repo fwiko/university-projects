@@ -13,11 +13,12 @@ class Manager:
     _next_uid: int = 1
     games: list[game.Game] = []
     clients: list[client.Client] = []
+
     def __init__(self):
         self.logger = Logger(self.__class__.__name__)
-        
+
     # setters
-        
+
     def add_client(self, conn: socket.socket, addr: tuple) -> None:
         """method to add a client to the manager
 
@@ -34,7 +35,7 @@ class Manager:
         # start the new clients listener thread (this will handle all incoming communcation from the client)
         threading.Thread(target=c.listen).start()
         self.logger.debug("Added client {}:{}".format(*c.addr))
-        
+
     def remove_client(self, client: client.Client) -> None:
         """method to remove a client from the manager
 
@@ -68,9 +69,9 @@ class Manager:
             # remove the game object from the list
             self.games.remove(game)
             self.logger.debug(f"Removed game {game.settings.code}")
-    
+
     # getters
-    
+
     def get_games(self) -> list[game.Game]:
         """method to get a list of all games in the manager
 
@@ -78,7 +79,7 @@ class Manager:
             list[game.Game]: list of game objects within the manager storage
         """
         return self.games
-    
+
     def get_clients(self) -> list[client.Client]:
         """method to get a list of all clients in the manager
 
@@ -86,7 +87,7 @@ class Manager:
             list[client.Client]: list of client objects within the manager storage
         """
         return self.clients
-    
+
     def get_game_from_code(self, game_code: str) -> game.Game or None:
         """method to get a game object from the manager based on the game code
 
@@ -98,8 +99,10 @@ class Manager:
         """
         # return the first game object in the manager list of games that has the same code as the passed in game code
         # if one is found, if one cannot be found return None
-        return next((game for game in self.games if game.settings.code == game_code), None)
-    
+        return next(
+            (game for game in self.games if game.settings.code == game_code), None
+        )
+
     def get_client_from_uid(self, client_uid: int) -> client.Client or None:
         """method to get a client object from the manager based on the client uid
 
@@ -109,10 +112,12 @@ class Manager:
         Returns:
             client.Client or None: either the retreived client object if one was found or None
         """
-        return next((client for client in self.clients if client.uid == client_uid), None)
-    
+        return next(
+            (client for client in self.clients if client.uid == client_uid), None
+        )
+
     # manager interaction
-    
+
     def client_exit(self, client: client.Client) -> None:
         """method to handle the exit/disconnection of a client
 
@@ -126,7 +131,7 @@ class Manager:
         if client.game is not None:
             # trigger the client leave event within the game to remove the client from the game
             client.game.client_leave(client)
-        
+
     def game_close(self, g: game.Game) -> None:
         """method to handle the closure of a game/game lobby
 

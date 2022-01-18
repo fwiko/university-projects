@@ -2,7 +2,7 @@ import os
 
 # server addresses
 
-HOST = "127.0.0.1"
+HOST = "vps.ssh"
 PORT = 5050
 
 # logging settings

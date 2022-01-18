@@ -58,11 +58,6 @@ class SessionManager:
 
     def connection_listener(self) -> None:
         """Listener for incoming socket connections"""
-        if not self._host or not self._port:
-            raise ValueError(
-                "Host and port must be set before starting connection listener"
-            )
-
         def listen():
             with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
                 try:

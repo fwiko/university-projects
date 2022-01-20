@@ -1,3 +1,4 @@
+import argparse
 import datetime
 import os
 
@@ -12,8 +13,14 @@ import os
 #     return command, args
 #
 
-def out(message: str) -> None:
-    print(f"\n{message}")
+class Response:
+    @staticmethod
+    def err(message: str) -> None:
+        print(f"\n[-] {message}\n")
+        
+    @staticmethod
+    def out(message: str) -> None:
+        print(f"\n[+] {message}\n")
 
 
 def data_dir() -> str:
@@ -52,3 +59,19 @@ def download_dir() -> str:
     if not os.path.exists(path):
         os.makedirs(path)
     return path
+
+
+def upload_args(arg_string: str) -> tuple[str, str]:
+    """
+    Parses the upload arguments.
+    :param arg_string: The argument string to parse.
+    :return: The file path and remote path.
+    """
+    parser = argparse.ArgumentParser(description='Upload a file to the client.')
+    parser.add_argument("s", help="ID of the session to upload to.")
+    parser.add_argument("-f", "--file", help="The file to upload.", nargs='+')
+    parser.add_argument("-d", "--directory", help="The location to upload to.", nargs='+')
+    
+    return parser.parse_args(arg_string)
+
+print(upload_args(input(">").split(" ")))

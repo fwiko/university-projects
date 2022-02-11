@@ -20,7 +20,7 @@ class ServerInterface:
         self._active = True
         while self._active:
             try:
-                command, *arguments = shlex.split(input("Server> "))
+                command, *arguments = shlex.split(input("Server> "), posix=False)
             except ValueError:
                 # Catch upon an error involving the shlex module (unclosed quotations)
                 continue

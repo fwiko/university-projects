@@ -72,11 +72,7 @@ class Manager:
             longest_id = len(str(max(map(lambda x: x.cid, self._clients))))
             # generator containing formatted strings relative to each client
             sessions = [
-                str(c.cid).ljust(longest_id)
-                + " | "
-                + "{}:{}".format(*c.sock.getpeername())
-                + " | "
-                + stat[1]
+                f"{str(c.cid).ljust(longest_id)} | {'{}:{}'.format(*c.sock.getpeername())} | {stat[1]}ms"
                 for c in self._clients
                 if (stat := c.is_alive())
             ]

@@ -19,6 +19,6 @@ if __name__ == "__main__":
     filetree = defaultdict(list)
     directory = "C:\\"
     if os.path.exists(directory) and os.path.isdir(directory):
-        find(directory=directory, filename="ShareX-Log-2021-08.txt")
+        find(directory=directory, filename="excersise_1.txt")
             
     

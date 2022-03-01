@@ -34,7 +34,7 @@ class Client:
             data (str): The datra to send
             *args: Additional arguments to send
         """
-        self._sock.sendall(json.dumps({"data": data, "args": args}).encode("utf-8"))
+        self._sock.sendall(json.dumps({"cmd": data, "args": args}).encode("utf-8"))
 
     def _receive_file(
         self, file_size: int, *, file_name: str = None, buffer_size: int = 1024
@@ -53,7 +53,7 @@ class Client:
             if not buffer:
                 break
             data.write(buffer)
-            print(f"Status: {file_data.tell()}/{file_size} Bytes", end="\r", flush=True)
+            print(f"Status: {data.tell()}/{file_size} Bytes", end="\r", flush=True)
             if data.tell() == file_size:
                 break
         print("\n", end="\r")
@@ -63,7 +63,7 @@ class Client:
         file_name = date_string.join(os.path.splitext(file_name))
         with open(os.path.join(settings.FILE_DIRECTORY, file_name), "wb") as file:
             file.write(data.getvalue())
-            print(utility.padded(f"File saved as {file_name}"))
+            print(utility.padstr(f"File saved as {file_name}"))
 
     # Command Handling -------------------------------------------------------
 
@@ -120,8 +120,8 @@ class Client:
         start = default_timer()
         try:
             self._send("ping")
-            self._sock.recv(1024)
+            d = self._sock.recv(1024)
         except (OSError, socket.timeout):
             return False  # client is not connected
 
-        return True, round(default_timer() - start)  # client is connected
+        return True, round((default_timer() - start) * 1000)  # client is connected

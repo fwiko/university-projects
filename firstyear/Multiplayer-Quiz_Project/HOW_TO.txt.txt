@@ -1,4 +1,0 @@
-
-Batch file run_test_setup.bat has been included and will load both the server and two clients for testing/demonstration purposes.
-
-To run the client and/or server on demand you can run run_client.bat and run_server.bat respectivley which will run the respective programs in their included virtual environments with all required dependencies pre-installed. Or you can set it up manually.

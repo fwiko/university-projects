@@ -1,9 +1,5 @@
-"""Module containing many multi-purpose functions.
-"""
-
-
-def padded(text: str, padding: int = 1, **kwargs) -> str:
-    """Adds 'padding' to the top and bottop of a string
+def padstring(text: str, padding: int = 1, **kwargs) -> str:
+    """Adds 'padding' to the top and bottom of a string
 
     Args:
         text (str): The string to pad.

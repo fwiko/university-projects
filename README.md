@@ -1,1 +1,2 @@
-Code written for university projects.
+A collection of my university coursework.
+

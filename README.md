@@ -1,2 +1,13 @@
-A collection of my university coursework.
+# **University Coursework**
+A collection of some of my university coursework and projects completed during my time at [Nottingham Trent University](https://www.ntu.ac.uk/).
 
+## First Year
+- [CPD Portfolio Website](/202122/Term1/CPDPortfolio)
+- [Arduino Traffic Light Control System](/202122/Term2/ArduinoTLC/)
+- [Python Remote Access Tool](/202122/Term3/RemoteAccessTool)
+
+## Second Year
+...
+
+## Third Year
+...

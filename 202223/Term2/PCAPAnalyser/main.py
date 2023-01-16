@@ -204,6 +204,10 @@ OPTIONS_MENU = (
     " 5. Exit"
 )
 
+# Read file with list of malicious MD5 hashes
+with open("malicious_hashes.txt", "r") as f:
+    KNOWN_MALICIOUS_HASHES = f.read().splitlines()
+
 # UTILITY ---------------------------------------------------------------
 
 
@@ -731,7 +735,7 @@ def export_http_file_objects(packets: list) -> dict[str, list[str, list]]:
     return exported_objects
 
 
-def save_exported_object_records(exported_objects: dict) -> None:
+def save_object_records(exported_objects: dict) -> None:
     """Save the exported object records to a CSV file
 
     Args:
@@ -744,6 +748,8 @@ def save_exported_object_records(exported_objects: dict) -> None:
         writer.writerow(["Hash", "Name", "Packets"])
         for hash, (name, packets) in exported_objects.items():
             writer.writerow([hash, name, ", ".join([str(p) for p in packets])])
+
+    print(f"\n[+] Exported Object Records to {os.path.abspath('exported_objects.csv')}")
 
 
 # OPTION HANDLERS ----------------------------------------------------------------
@@ -819,6 +825,20 @@ def find_search_engine_handler(pcap_data: bytes, packets: bytes) -> None:
         print(f"    {page}")
 
 
+def export_file_object_handler(packets: list) -> None:
+    exported_objects = export_http_file_objects(packets)
+
+    malicious = [hash for hash in exported_objects if hash in KNOWN_MALICIOUS_HASHES]
+    if len(malicious) > 0:
+        print(f"\n[!] Found {len(malicious)} Potentially Malicious File Object(s)")
+        for hash in malicious:
+            print(
+                f"\n    Hash (MD5).... {hash}\n    Name.......... {exported_objects[hash][0]}\n    Packet(s)..... {', '.join([str(p) for p in exported_objects[hash][1]])}"
+            )
+
+    save_object_records(exported_objects)
+
+
 # MAIN ---------------------------------------------------------------------------
 
 
@@ -864,8 +884,7 @@ def main(pcap_file_path: str) -> None:
         elif option == 3:  # Find Popular Search Engines and Requests
             find_search_engine_handler(pcap_data, packets)
         elif option == 4:  # Export HTTP File Objects and Hashes
-            exported_object_records = export_http_file_objects(packets)
-            save_exported_object_records(exported_object_records)
+            export_file_object_handler(packets)
         elif option == 5:
             break
 

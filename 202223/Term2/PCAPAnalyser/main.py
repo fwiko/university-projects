@@ -1,13 +1,13 @@
+import csv
+import datetime
+import gzip
+import hashlib
+import io
+import mimetypes
 import os
 import re
-import sys
 import struct
-import datetime
-import mimetypes
-import hashlib
-import gzip
-import io
-import csv
+import sys
 
 # CONSTANTS -------------------------------------------------------------------
 
@@ -386,7 +386,7 @@ def inspect_packet(packet_num: int, packet: tuple[tuple[int], bytes]) -> None:
             print(f"\n    ... {len(dhcp_options) - len(known_options)} unknown options")
 
 
-def format_dhcp_option_value(option: dict, value: bytes) -> bytes | str:
+def format_dhcp_option_value(option: dict, value: bytes) -> bytes or str:
     """Decode the value of a DHCP option based on its type.
 
     Args:
@@ -525,6 +525,135 @@ def inspect_search_request(packets: list) -> set[str]:
 # EXPORTING HTTP FILE OBJECTS (PART 5) -------------------------------------------
 
 
+def get_object_packets(packets: list[tuple]) -> list:
+    """Get all packets related to a file object request (HTTP GET request and TCP Segment packets)
+
+    Args:
+        packets (list[tuple]): List of captured packets from the PCAP file
+
+    Returns:
+        list: List of packets associated with a file object request
+    """
+
+    objects = []
+    # Iterate through all packets in the PCAP file
+    for i, (_, data) in enumerate(packets):
+        # Attempt to get the URL path of the HTTP request
+        url_path = re.search(b"GET (\S+)\W", data)
+        # If the URL path is not None, then this is an HTTP GET request
+        if url_path is not None:
+            # Decode the URL path from bytes to a string
+            url_path = url_path.group(1).decode()
+            # Get the sequence number of the HTTP request packet
+            seq_num = int.from_bytes(data[38:42], byteorder="big")
+            # Get the acknowledgement number of the HTTP response (sequence number + length of data)
+            ack_num = seq_num + len(data[54:])
+
+            # Get the numbers of all TCP Segment packets holding file object data
+            related_packet_nums = get_related_packets(packets, i, ack_num)
+            # Get all packets related to the file object request using the packet numbers
+            related_packets = [packets[i] for i in related_packet_nums]
+
+            # Check if the file object request was successful based on the HTTP response code
+            if not is_successful_request(related_packets):
+                # If the request was not successful, skip the file object
+                continue
+
+            # Get the Content-Type of the file object (i.e. image/jpeg)
+            content_type = get_content_type(related_packets)
+            # Extract the file object name from the URL path
+            object_name = os.path.basename(url_path.split("?")[0]) or "unknown"
+            # Get the file extension of the object based on the Content-Type (i.e. .jpg)
+            file_extension = mimetypes.guess_extension(content_type) or ""
+
+            # If the object name does not already have a file extension
+            if not object_name.endswith(file_extension):
+                # Add the file extension to the object name (i.e. image.jpg)
+                object_name += file_extension
+
+            # Add the request packet number, object name, and related packets to the list of objects
+            request_packet_num = related_packet_nums[0] + 1
+            objects.append((request_packet_num, object_name, related_packets))
+
+    # Return the list of file object information
+    return objects
+
+
+def export_http_objects(objects: list) -> dict[str, list[str, list]]:
+    """Export all valid HTTP file objects within a given PCAP file
+
+    Args:
+        packets (list): List of packets from a given PCAP file
+
+    Returns:
+        dict[str, list[str, list]]: Dictionary of unique file objects containing the file name, hash, and associated packets
+    """
+
+    # Dictionary holding md5 hashes, names, and request packets of all exported objects
+    exported_objects = {}
+    # Iterate through the list of all found file object information
+    for req_num, obj_name, obj_packets in objects:
+        # Join the data from all packets holding file object data
+        obj_data = b"".join([packet[1][54:] for packet in obj_packets])
+
+        # Separate the HTTP header from the object data
+        http_header, obj_data = obj_data.split(b"\r\n\r\n", 1)
+        # Check the HTTP header for if the Transfer-Encoding type is "chunked"
+        is_chunked = bool(re.search(b"Transfer-Encoding: chunked", http_header))
+        # If the response is chunked, remove chunk headers, joining chunk data together
+        if is_chunked:
+            obj_data = process_chunked_data(obj_data)
+
+        # If the directory to export objects to does not exist
+        if not os.path.exists("exported_objects"):
+            # Create the directory to export objects to
+            os.mkdir("exported_objects")
+
+        # Build the "relative object name" prepending req_num (e.g. 0001_image.png)
+        max_req_num_len = len(str(max([req_num for req_num, _, _ in objects])))
+        obj_name = f"{req_num:0>{max_req_num_len}}_{obj_name}"
+
+        # If the Content-Encoding of the object is gzip
+        if re.search(b"Content-Encoding: gzip", http_header):
+            compressed_object = io.BytesIO(obj_data)
+            try:
+                # Attempt to decompress the object with the gzip library
+                with gzip.GzipFile(fileobj=compressed_object) as gz:
+                    obj_data = gz.read()
+            except:
+                # If the decompression fails, skip exporting the object
+                continue
+
+        # Calculate the md5 hash of the object
+        obj_hash = hashlib.md5(obj_data).hexdigest()
+
+        # If the file object has already been exported
+        if obj_hash in exported_objects:
+            # Add the request number to the file object record
+            exported_objects[obj_hash][1].append(req_num)
+            # Skip exporting the file object
+            continue
+
+        # Write the file object data to a file in the exported_objects directory
+        with open(f"exported_objects/{obj_name}", "wb") as file:
+            file.write(obj_data)
+
+        # Add the file object to the exported_objects dictionary
+        exported_objects[obj_hash] = [obj_name, [req_num]]
+
+    # If any objects were found and exported
+    if len(exported_objects) > 0:
+        # Print the number of exported objects and the path to the exported_objects directory
+        export_path = os.path.abspath("exported_objects")
+        print(f"\n[+] Exported {len(exported_objects)} File Objects to {export_path}")
+    else:
+        # If no objects were found, print a message to the user
+        print("\n[-] No File Objects Found")
+
+    # Return the dictionary of exported object information (md5 hash, name, and request packet numbers)
+    return exported_objects
+
+
 def get_related_packets(packets: list[tuple], req_num: int, ack_num: int) -> list:
     """Get all packets related to a specified HTTP request based on the ACK number of the responses.
 
@@ -536,14 +665,21 @@ def get_related_packets(packets: list[tuple], req_num: int, ack_num: int) -> lis
     Returns:
         list: List of packets related to the specified HTTP request.
     """
+
     related_packets = []
-    for i, (header, data) in enumerate(packets[req_num + 1 :], req_num + 1):
+    # Iterate through all packets after the initial GET request
+    for i, (_, data) in enumerate(packets[req_num + 1 :], req_num + 1):
+        # If the ACK number of the packet matches the ACK number of the HTTP response (i.e. the packet is a TCP Segment)
         if ack_num == int.from_bytes(data[42:46], byteorder="big"):
+            # Add the packet number to the list of related packets
             related_packets.append(i)
 
+    # If the first packet in the list of related packets is empty
     if not packets[related_packets[0]][1][54:]:
+        # Remove the empty packet from the list of related packets
         return related_packets[1:]
     else:
+        # Return the list of related packets
         return related_packets
 
 
@@ -556,13 +692,17 @@ def is_successful_request(packets: list[tuple]) -> bool:
     Returns:
         int: A boolean value indicating whether the HTTP request was successful.
     """
-    for i, (header, data) in enumerate(packets):
+    # Iterate through all packets associated with the HTTP request
+    for _, data in packets:
+        # If the HTTP response code is 200 (OK)
         if re.search(b"HTTP/\S+\W(200)\W", data) is not None:
+            # Return True
             return True
+    # If the HTTP response code is not 200 (OK), return False
     return False
 
 
-def get_content_type(packets: list[tuple]) -> str | None:
+def get_content_type(packets: list[tuple]) -> str or None:
     """Get the content type of a HTTP GET request.
 
     Args:
@@ -571,58 +711,15 @@ def get_content_type(packets: list[tuple]) -> str | None:
     Returns:
         str | None: String of the content type of the GET request or None if no content type is found.
     """
-    for header, data in packets:
+
+    # Iterate through all packets associated with the HTTP request
+    for _, data in packets:
+        # Search for the Content-Type header in the HTTP response
         content_type = re.search(b"Content-Type:\W(\S+)", data)
+        # If the Content-Type header is found and the content type is not None
         if content_type is not None:
+            # Return the content type
             return content_type.group(1).decode().split(";")[0]
-
-
-def get_file_object_packets(packets: list[tuple]) -> list:
-    """Get all packets related to a file object request (HTTP GET request and TCP Segment packets)
-
-    Args:
-        packets (list[tuple]): List of captured packets from the PCAP file
-
-    Returns:
-        list: List of packets associated with a file object request
-    """
-    file_object_packets = []
-    for i, (header, data) in enumerate(packets):
-        url_path = re.search(b"GET (\S+)\W", data)
-        if url_path is not None:
-
-            # Get the sequence number of the HTTP request packet and the ACK number of the response packet
-            seq_num = int.from_bytes(data[38:42], byteorder="big")
-            ack_num = seq_num + len(data[54:])
-
-            # Get all TCP Segment packets related to this file object request
-            related_packet_nums = get_related_packets(packets, i, ack_num)
-            related_packets = [packets[i] for i in related_packet_nums]
-
-            # If the request was not successful (i.e. 200 OK), skip this file object
-            if not is_successful_request(related_packets):
-                continue
-
-            # Get the contet type, file name, and file extension of the file object
-            content_type = get_content_type(related_packets)
-            file_object_name = (
-                os.path.basename(url_path.group(1).decode().split("?")[0]) or "unknown"
-            )
-            file_extension = mimetypes.guess_extension(content_type) or ""
-
-            # If the file object name does not have a file extension, add the file extension
-            if not file_object_name.endswith(file_extension):
-                file_object_name += file_extension
-
-            # Add the file object to the list of file objects
-            file_object_packets.append(
-                (related_packet_nums[0] + 1, file_object_name, related_packets)
-            )
-
-            # if not re.match("[A-Za-z0-9._-]", file_object_name):
-            #     file_object_name = "unknown"
-
-    return file_object_packets
 
 
 def process_chunked_data(object_data: bytes) -> bytes:
@@ -638,101 +735,21 @@ def process_chunked_data(object_data: bytes) -> bytes:
     chunks = []
     # Separate the first chunk header from the remaining chunk headers and data
     chunk_size, chunk_data = object_data.split(b"\x0d\x0a", 1)
-
-    while True:  # Loop until all chunks have been processed
-
-        # Append the chunk data up to the point of current chunk_size to chunks list
+    # Loop until all chunks have been processed
+    while True:
+        # Add the chunk data up to the point of current chunk_size to chunks list
         chunks.append(chunk_data[: int(chunk_size, 16)])
-
-        # Separate next chunk header from chunk data (move to next chunk if there is one)
+        # Separate next chunk header from chunk data
         chunk_size, *chunk_data = chunk_data[int(chunk_size, 16) + 2 :].split(
             b"\x0d\x0a", 1
         )
-
         # If there is no remaining chunk data, break
         if not chunk_data:
             break
-
         # Join the remaining chunk data together to process the next chunk
         chunk_data = b"".join(chunk_data)
-
     # Join all chunks together to get the complete file object data
     return b"".join(chunks)
-
-
-def export_http_file_objects(packets: list) -> dict[str, list[str, list]]:
-    """Export all valid HTTP file objects within a given PCAP file
-
-    Args:
-        packets (list): List of packets from a given PCAP file
-
-    Returns:
-        dict[str, list[str, list]]: Dictionary of unique file objects containing the file name, hash, and associated packets
-    """
-
-    # Get all packets containing HTTP file objects (e.g. images, PDFs, etc.)
-    file_objects = get_file_object_packets(packets)
-
-    # Keep track of file hashes to avoid duplicates (e.g. same file requested multiple times)
-    exported_objects = {}
-
-    # Iterate over all retreived file objects
-    for req_num, object_name, object_packets in file_objects:
-
-        # Fetch and Join the data from all packets relating to the file object
-        object_data = b""
-        for packet in object_packets:
-            object_data += packet[1][54:]
-
-        # Separate the HTTP header from the file object data
-        http_header, object_data = object_data.split(b"\r\n\r\n", 1)
-
-        # Check the HTTP header to see if the file object is chunked (i.e. sent in multiple packets as chunks)
-        is_chunked = bool(re.search(b"Transfer-Encoding: chunked", http_header))
-
-        # If the response is chunked, process the chunks (Remove chunk size and chunk data headers, joining all chunks together)
-        if is_chunked:
-            object_data = process_chunked_data(object_data)
-
-        # If the directory to export files to does not exist, create it
-        if not os.path.exists("exported_objects"):
-            os.mkdir("exported_objects")
-
-        # Create the relative object name adding the packet number of the request (e.g. 0001_image.png)
-        relative_object_name = f"{req_num:0>{len(str(len(packets)))}}_{object_name}"
-
-        # If the file object is a gzip, inflate it
-        if re.search(b"Content-Encoding: gzip", http_header):
-            compressed_object = io.BytesIO(object_data)
-            try:  # Attempt to decompress the file object with gzip library
-                with gzip.GzipFile(fileobj=compressed_object) as gz:
-                    object_data = gz.read()
-            except:  # If the inflation fails, skip exporting the file object
-                continue
-
-        # Calculate the MD5 hash of the file object data to check for duplicates
-        file_object_hash = hashlib.md5(object_data).hexdigest()
-
-        # If the file object has already been exported, skip it
-        if file_object_hash in exported_objects:
-            exported_objects[file_object_hash][1].append(req_num)
-            continue
-
-        # Write the file object data to a file in the exported_objects directory
-        with open(f"exported_objects/{relative_object_name}", "wb") as file:
-            file.write(object_data)
-
-        # Add the file object to the exported_objects dictionary
-        exported_objects[file_object_hash] = [relative_object_name, [req_num]]
-
-    # Output a message displaying the number of file objects exported and the directory they were exported to
-    if len(exported_objects) > 0:
-        export_path = os.path.abspath("exported_objects")
-        print(f"\n[+] Exported {len(exported_objects)} File Objects to {export_path}")
-    else:
-        print("\n[-] No File Objects Found")
-
-    return exported_objects
 
 
 def save_object_records(exported_objects: dict) -> None:
@@ -742,13 +759,17 @@ def save_object_records(exported_objects: dict) -> None:
         exported_objects (dict): Dictionary containing records of all exported objects
     """
 
-    # Example.csv gets created in the current working directory
+    # Create and open a CSV file to write the exported object records to
     with open("exported_objects.csv", "w", newline="") as csvfile:
+        # Create a CSV writer object with a comma delimiter
         writer = csv.writer(csvfile, delimiter=",")
+        # Write the header row of the CSV file with the column names
         writer.writerow(["Hash", "Name", "Packets"])
+        # Iterate through all exported objects and write the object records to the CSV file
         for hash, (name, packets) in exported_objects.items():
             writer.writerow([hash, name, ", ".join([str(p) for p in packets])])
 
+    # Output the path of the exported object records file to the console
     print(f"\n[+] Exported Object Records to {os.path.abspath('exported_objects.csv')}")
 
 
@@ -826,16 +847,28 @@ def find_search_engine_handler(pcap_data: bytes, packets: bytes) -> None:
 
 
 def export_file_object_handler(packets: list) -> None:
-    exported_objects = export_http_file_objects(packets)
 
-    malicious = [hash for hash in exported_objects if hash in KNOWN_MALICIOUS_HASHES]
-    if len(malicious) > 0:
-        print(f"\n[!] Found {len(malicious)} Potentially Malicious File Object(s)")
-        for hash in malicious:
+    # Get the numbers of all packets associated with HTTP file objects, in order
+    objects = get_object_packets(packets)
+
+    # Process and Export all HTTP file objects based on the lists containing associated packet numbers
+    exported_objects = export_http_objects(objects)
+
+    # Find any potentially malicious file objects based on their hash
+    malicious_hashes = [h for h in exported_objects if h in KNOWN_MALICIOUS_HASHES]
+    # If any potentially malicious file objects were found, output them to the console
+    if len(malicious_hashes) > 0:
+        print(
+            f"\n[!] Found {len(malicious_hashes)} Potentially Malicious File Object(s)"
+        )
+        for hash in malicious_hashes:
             print(
-                f"\n    Hash (MD5).... {hash}\n    Name.......... {exported_objects[hash][0]}\n    Packet(s)..... {', '.join([str(p) for p in exported_objects[hash][1]])}"
+                f"\n    Hash (md5).... {hash}"
+                f"\n    Name.......... {exported_objects[hash][0]}"
+                f"\n    Packet(s)..... {', '.join([str(p) for p in exported_objects[hash][1]])}"
             )
 
+    # Save the exported object records to a CSV file for further analysis
     save_object_records(exported_objects)
 
 
@@ -886,7 +919,9 @@ def main(pcap_file_path: str) -> None:
         elif option == 4:  # Export HTTP File Objects and Hashes
             export_file_object_handler(packets)
         elif option == 5:
-            break
+            return
+
+        input("\nPress Enter to continue...")
 
 
 if __name__ == "__main__":

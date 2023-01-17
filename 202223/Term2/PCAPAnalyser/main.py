@@ -1,3 +1,31 @@
+# Rafferty Simms N0990815 - 202223 - Term 2 - PCAP Analyser - ISYS20301
+
+# DECLARATION OF OWNERSHIP ----------------------------------------------
+
+# 1. I am aware of the University’s rules on plagiarism and collusion and I understand
+# that, if I am found to have broken these rules, it will be treated as Academic
+# Misconduct and dealt with accordingly. I understand that if I lend this piece of work
+# to another student and they copy all or part of it, either with or without my
+# knowledge or permission, I shall be guilty of collusion.
+
+# 2. In submitting this work I confirm that I am aware of, and am abiding by, the
+# University’s expectations for proof-reading.
+
+# 3. I understand that I must submit this coursework by the time and date published. I
+# also understand that if this coursework is submitted late it will, if submitted within 5
+# working days of the deadline date and time, be given a pass mark as a maximum
+# mark. If received more than 5 working days after the deadline date and time, it will
+# receive a mark of 0%. For referred or repeat coursework, I understand that if the
+# coursework is not submitted by the published date and time, a mark of 0% will be
+# automatically awarded.
+
+# 4. I understand that it is entirely my responsibility to ensure that I hand in my full and
+# complete coursework and that any missing pages handed in after the deadline will
+# be disregarded.
+
+# 5. I understand that the above rules apply even in the eventuality of computer or
+# other information technology failures.
+
 import csv
 import datetime
 import gzip
@@ -150,7 +178,7 @@ DATA_LINK_TYPES = {
     296: "AUERSWALD LOG",
 }
 
-# DHCP options that have been individually identified and parsed
+# DHCP options that have been individually identified (Known Options)
 KNOWN_DHCP_OPTIONS = {
     1: {
         "name": "Subnet Mask",
@@ -175,7 +203,7 @@ KNOWN_DHCP_OPTIONS = {
     },
 }
 
-# all possible DHCP Message Types as per RFC 2131 (in order of id number)
+# All possible DHCP Message Types as per RFC 2131 (in order of id number)
 DHCP_MESSAGE_TYPES = (
     "Discover",
     "Offer",
@@ -187,7 +215,7 @@ DHCP_MESSAGE_TYPES = (
     "Inform",
 )
 
-# popular Search Engines to check for in HTTP Requests
+# Popular Search Engine domains to check for in HTTP Requests
 POPULAR_SEARCH_ENGINES = (
     "www.google.com",
     "www.bing.com",
@@ -195,6 +223,7 @@ POPULAR_SEARCH_ENGINES = (
     "www.ask.com",
 )
 
+# Menu options to display for the command-line interface
 OPTIONS_MENU = (
     "\n"
     " 1. Analyse a Packet\n"
@@ -236,18 +265,19 @@ def prompt_number_input(message: str, min_value: int, max_value: int) -> int:
         int: Number entered by the user within the given range.
     """
 
+    # Loop until the user enters a valid number
     while True:
-        try:
+        try:  # Try to convert the user's input to an integer
             user_input = int(input(f"\n[?] {message}: "))
-        except ValueError:
+        except ValueError:  # If the user's input is not a number
             print("\nError: Invalid input. Please try again.")
-        else:
+        else:  # If the user's input is a number
             if user_input < min_value or user_input > max_value:
                 print(
                     f"\nError: Please enter a number between {min_value} and {max_value}"
                 )
                 continue
-        return user_input
+        return user_input  # Return the user's input
 
 
 def process_packets(pcap_data: bytes, endianness: str) -> None:
@@ -258,15 +288,22 @@ def process_packets(pcap_data: bytes, endianness: str) -> None:
         endianness (str): Endianness of the PCAP file.
     """
     packets = []
+    # Skip the global header of the PCAP file
     pointer = 24
+    # While the pointer is not at the end of the PCAP file
     while pointer < len(pcap_data):
+        # Unpack the header of the packet
         header = struct.unpack(
             f"{'<' if endianness == 'little' else '>'}IIII",
             pcap_data[pointer : pointer + 16],
         )
+        # Increment the pointer to the start of the packet data
         pointer += 16
+        # Append the header and data of the packet to the list
         packets.append((header, pcap_data[pointer : pointer + header[2]]))
+        # Increment the pointer to the start of the next packet header
         pointer += header[2]
+    # Return the list of packets
     return packets
 
 
@@ -280,7 +317,7 @@ def parse_url_parameters(url_string: str) -> dict:
         dict: Dictionary of key-value pairs from the URL.
     """
     return dict(
-        map(
+        map(  # Map the key-value URL parameters to a dictionary
             lambda param: param.split("="),
             url_string.split("&"),
         )
@@ -300,8 +337,11 @@ def parse_global_header(header_data: bytes, endianness: str) -> dict:
     Returns:
         dict: Dictionary of decoded Global Header values.
     """
-    endianness_symbol = ">" if endianness == "big" else "<"  # endianness symbol
+    # Determine the endianness symbol based on the endianness of the PCAP file
+    endianness_symbol = ">" if endianness == "big" else "<"
+    # Unpack the global header into a tuple of values
     global_header = struct.unpack(endianness_symbol + "IHHIIII", header_data)
+    # Return the global header as a dictionary
     return {
         "magic_number": global_header[0],
         "version_number": f"{global_header[1]}.{global_header[2]}",
@@ -324,11 +364,11 @@ def get_endianness(magic_number: str) -> str:
     Returns:
         str: String representing the endianness of the PCAP file (little or big).
     """
-    if magic_number == "a1b2c3d4":
+    if magic_number == "a1b2c3d4":  # big endian
         return "big"
-    elif magic_number == "d4c3b2a1":
+    elif magic_number == "d4c3b2a1":  # little endian
         return "little"
-    else:
+    else:  # invalid magic number
         raise ValueError("Invalid magic number")
 
 
@@ -341,12 +381,16 @@ def inspect_packet(packet_num: int, packet: tuple[tuple[int], bytes]) -> None:
     Args:
         packet (tuple[tuple[int], bytes]): tuple containing the packet header and data.
     """
+    # Unpack the packet header and data
     packet_header, packet_data = packet
+    # Convert the timestamp to a Unix timestamp
     unix_timestamp = packet_header[0] + packet_header[1] / 1000000
 
+    # Extract the source and destination ports from the packet data
     src_port = int.from_bytes(packet_data[36:38], byteorder="big")
     dst_port = int.from_bytes(packet_data[34:36], byteorder="big")
 
+    # Print the packet information to the console
     print(
         f"\n[+] Packet {packet_num} Information\n\n"
         f"    Unix Timestamp.............. {unix_timestamp}\n"
@@ -360,29 +404,39 @@ def inspect_packet(packet_num: int, packet: tuple[tuple[int], bytes]) -> None:
         f"    Destination Port............ {dst_port}"
     )
 
+    # If the source or destination port indicates a DHCP packet
     if (src_port == 67 or dst_port == 67) or (src_port == 68 or dst_port == 68):
+        # Parse the DHCP options from the packet data
         dhcp_options = parse_dhcp_options(packet_data)
         longest_name = max(len(opt["name"]) for opt in KNOWN_DHCP_OPTIONS.values())
+        # Filter out unknown DHCP options from the list of known options
         known_options = [opt for opt in dhcp_options if opt[0] in KNOWN_DHCP_OPTIONS]
-
+        # Print the number of DHCP options detected in the packet data
         print(f"\n[!] DHCP Frame Detected with {len(dhcp_options)} Options\n")
 
+        # If no known DHCP options were detected
         if len(known_options) == 0:
+            # Print a message to the console and return
             print("    No known DHCP options detected.")
             return
 
+        # Print the known DHCP options
         for num, data in known_options:
+            # Slice the data based on the start and end indexes of the option
             s = KNOWN_DHCP_OPTIONS[num].get("start", 0)
             e = KNOWN_DHCP_OPTIONS[num].get("end", None)
+            # Format the value of the DHCP option based on its type
             value = format_dhcp_option_value(
                 KNOWN_DHCP_OPTIONS[num],
                 data[s:e],
             )
-
+            # Get the name of the DHCP option and print the name and value to the console
             option_name = KNOWN_DHCP_OPTIONS[num]["name"]
             print(f"    {option_name.ljust(longest_name + 3, '.')} {value}")
 
+        # If there are any unknown DHCP options
         if len(known_options) != len(dhcp_options):
+            # Print the number of unknown options to the console
             print(f"\n    ... {len(dhcp_options) - len(known_options)} unknown options")
 
 
@@ -396,11 +450,15 @@ def format_dhcp_option_value(option: dict, value: bytes) -> bytes or str:
     Returns:
         bytes | str: Decoded value of the DHCP option if it is a known type.
     """
-    if option["type"] == "ip_address":
+
+    if option["type"] == "ip_address":  # if the type is an ip address
+        # Convert octets from hex to decimal and join them with a dot
         value = ".".join(str(octet) for octet in value)
-    elif option["type"] == "message_type":
+    elif option["type"] == "message_type":  # if the type is a message type
+        # Get the message type from the DHCP_MESSAGE_TYPES list
         value = DHCP_MESSAGE_TYPES[value[0] - 1]
-    elif option["type"] == "string":
+    elif option["type"] == "string":  # if the type is a string
+        # Decode the value from bytes to a string
         value = value.decode("utf-8")
 
     return value
@@ -416,15 +474,23 @@ def parse_dhcp_options(packet_data: bytes) -> list[tuple[int, bytes]]:
         list[tuple[int, bytes]]: List of tuples containing the DHCP option number and data.
     """
     dhcp_options = []
-    pointer = 282
+    pointer = 282  # DHCP options start at byte 283 in the packet data (0-indexed)
+    # Iterate through option data until the end of the packet data is reached or the end option is reached
     while pointer < len(packet_data):
+        # Get the option code and data from the current option
         option_code = packet_data[pointer]
-        if option_code == 255:
+        if option_code == 255:  # if the option code is 255 (end option)
+            # Break out of the loop
             break
+
+        # Get the option data from the packet data
         option_data = packet_data[pointer + 2 : pointer + 2 + packet_data[pointer + 1]]
+        # Append the option code and data to the list of DHCP options
         dhcp_options.append((option_code, option_data))
+        # Increment the pointer to the next option
         pointer += 2 + packet_data[pointer + 1]
 
+    # Return the list of DHCP options
     return dhcp_options
 
 
@@ -438,9 +504,11 @@ def prompt_top_level_domain() -> str:
         str: Top-Level Domain input by the user.
     """
     while True:
+        # Prompt the user to input a Top-Level Domain
         top_level_domain = input("\n[?] Enter a Top-Level Domain: ").strip(".").lower()
-        if re.match(r"^[a-z]{2,}$", top_level_domain):
+        if re.match(r"^[a-z]{2,}$", top_level_domain):  # if valid Top-Level Domain
             return top_level_domain
+        # If the Top-Level Domain is invalid
         print("\nError: Invalid Top-Level Domain. Please try again.")
 
 
@@ -454,9 +522,13 @@ def find_url_occurrences(top_level_domain: str, pcap_data: bytes) -> dict:
     Returns:
         list[str]: List of URLs containing the Top-Level Domain.
     """
+    # Find all domains ending with the specified Top-Level Domain
     regex = f"http[s]?://([a-zA-Z0-9-.]+?\.{top_level_domain})\W"
+    # Find all subdirectories of the domains
     visited_domains = {}
+    # Iterate through the domains found
     for domain in set(re.findall(regex.encode(), pcap_data)):
+        # Find all subdirectories of the domain
         subdirectories = map(
             lambda d: d.decode().strip(),
             re.findall(
@@ -464,8 +536,9 @@ def find_url_occurrences(top_level_domain: str, pcap_data: bytes) -> dict:
                 pcap_data,
             ),
         )
+        # Add the domain and subdirectories to the dictionary
         visited_domains[domain.decode()] = set(subdirectories)
-
+    # Return the dictionary of domains and subdirectories
     return visited_domains
 
 
@@ -482,12 +555,16 @@ def find_search_engines(pcap_data: bytes) -> dict[str, set[str]]:
         dict[str, set[str]]: Dictionary of search engine domains and the query paths made to them.
     """
     search_engines = {}
+    # Iterate through the list of popular search engine domains
     for domain in POPULAR_SEARCH_ENGINES:
+        # Find all paths that are not URLs to other domains that are requested to the search engine domain
         regex = rf"http[s]?://{domain}(/(?!http[s]?://)[-a-zA-Z0-9@:%._+~#=?&/]+)"
         search_engine_uses = re.findall(regex.encode(), pcap_data)
+        # If the search engine domain was used in the PCAP file
         if len(search_engine_uses) > 0:
+            # Add the search engine domain and query paths to the dictionary
             search_engines[domain] = list(map(lambda u: u.decode(), search_engine_uses))
-
+    # Return the dictionary of search engine domains and query paths
     return search_engines
 
 
@@ -502,23 +579,28 @@ def get_refered_packets(packets: list, referer_url: str) -> list:
         list: List of packets with a "Referer" header that matches the specified URL.
     """
     refered_packets = []
+    # Iterate through the packets in the PCAP file
     for header, data in packets:
+        # If the packet is an HTTP packet with a "Referer" header that matches the specified URL
         if re.search(
             rf"Referer: http[s]?://\S+{re.escape(referer_url)}".encode(), data
         ):
+            # Add the packet to the list of packets with a "Referer" header that matches the specified URL
             refered_packets.append((header, data))
-
     return refered_packets
 
 
 def inspect_search_request(packets: list) -> set[str]:
     refered_pages = set()
-    for header, data in packets:
+    # Iterate through the packets in the PCAP file
+    for _, data in packets:
+        # Get the page that the search engine request was made to
         page = re.search(b"GET (\S+)\W", data)
-        if page:
+        if page is not None:  # If the packet is an HTTP GET request
+            # Get the domain that the search engine request was made to
             host_domain = re.search(b"Host:\W(\S+)", data).group(1).decode()
+            # Add the page that the search engine request was made to to the list of pages
             refered_pages.add(host_domain + page.group(1).decode())
-
     return refered_pages
 
 
@@ -777,20 +859,37 @@ def save_object_records(exported_objects: dict) -> None:
 
 
 def analyse_packet_handler(packets: list) -> None:
+    """Handles the user input "1" to analyse a packet.
+
+    Args:
+        packets (list): List of packets captured in the PCAP file
+    """
+    # Prompt the user to enter a packet number
     packet_num = prompt_number_input("Enter a Packet Number", 1, len(packets))
+    # Analyse the packet, outputting the results to the console
     inspect_packet(packet_num, packets[packet_num - 1])
 
 
 def domain_search_handler(pcap_data: bytes) -> None:
+    """Handles the user input "2" to search for domains.
+
+    Args:
+        pcap_data (bytes): PCAP file data as bytes
+    """
+    # Prompt the user to enter a top-level domain
     top_level_domain = prompt_top_level_domain()
+    # Search for domains ending in the top-level domain
     matching_domains = find_url_occurrences(top_level_domain, pcap_data)
 
+    # If no domains ending in the top-level domain are found
     if (matches := len(matching_domains)) == 0:
+        # Output a message to the console
         print(f'\n[!] Found no domains ending in ".{top_level_domain}"')
         return
-    else:
+    else:  # Otherwise, output the number of domains found
         print(f'\n[!] Found {matches} domain(s) ending ".{top_level_domain}"')
 
+    # Iterate through all domains ending in the top-level domain and output the results to the console
     for domain, subdirs in matching_domains.items():
         print(f"\n    {domain}")
         for subdir in subdirs:
@@ -798,27 +897,42 @@ def domain_search_handler(pcap_data: bytes) -> None:
 
 
 def find_search_engine_handler(pcap_data: bytes, packets: bytes) -> None:
+    """Handles the user input "3" to find popular search engines.
+
+    Args:
+        pcap_data (bytes): PCAP file data as bytes
+        packets (bytes): List of packets captured in the PCAP file
+    """
+    # Find all popular search engines in the PCAP file
     search_engines = find_search_engines(pcap_data)
 
+    # If no popular search engines are found
     if len(search_engines) == 0:
+        # Output a message to the console
         print("\n[!] Found no popular Search Engines")
         return
 
+    # Otherwise, output the number of popular search engines found
     print(f"\n[!] Found {len(search_engines)} popular Search Engine(s)\n")
+    # Output the popular search engines to the console
     for i, (search_engine, uses) in enumerate(search_engines.items(), 1):
         print(
             f"    {i}) {search_engine} [{len(uses)} Appearance(s), {len(set(uses))} Unique]"
         )
 
+    # Prompt the user to enter a search engine number to inspect
     search_engine_num = prompt_number_input("Inspect Search Engine (0 to cancel)", 0, i)
     if search_engine_num == 0:
         return
 
+    # Get the selected search engine and its requests
     selected, requests = list(search_engines.items())[search_engine_num - 1]
     unique_requests = sorted(set(requests), key=requests.index)
 
+    # Output the selected search engine and its requests to the console
     print(f'\n[!] Requests made with "{selected}" Search Engine')
 
+    # Iterate through all requests made with the selected search engine and output the results to the console
     for i, request in enumerate(unique_requests, 1):
         subdir, query_string = request.split("?")
         parameters = parse_url_parameters(query_string)
@@ -826,27 +940,38 @@ def find_search_engine_handler(pcap_data: bytes, packets: bytes) -> None:
         for key, value in parameters.items():
             print(f"{' ' * 12}{key.ljust(10, '.')} '{value.replace('+', ' ')}'")
 
+    # Prompt the user to enter a search request number to inspect
     request_num = prompt_number_input("Inspect Search Request (0 to cancel)", 0, i)
     if request_num == 0:
         return
 
+    # Get the packets associated with the selected search request
     selected_request = unique_requests[request_num - 1]
     refered_packets = get_refered_packets(packets, selected_request)
 
+    # Get the pages refered by the selected search request
     refered_pages = inspect_search_request(refered_packets)
 
+    # If no pages are refered by the selected search request
     if len(refered_pages) == 0:
+        # Output a message to the console and return
         print(f"\n[!] Found no pages refered by request {request_num}")
         return
-
+    # Otherwise, output the number of pages refered by the selected search request
     print(
         f"\n[!] Found {len(refered_pages)} page(s) refered by request {request_num}\n"
     )
+    # Output the pages refered by the selected search request to the console
     for i, page in enumerate(refered_pages, 1):
         print(f"    {page}")
 
 
 def export_file_object_handler(packets: list) -> None:
+    """Handles the user input "4" to export file objects.
+
+    Args:
+        packets (list): List of packets captured in the PCAP file
+    """
 
     # Get the numbers of all packets associated with HTTP file objects, in order
     objects = get_object_packets(packets)
@@ -876,6 +1001,11 @@ def export_file_object_handler(packets: list) -> None:
 
 
 def main(pcap_file_path: str) -> None:
+    """Primary function to run the program and handle user input.
+
+    Args:
+        pcap_file_path (str): Path of the PCAP file to analyse passed as a command line argument
+    """
     pcap_data = load_pcap(pcap_file_path)
     print(f'[*] Analysing PCAP file "{os.path.basename(pcap_file_path)}"')
 

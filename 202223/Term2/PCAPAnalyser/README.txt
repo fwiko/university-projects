@@ -1,20 +1,28 @@
-Run this program from the command line: "python main.py CyberSecurity2022.pcap"
+!!! Run this program from the command line: "python main.py CyberSecurity2022.pcap" !!!
 
-Requirement 1 - Inspecting Global Header
+---------------------------------------------------------------------------------------
+
+# Requirement 1 - Inspecting Global Header
 
     - Global Header data is output immediately, as soon as the program is run.
 
-Requirement 2 - Inspecting First DHCP Frame
+---------------------------------------------------------------------------------------
+
+# Requirement 2 - Inspecting First DHCP Frame 
 
     1. Choose option 1 (Analyse a Packet)
     2. Choose Packet Number 1 (Enter a Packet Number)
 
-Requirement 3 - Finding Suspicious Domain
+---------------------------------------------------------------------------------------
+
+# Requirement 3 - Finding Suspicious Domain
 
     1. Choose option 2 (Search for Domain(s)/URL(s))
     2. Enter "top" as the Top-Level Domain to search for (Enter a Top-Level Domain)
 
-Requirement 4 - Investigating Search Engines 
+---------------------------------------------------------------------------------------
+
+# Requirement 4 - Investigating Search Engines 
 
     1. Choose option 3 (Find Search Engine(s))
     2. Choose search engine 1 (www.bing.com [41 Appearance(s), 2 Unique])
@@ -29,7 +37,9 @@ Requirement 4 - Investigating Search Engines
             first..... '7'
             FORM...... 'PERE')
 
-Requirement 5 - Additional Features
+---------------------------------------------------------------------------------------
+
+# Requirement 5 - Additional Features
 
     - Command Line Interface is an additional usability Features
     - Option 4 (Export File Objects)

@@ -277,7 +277,9 @@ def prompt_number_input(message: str, min_value: int, max_value: int) -> int:
                     f"\nError: Please enter a number between {min_value} and {max_value}"
                 )
                 continue
-        return user_input  # Return the user's input
+            else:
+                break
+    return user_input  # Return the user's input
 
 
 def process_packets(pcap_data: bytes, endianness: str) -> None:
@@ -506,7 +508,7 @@ def prompt_top_level_domain() -> str:
     while True:
         # Prompt the user to input a Top-Level Domain
         top_level_domain = input("\n[?] Enter a Top-Level Domain: ").strip(".").lower()
-        if re.match(r"^[a-z]{2,}$", top_level_domain):  # if valid Top-Level Domain
+        if re.match(r"^[a-z.]{2,}$", top_level_domain):  # if valid Top-Level Domain
             return top_level_domain
         # If the Top-Level Domain is invalid
         print("\nError: Invalid Top-Level Domain. Please try again.")
@@ -628,10 +630,13 @@ def get_object_packets(packets: list[tuple]) -> list:
             url_path = url_path.group(1).decode()
             # Get the sequence number of the HTTP request packet
             seq_num = int.from_bytes(data[38:42], byteorder="big")
+            # Get the TCP Header Length
+            tcp_header_length = int(data[46] / 4)
             # Get the acknowledgement number of the HTTP response (sequence number + length of data)
-            ack_num = seq_num + len(data[54:])
+            ack_num = seq_num + len(data[34 + tcp_header_length :])
 
             # Get the numbers of all TCP Segment packets holding file object data
+
             related_packet_nums = get_related_packets(packets, i, ack_num)
             # Get all packets related to the file object request using the packet numbers
             related_packets = [packets[i] for i in related_packet_nums]
@@ -676,7 +681,10 @@ def export_http_objects(objects: list) -> dict[str, list[str, list]]:
     # Iterate through the list of all found file object information
     for req_num, obj_name, obj_packets in objects:
         # Join the data from all packets holding file object data
-        obj_data = b"".join([packet[1][54:] for packet in obj_packets])
+        obj_data = b""
+        for packet in obj_packets:
+            tcp_header_length = int(packet[1][46] / 4)
+            obj_data += packet[1][34 + tcp_header_length :]
 
         # Separate the HTTP header from the object data
         http_header, obj_data = obj_data.split(b"\r\n\r\n", 1)
@@ -757,7 +765,8 @@ def get_related_packets(packets: list[tuple], req_num: int, ack_num: int) -> lis
             related_packets.append(i)
 
     # If the first packet in the list of related packets is empty
-    if not packets[related_packets[0]][1][54:]:
+    tcp_header_length = int(packets[related_packets[0]][1][46] / 4)
+    if not packets[related_packets[0]][1][34 + tcp_header_length :]:
         # Remove the empty packet from the list of related packets
         return related_packets[1:]
     else:
@@ -818,18 +827,23 @@ def process_chunked_data(object_data: bytes) -> bytes:
     # Separate the first chunk header from the remaining chunk headers and data
     chunk_size, chunk_data = object_data.split(b"\x0d\x0a", 1)
     # Loop until all chunks have been processed
+
     while True:
         # Add the chunk data up to the point of current chunk_size to chunks list
         chunks.append(chunk_data[: int(chunk_size, 16)])
+
         # Separate next chunk header from chunk data
+
         chunk_size, *chunk_data = chunk_data[int(chunk_size, 16) + 2 :].split(
             b"\x0d\x0a", 1
         )
+
         # If there is no remaining chunk data, break
         if not chunk_data:
             break
         # Join the remaining chunk data together to process the next chunk
         chunk_data = b"".join(chunk_data)
+
     # Join all chunks together to get the complete file object data
     return b"".join(chunks)
 

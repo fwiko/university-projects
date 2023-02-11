@@ -343,7 +343,8 @@ def parse_global_header(header_data: bytes, endianness: str) -> dict:
     # Return the global header as a dictionary
     return {
         "magic_number": global_header[0],
-        "version_number": f"{global_header[1]}.{global_header[2]}",
+        "major_version": global_header[1],
+        "minor_version": global_header[2],
         "time_zone": global_header[3],
         "timestamp_accuracy": global_header[4],
         "snapshot_length": global_header[5],
@@ -1030,7 +1031,8 @@ def main(pcap_file_path: str) -> None:
         "\n"
         f"    Global Header Length.... {len(pcap_data[:24])} Bytes\n"
         f"    Magic Number............ 0x{magic_number} ({endianness.title()}-Endian)\n"
-        f"    Version Number.......... {global_header['version_number']} {'(Latest)' if global_header['version_number'] == '2.4' else ''}\n"
+        f"    Major Version Number.... {global_header['major_version']}\n"
+        f"    Minor Version Number.... {global_header['minor_version']}\n"
         f"    Snapshot Length......... {global_header['snapshot_length']} ({'All Information Captured' if global_header['snapshot_length'] == 65535 else 'Maximum Packet Size'})\n"
         f"    Data Link Type.......... {global_header['data_link_type']} ({DATA_LINK_TYPES.get(global_header['data_link_type'], 'UNKNOWN')})\n"
         f"    Captured Packets........ {len(packets)}",

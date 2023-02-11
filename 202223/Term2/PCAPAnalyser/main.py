@@ -217,7 +217,6 @@ DHCP_MESSAGE_TYPES = (
 
 # Popular Search Engine domains to check for in HTTP Requests
 POPULAR_SEARCH_ENGINES = (
-    "www.google.com",
     "www.bing.com",
     "www.yahoo.com",
     "www.ask.com",
@@ -273,9 +272,7 @@ def prompt_number_input(message: str, min_value: int, max_value: int) -> int:
             print("\nError: Invalid input. Please try again.")
         else:  # If the user's input is a number
             if user_input < min_value or user_input > max_value:
-                print(
-                    f"\nError: Please enter a number between {min_value} and {max_value}"
-                )
+                print(f"\nError: Please enter a number between {min_value} and {max_value}")
                 continue
             else:
                 break
@@ -584,9 +581,7 @@ def get_refered_packets(packets: list, referer_url: str) -> list:
     # Iterate through the packets in the PCAP file
     for header, data in packets:
         # If the packet is an HTTP packet with a "Referer" header that matches the specified URL
-        if re.search(
-            rf"Referer: http[s]?://\S+{re.escape(referer_url)}".encode(), data
-        ):
+        if re.search(rf"Referer: http[s]?://\S+{re.escape(referer_url)}".encode(), data):
             # Add the packet to the list of packets with a "Referer" header that matches the specified URL
             refered_packets.append((header, data))
     return refered_packets
@@ -834,9 +829,7 @@ def process_chunked_data(object_data: bytes) -> bytes:
 
         # Separate next chunk header from chunk data
 
-        chunk_size, *chunk_data = chunk_data[int(chunk_size, 16) + 2 :].split(
-            b"\x0d\x0a", 1
-        )
+        chunk_size, *chunk_data = chunk_data[int(chunk_size, 16) + 2 :].split(b"\x0d\x0a", 1)
 
         # If there is no remaining chunk data, break
         if not chunk_data:
@@ -930,9 +923,7 @@ def find_search_engine_handler(pcap_data: bytes, packets: bytes) -> None:
     print(f"\n[!] Found {len(search_engines)} popular Search Engine(s)\n")
     # Output the popular search engines to the console
     for i, (search_engine, uses) in enumerate(search_engines.items(), 1):
-        print(
-            f"    {i}) {search_engine} [{len(uses)} Appearance(s), {len(set(uses))} Unique]"
-        )
+        print(f"    {i}) {search_engine} [{len(uses)} Appearance(s), {len(set(uses))} Unique]")
 
     # Prompt the user to enter a search engine number to inspect
     search_engine_num = prompt_number_input("Inspect Search Engine (0 to cancel)", 0, i)
@@ -972,9 +963,7 @@ def find_search_engine_handler(pcap_data: bytes, packets: bytes) -> None:
         print(f"\n[!] Found no pages refered by request {request_num}")
         return
     # Otherwise, output the number of pages refered by the selected search request
-    print(
-        f"\n[!] Found {len(refered_pages)} page(s) refered by request {request_num}\n"
-    )
+    print(f"\n[!] Found {len(refered_pages)} page(s) refered by request {request_num}\n")
     # Output the pages refered by the selected search request to the console
     for i, page in enumerate(refered_pages, 1):
         print(f"    {page}")
@@ -997,9 +986,7 @@ def export_file_object_handler(packets: list) -> None:
     malicious_hashes = [h for h in exported_objects if h in KNOWN_MALICIOUS_HASHES]
     # If any potentially malicious file objects were found, output them to the console
     if len(malicious_hashes) > 0:
-        print(
-            f"\n[!] Found {len(malicious_hashes)} Potentially Malicious File Object(s)"
-        )
+        print(f"\n[!] Found {len(malicious_hashes)} Potentially Malicious File Object(s)")
         for hash in malicious_hashes:
             print(
                 f"\n    Hash (md5).... {hash}"

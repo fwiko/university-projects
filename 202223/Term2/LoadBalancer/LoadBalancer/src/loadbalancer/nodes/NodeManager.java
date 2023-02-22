@@ -1,4 +1,4 @@
-package loadbalancer;
+package loadbalancer.nodes;
 
 import java.util.LinkedHashMap;
 

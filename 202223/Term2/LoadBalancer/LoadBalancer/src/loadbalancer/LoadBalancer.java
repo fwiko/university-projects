@@ -1,5 +1,8 @@
 package loadbalancer;
 
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+
 public class LoadBalancer {
 
     public static void main(String[] args) {
@@ -10,25 +13,33 @@ public class LoadBalancer {
         }
         
         // Process the input port number that Server will listen for Messages on
-        int port = 0;
+        int portNumber = 0;
         try {
-            port = Integer.parseInt(args[0]);
+            portNumber = Integer.parseInt(args[0]);
         } catch (NumberFormatException e) {
-            System.out.println("Error: Input \"" + args[0] + "\" is not a valid Integer.");
+            System.err.println("Error: Input \"" + args[0] + "\" is not a valid Integer.");
+            System.exit(0);
+        }
+        
+        // Configure the IP address that the server will listen for Messages on
+        InetAddress ipAddress = null;
+        try {
+            ipAddress = InetAddress.getLocalHost();
+        } catch (UnknownHostException e) {
+            System.err.println("Error: Failed to get LocalHost address.");
             System.exit(0);
         }
         
         // Initialise a new Server/Listener instance
-        Server listenerServer = new Server(port);
-        
-        // Start the Server to listen for and handle Messages from Initiator and Node(s)
+        Server listenerServer = null;
         try {
-            listenerServer.start();
+            listenerServer = new Server(ipAddress.getHostAddress(), portNumber);
         } catch (IllegalArgumentException e) {
-            System.out.println(e.getMessage());
+            System.err.println(e.getMessage());
             System.exit(0);
         }
         
+        // Start the Server to listen for and handle Messages from Initiator and Node(s)
+        listenerServer.start();
     }
-    
 }

@@ -17,6 +17,9 @@ public class Message {
     public Message(String messageString, String separator) {
         String[] params = messageString.split(separator);
         messageInstruction = params[0];
+        
+        
+        
         messageParameters = Arrays.copyOfRange(params, 1, params.length);
     }
 }

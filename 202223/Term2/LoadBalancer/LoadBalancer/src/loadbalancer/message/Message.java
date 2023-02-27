@@ -4,15 +4,20 @@
  */
 package loadbalancer.message;
 
+import java.util.Arrays;
+
 /**
  *
  * @author fwiko
  */
 public class Message {
+    protected String instructionString = "";
     private String[] messageParameters = null;
     
     public Message(String messageString, String separator) {
-        messageParameters = messageString.split(separator);
+        String[] messageElements = messageString.split(separator);
+        instructionString = messageElements[0];
+        messageParameters = Arrays.copyOfRange(messageElements, 1, messageString.length() + 1);
     }
     
     public String[] getParameters() {

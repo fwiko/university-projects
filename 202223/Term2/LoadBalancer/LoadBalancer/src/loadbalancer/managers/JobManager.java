@@ -4,6 +4,8 @@
  */
 package loadbalancer.managers;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -21,7 +23,8 @@ public class JobManager {
     private static JobManager instance;
     
     private final LinkedList<Job> jobQueue;
-    private final LinkedHashMap<Job, Integer> allocatedJobs;
+    private final ArrayList<Job> allocatedJobs;
+    private final HashMap<Integer, Integer> jobAllocations;
     
     // Mutexes used for exclusive access to jobQueue and allocatedJobs
     private final Object queueMutexLock = new Object();
@@ -33,7 +36,8 @@ public class JobManager {
     
     private JobManager() {
         this.jobQueue = new LinkedList<>();
-        this.allocatedJobs = new LinkedHashMap<>();
+        this.allocatedJobs = new ArrayList<>();
+        this.jobAllocations = new LinkedHashMap<>();
         
         this.messageManager = MessageManager.getInstance();
     }
@@ -63,21 +67,32 @@ public class JobManager {
     public void allocateJob(Job job, Node node) {
         // Add the new Job allocation to the LinkedHashMap of allocated Jobs
         synchronized (allocMutexLock) {
-            allocatedJobs.put(job, node.getIdNum());
+            jobAllocations.put(job.getId(), node.getIdNum());
+            allocatedJobs.add(job);
         }
         
         // Send the Job allocation Message to the Node
-        MessageOutbound newJobMessage = new MessageOutbound(MessageTypeOutbound.UNKNOWN, ",", job.getId().toString(), job.getExecutionTime().toString());
+        MessageOutbound newJobMessage = new MessageOutbound(MessageTypeOutbound.NEW_JOB, ",", job.getId().toString(), job.getExecutionTime().toString());
         messageManager.sendMessage(newJobMessage, node.getIpAddr(), node.getPortNum());
     }
     
 
     public void deallocateJob(Job job) {
-        allocatedJobs.remove(job);
+        synchronized (allocMutexLock) {
+            jobAllocations.remove(job.getId());
+            allocatedJobs.remove(job);
+        }
     }
     
-    public void deallocateJobById(int jobId) {
-        
+    public Job getAllocatedJobById(int jobId) {
+        synchronized (allocMutexLock) {
+            for (Job job : allocatedJobs) {
+                if (job.getId() == jobId) {
+                    return job;
+                }
+            }
+        }
+        return null;
     }
     
     public Job getNextJob() {
@@ -95,10 +110,12 @@ public class JobManager {
     
     public List getNodeJobs(Node node) {
         // Return a list of Jobs allocated to a specific Node
-        return allocatedJobs
-                .entrySet()
-                .stream()
-                .filter(allocation -> allocation.getValue().equals(node.getIdNum()))
-                .collect(Collectors.toList());
+        synchronized (allocMutexLock) {
+            return jobAllocations
+                    .entrySet()
+                    .stream()
+                    .filter(allocation -> allocation.getValue().equals(node.getIdNum()))
+                    .collect(Collectors.toList());
+        }
     }
 }

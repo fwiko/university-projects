@@ -14,6 +14,6 @@ public enum MessageTypeInbound {
     NEW_JOB,
     FIN_JOB,
     ACK_IS_ALIVE,
-    STOPPED_NODE,
+    EXITED_NODE,
     STOP_SYSTEM,
 }

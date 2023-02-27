@@ -111,8 +111,9 @@ public class Server {
 
                 // If an initiator has already been registered - send failure message and stop
                 if (initiatorRegistered) {
-                    MessageOutbound registerFailureMessage = new MessageOutbound(MessageTypeOutbound.UNKNOWN, ",");
+                    MessageOutbound registerFailureMessage = new MessageOutbound(MessageTypeOutbound.REG_INITIATOR_FAILURE, ",");
                     messageManager.sendMessage(registerFailureMessage, tempInitiatorIpAddress, tempInitiatorPortNumber);
+                    System.err.println("Server (Error): There is already a registered Initiator");
                     break;
                 } 
                 
@@ -120,84 +121,119 @@ public class Server {
                 initiatorIpAddress = tempInitiatorIpAddress;
                 initiatorPortNumber = tempInitiatorPortNumber;
 
-                
                 // Send a success message to the initiator
-                MessageOutbound registerSuccessMessage = new MessageOutbound(MessageTypeOutbound.UNKNOWN, ",");
+                MessageOutbound registerSuccessMessage = new MessageOutbound(MessageTypeOutbound.REG_INITIATOR_SUCCESS, ",");
                 messageManager.sendMessage(registerSuccessMessage, initiatorIpAddress, initiatorPortNumber);
 
                 // Set the initiator as registered
                 initiatorRegistered = true;
+                
+                System.out.println("Server (Info): Initiator has sucessfully registered");
             }
             case REG_NODE -> {
                 if (message.getParameters().length < 3) {
-                    System.err.println("Server (Error): Failed to register Node - Not enough parameters");
+                    System.err.println("Server (Error): Failed to register Node (Not enough parameters)");
                     break;
                 }
                 
+                // Attempt to convert the Port Number parameter of the REG_NODE Message to an Integer
                 int port = 0;
                 try {
                     portNumber = Short.parseShort(message.getParameter(1));
                 } catch (NumberFormatException e) {
-                    System.err.println(String.format("Server (Error): Failed to register Node - %s is not a valid port number", message.getParameter(1)));
+                    System.err.println(String.format("Server (Error): Failed to register Node (%s is not a valid Port Number)", message.getParameter(1)));
                 }
                 
+                // Attempt to convert the Capacity parameter of the REG_NODE Message to an Integer
                 int capacity = 0;
                 try {
                     capacity = Integer.parseInt(message.getParameter(2));
                 } catch (NumberFormatException e) {
-                    System.err.println(String.format("Server (Error): Failed to register Node - %s is not a valid integer", message.getParameter(1)));
+                    System.err.println(String.format("Server (Error): Failed to register Node (Capacity \"%s\" is not a valid Integer)", message.getParameter(1)));
                 }
                 
+                // Register the new Node with the Node Manager
                 nodeManager.registerNode(message.getParameter(0), port, capacity);
             }
             case NEW_JOB -> {
                 if (message.getParameters().length < 1) {
-                    System.err.println("Server (Error): Failed to queue Job - Not enough parameters");
+                    System.err.println("Server (Error): Failed to queue Job (Not enough parameters)");
                     break;
                 }
                 
+                // Attempt to convert the Execution Time parameter of the NEW_JOB Message to an Integer
                 int executionTime = 0;
                 try {
                     executionTime = Integer.parseInt(message.getParameter(0));
                 } catch (NumberFormatException e) {
-                    System.err.println(String.format("Server (Error): Failed to queue Job - %s is not a valid integer", message.getParameter(0)));
+                    System.err.println(String.format("Server (Error): Failed to queue Job (Execution time \"%s\" is not a valid Integer)", message.getParameter(0)));
                     break;
                 }
                 
+                // Add the new Job to the Job Manager's queue
                 jobManager.queueJob(executionTime);
             }
             case FIN_JOB -> {
                 if (message.getParameters().length < 1) {
-                    System.err.println("Server (Error): Failed to handle finished Job - Not enough parameters");
+                    System.err.println("Server (Error): Failed to handle finished Job (Not enough parameters)");
                     break;
                 }
                 
+                // Attempt to convert the Job ID parameter of the FIN_JOB Message to an Integer
                 int jobId = 0;
                 try {
                     jobId = Integer.parseInt(message.getParameter(0));
                 } catch (NumberFormatException e) {
-                    System.err.println("Server (Error): Failed to handle finished Job - Invalid Job ID");
+                    System.err.println("Server (Error): Failed to handle finished Job (Invalid Job ID)");
                     break;
                 }
                 
-                jobManager.deallocateJobById(jobId);
+                // Get the Job object associated with the given Job ID from the Job Manager
+                Job job = jobManager.getAllocatedJobById(jobId);
+                if (job == null) {
+                    System.err.println(String.format("Server (Error): Failed to handle finished Job (Allocated Job with ID %d does not exist)", jobId));
+                    break;
+                }
                 
-                // Send a Job finished message to the initiator
-                MessageOutbound jobFinishedMessage = new MessageOutbound(MessageTypeOutbound.UNKNOWN, ",", String.valueOf(jobId));
+                // De-allocate the Job - removing it from the Job Manager
+                jobManager.deallocateJob(job);
+                
+                // Send a FIN_JOB Message to the Initiator
+                MessageOutbound jobFinishedMessage = new MessageOutbound(MessageTypeOutbound.FIN_JOB, ",", String.valueOf(jobId));
                 messageManager.sendMessage(jobFinishedMessage, initiatorIpAddress, initiatorPortNumber);
             }
             case ACK_IS_ALIVE -> {
-                // Node Manager Add Strike
-                // Node Manager Get Strikes
-                // If Strikes hit threshold remove node
+                if (message.getParameters().length < 1) {
+                    System.err.println("Server (Error): Failed to handle alive acknowledgement (Not enough parameters)");
+                    break;
+                }
+                
+                // Attempt to convert the Node ID parameter of the ACK_IS_ALIVE Message to an Integer
+                int nodeId = -1;
+                try {
+                    nodeId = Integer.parseInt(message.getParameter(0));
+                } catch (NumberFormatException e) {
+                    System.err.println("Server (Error): Failed to handle alive acknowledgement (Invalid Node ID)");
+                    break;
+                }
+                
+                // Get the Node object associated with the given Node ID from the Node Manager
+                Node node = nodeManager.getNodeById(nodeId);
+                if (node == null) {
+                    System.err.println(String.format("Server (Error): Failed to handle alive acknowledgement (Node with ID %d no longer exists)", nodeId));
+                    break;
+                }
+                
+                // Reset the warnings (three warning system) of the Node that sent the ACK_IS_ALIVE Message
+                nodeManager.resetWarnings(node);
             }
-            case STOPPED_NODE -> {
+            case EXITED_NODE -> {
                 if (message.getParameters().length < 1) {
                     System.err.println("Server (Error): Failed to remove Node - Not enough parameters");
                     break;
                 }
                 
-                // Try to parse the nodeId parameter of the message
+                // Attempt to convert the Node ID parameter of the EXITED_NODE Message to an Integer
                 int nodeId = 0;
                 try {
                     nodeId = Integer.parseInt(message.getParameter(0));
@@ -206,19 +242,16 @@ public class Server {
                     break;
                 }
                 
-                // Retreive the Node object associated with the specified Node ID
+                // Get the Node object associated with the given Node ID from the Node Manager
                 Node stoppedNode = nodeManager.getNodeById(nodeId);
                 if (stoppedNode == null) {
                     System.err.println(String.format("Server (Error): Failed to remove Node - Could not find Node with ID %d", nodeId));
                     return;
                 }
                 
-                // If the Load-Balancer system is still running - re-allocate any Jobs the Node was handling
-                if (running) {
-                    // RE-ALLOCATE JOBS
-                }
+                // Re-allocate any Jobs the Node was handling
                 
-                // Remove/unregister the Node
+                // Remove/unregister the Node from the Node Manager
                 nodeManager.removeNode(nodeId);
             }
             case STOP_SYSTEM -> {

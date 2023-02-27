@@ -1,12 +1,14 @@
 package loadbalancer.managers;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import loadbalancer.node.Node;
 
 public class NodeManager {
     private static NodeManager instance;
     
     private final ArrayList<Node> registeredNodes;
+    private final HashMap<Node, Integer> nodeWarnings;
     
     private int nextNodeId = 1;
     
@@ -14,6 +16,7 @@ public class NodeManager {
     
     private NodeManager() {
         this.registeredNodes = new ArrayList<>();
+        this.nodeWarnings = new HashMap<>();
     }
     
     public static NodeManager getInstance() {
@@ -37,6 +40,7 @@ public class NodeManager {
         // Add the new Node to the list of Nodes and increment the next Node ID value
         registeredNodes.add(newNode);
         nextNodeId += 1;
+        nodeWarnings.put(newNode, 0);
         
         System.out.println(String.format("Node Manager (Info): Registered Node %d from %s:%d", newNode.getIdNum(), newNode.getIpAddr(), newNode.getPortNum()));
     }
@@ -48,6 +52,7 @@ public class NodeManager {
                 // if the Node object's ID matches the specified idNum - remove it from the list
                 if (node.getIdNum() == idNumber) {
                     registeredNodes.remove(node);
+                    nodeWarnings.remove(node);
                 }
             }
         }
@@ -84,5 +89,13 @@ public class NodeManager {
     
     private void sortNodes() {
         registeredNodes.sort((n1, n2) -> Float.compare(n1.getUsage(), n2.getUsage()));
+    }
+    
+    public void resetWarnings(Node node) {
+        nodeWarnings.put(node, 0);
+    }
+    
+    public void incrementWarnings(Node node) {
+        nodeWarnings.put(node, nodeWarnings.getOrDefault(node, 0) + 1);
     }
 }

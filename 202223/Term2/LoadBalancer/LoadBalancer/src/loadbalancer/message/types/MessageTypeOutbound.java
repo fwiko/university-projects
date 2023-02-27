@@ -9,5 +9,10 @@ package loadbalancer.message.types;
  * @author fwiko
  */
 public enum MessageTypeOutbound {
-    UNKNOWN
+    REG_INITIATOR_FAILURE,
+    REG_INITIATOR_SUCCESS,
+    REG_NODE_FAILURE,
+    REG_NODE_SUCCESS,
+    NEW_JOB,
+    FIN_JOB,
 }

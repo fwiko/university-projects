@@ -16,6 +16,6 @@ public class MessageInbound extends Message {
     }
     
     public MessageTypeInbound getType() {
-        return MessageTypeInbound.valueOf(getParameter(0));
+        return MessageTypeInbound.valueOf(instructionString);
     }   
 }

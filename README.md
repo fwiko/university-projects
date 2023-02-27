@@ -8,7 +8,8 @@ A collection of some of my university coursework and projects completed during m
 - [Python Remote Access Tool](/202122/Term3/RemoteAccessTool)
 
 ## Second Year
-...
+- [PCAP File Analyser](/202223/Term2/PCAPAnalyser)
+- [Load Balancer](/202223/Term2/LoadBalancer)
 
 ## Third Year
 ...

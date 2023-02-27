@@ -31,15 +31,15 @@ public class LoadBalancer {
         }
         
         // Initialise a new Server/Listener instance
-        Server listenerServer = null;
+        Server loadBalancerServer = null;
         try {
-            listenerServer = new Server(ipAddress.getHostAddress(), portNumber);
+            loadBalancerServer = new Server(ipAddress.getHostAddress(), portNumber);
         } catch (IllegalArgumentException e) {
             System.err.println(e.getMessage());
             System.exit(0);
         }
         
         // Start the Server to listen for and handle Messages from Initiator and Node(s)
-        listenerServer.start();
+        loadBalancerServer.start();
     }
 }

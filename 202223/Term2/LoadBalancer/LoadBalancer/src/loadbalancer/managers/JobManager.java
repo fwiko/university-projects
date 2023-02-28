@@ -5,8 +5,6 @@
 package loadbalancer.managers;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -24,39 +22,39 @@ public class JobManager {
     
     private final LinkedList<Job> jobQueue;
     private final ArrayList<Job> allocatedJobs;
-    private final HashMap<Integer, Integer> jobAllocations;
     
     // Mutexes used for exclusive access to jobQueue and allocatedJobs
-    private final Object queueMutexLock = new Object();
-    private final Object allocMutexLock = new Object();
+    private final Object jobQueueLock = new Object();
+    private final Object allocatedJobsLock = new Object();
     
+    // Message manager singleton class instance
     private final MessageManager messageManager;
     
+    // Next Job ID to assign to a Job
     private int nextJobId = 1;
     
     private JobManager() {
         this.jobQueue = new LinkedList<>();
         this.allocatedJobs = new ArrayList<>();
-        this.jobAllocations = new LinkedHashMap<>();
-        
         this.messageManager = MessageManager.getInstance();
     }
 
     public static JobManager getInstance() {
+        // If the JobManager instance already exists, return the instance
         if (instance != null) {
             return instance;
         }
+        // If the JobManager instance does not exist, create a new instance
         instance = new JobManager();
         return instance;
     }
-    
 
     public void queueJob(int executionTime) {
         // Create a new Job object
         Job newJob = new Job(nextJobId, executionTime);
         
         // Add the new Job object to the Job queue LinkedList
-        synchronized (queueMutexLock) {
+        synchronized (jobQueueLock) {
             jobQueue.add(newJob);
         }
         
@@ -66,28 +64,24 @@ public class JobManager {
     
     public void allocateJob(Job job, Node node) {
         // Add the new Job allocation to the LinkedHashMap of allocated Jobs
-        synchronized (allocMutexLock) {
-            jobAllocations.put(job.getId(), node.getIdNum());
+        synchronized (allocatedJobsLock) {
             allocatedJobs.add(job);
+            job.setHandlerNodeId(node.getIdNum());
         }
-        
-        // Send the Job allocation Message to the Node
-        MessageOutbound newJobMessage = new MessageOutbound(MessageTypeOutbound.NEW_JOB, ",", job.getId().toString(), job.getExecutionTime().toString());
-        messageManager.sendMessage(newJobMessage, node.getIpAddr(), node.getPortNum());
     }
     
 
     public void deallocateJob(Job job) {
-        synchronized (allocMutexLock) {
-            jobAllocations.remove(job.getId());
+        synchronized (allocatedJobsLock) {
+            // Remove the specified Job from the allocatedJobs ArrayList
             allocatedJobs.remove(job);
         }
     }
     
-    public Job getAllocatedJobById(int jobId) {
-        synchronized (allocMutexLock) {
+    public Job getAllocatedJobById(int jobIdNumber) {
+        synchronized (allocatedJobsLock) {
             for (Job job : allocatedJobs) {
-                if (job.getId() == jobId) {
+                if (job.getIdNumber() == jobIdNumber) {
                     return job;
                 }
             }
@@ -96,26 +90,24 @@ public class JobManager {
     }
     
     public Job getNextJob() {
-        // Fetch, Return, and Remove the first element of the Job queue
-        synchronized (queueMutexLock) {
+        synchronized (jobQueueLock) {
+            // Fetch and Remove the first element of the jobQueue LinkedList
             return jobQueue.pollFirst();
         }
     }
     
-    public int getNumberOfNodeJobs(Node node) {
-        // Return the number of Jobs allocated to a specific Node
-        return getNodeJobs(node).size();
-    }
-    
-    
     public List getNodeJobs(Node node) {
-        // Return a list of Jobs allocated to a specific Node
-        synchronized (allocMutexLock) {
-            return jobAllocations
-                    .entrySet()
+        synchronized (allocatedJobsLock) {
+            // Return a filtered List of Jobs containing only those allocated to the specified Node
+            return allocatedJobs
                     .stream()
-                    .filter(allocation -> allocation.getValue().equals(node.getIdNum()))
+                    .filter(allocJob -> allocJob.getHandlerNodeId() == node.getIdNum())
                     .collect(Collectors.toList());
         }
+    }
+    
+    public int getNumberOfNodeJobs(Node node) {
+        // Return the number of Jobs allocated to the specified Node
+        return getNodeJobs(node).size();
     }
 }

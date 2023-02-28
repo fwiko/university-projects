@@ -12,7 +12,7 @@ public class NodeManager {
     
     private int nextNodeId = 1;
     
-    private final Object mutexLock = new Object();
+    private final Object registeredNodesLock = new Object();
     
     private NodeManager() {
         this.registeredNodes = new ArrayList<>();
@@ -46,7 +46,7 @@ public class NodeManager {
     }
     
     public void removeNode(int idNumber) {
-        synchronized (mutexLock) {
+        synchronized (registeredNodesLock) {
             // Iterate through the list of registered Nodes
             for (Node node : registeredNodes) {
                 // if the Node object's ID matches the specified idNum - remove it from the list
@@ -61,7 +61,7 @@ public class NodeManager {
     public Node getNextNode() {
         // If the list of registered Nodes is not empty
         if (!registeredNodes.isEmpty()) {
-            synchronized (mutexLock) {
+            synchronized (registeredNodesLock) {
                 // Sort the list of nodes by usage in ascending order
                 sortNodes();
                 // If the first element in the sorted list is at under 100% usage - return it
@@ -75,7 +75,7 @@ public class NodeManager {
     }
     
     public Node getNodeById(int idNumber) {
-        synchronized (mutexLock) {
+        synchronized (registeredNodesLock) {
             // Iterate through the list of registered Nodes
             for (Node node : registeredNodes) {
                 // if the Node object's ID matches the specified idNum - return the Node
@@ -91,11 +91,15 @@ public class NodeManager {
         registeredNodes.sort((n1, n2) -> Float.compare(n1.getUsage(), n2.getUsage()));
     }
     
+    public int getWarnings(Node node) {
+        return nodeWarnings.getOrDefault(node, 0);
+    }
+    
     public void resetWarnings(Node node) {
         nodeWarnings.put(node, 0);
     }
     
     public void incrementWarnings(Node node) {
-        nodeWarnings.put(node, nodeWarnings.getOrDefault(node, 0) + 1);
+        nodeWarnings.put(node, getWarnings(node) + 1);
     }
 }

@@ -43,15 +43,16 @@ public class Initiator {
         
         byte[] buffer = new byte[1024];
         
-        MessageOutbound message = new MessageOutbound(MessageTypeOutbound.REG_INITIATOR, ",", ipAddress.getHostAddress(), String.valueOf(recPort));
+        MessageOutbound message = new MessageOutbound(MessageTypeOutbound.STOP_SYSTEM, ",", ipAddress.getHostAddress(), String.valueOf(recPort));
         buffer = message.packString(",").getBytes();
         
         InetAddress initiatorIpAddress;
         try {
-            initiatorIpAddress = InetAddress.getByName("192.168.0.12");
+            initiatorIpAddress = InetAddress.getLocalHost();
         } catch (UnknownHostException e) {
             e.printStackTrace();
-            return;}
+            return;
+        }
         
         DatagramPacket packet = new DatagramPacket(buffer, buffer.length, initiatorIpAddress, port);
         System.out.println("Sender: Ready to send on " + socket.getLocalAddress().toString() + " port: " + socket.getLocalPort());

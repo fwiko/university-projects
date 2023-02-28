@@ -24,7 +24,7 @@ public class Server {
     private DatagramSocket socket = null;
     private boolean running = true;
     
-    // Manager Instances
+    // Manager singleton class instances
     private MessageManager messageManager;
     private JobManager jobManager;
     private NodeManager nodeManager;
@@ -61,8 +61,12 @@ public class Server {
             // Retreive and Handle the next Message - using FIFO approach to get next Message
             MessageInbound nextMessage = messageManager.getNextMessage();
             if (nextMessage != null) {
+                System.out.println(String.format("Server (Info): Received %s Message", nextMessage.getType().toString()));
                 handleMessage(nextMessage);
+                
             }
+            
+            if (!running) { break; }
             
             // Retreive the next Job - using FIFO approach to get next Job from the Job queue
             Job nextJob = jobManager.getNextJob();
@@ -75,7 +79,11 @@ public class Server {
             nextNode = nodeManager.getNextNode();
             if (nextNode != null) {
                 // Allocate the new Job  to the next Node on the Job Manager
-                jobManager.allocateJob(nextJob, nextNode);  
+                jobManager.allocateJob(nextJob, nextNode);
+                
+                // Send the Job allocation Message to the Node
+                MessageOutbound newJobMessage = new MessageOutbound(MessageTypeOutbound.NEW_JOB, ",", String.valueOf(nextJob.getIdNumber()), String.valueOf(nextJob.getExecutionTime()));
+                messageManager.sendMessage(newJobMessage, nextNode.getIpAddr(), nextNode.getPortNum());
             }
         }
     }
@@ -255,7 +263,10 @@ public class Server {
                 nodeManager.removeNode(nodeId);
             }
             case STOP_SYSTEM -> {
+                System.out.println("stopping");
+                messageManager.stop();
                 running = false;
+                break;
             }
             default -> throw new AssertionError();
         }

@@ -9,5 +9,6 @@ package initiator.message.types;
  * @author fwiko
  */
 public enum MessageTypeOutbound {
-    REG_INITIATOR
+    REG_INITIATOR,
+    STOP_SYSTEM
 }

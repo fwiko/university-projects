@@ -19,10 +19,21 @@ import loadbalancer.message.MessageOutbound;
 public class MessageManager {
     private static MessageManager instance;
     
-    private final LinkedList<MessageInbound> receivedMessages = new LinkedList<>();
+    // Message Queue LinkedList to be queried FIFO to handle next Message
+    private final LinkedList<MessageInbound> messageQueue;
+    
+    // Thread that will listen for incoming Messages from the Initiator and Node(s)
     private Thread messageReceiver;
-    private DatagramSocket serverSocket = null;
-    private final Object mutexLock = new Object();
+    
+    // Socket that the Load-Balancer will receive and send Message through
+    private DatagramSocket serverSocket;
+    
+    // Mutex used for exclusive access to messageQueue
+    private final Object messageQueueLock = new Object();
+    
+    private MessageManager() {
+        this.messageQueue = new LinkedList<>();
+    }
     
     public static MessageManager getInstance() {
         if (instance != null) {
@@ -85,18 +96,18 @@ public class MessageManager {
     }
     
     private void addMessage(MessageInbound message) {
-        // Use a Mutex to ensure exclusive access to the receivedMessages LinkedList
-        synchronized (mutexLock) {
-            // Add the new MessageInbound object to the receivedMessages LinkedList
-            receivedMessages.add(message);
+        // Use a Mutex to ensure exclusive access to the messageQueue LinkedList
+        synchronized (messageQueueLock) {
+            // Add the new MessageInbound object to the messageQueue LinkedList
+            messageQueue.add(message);
         }
     }
     
     public MessageInbound getNextMessage() {
-        // Use a Mutex to ensure exclusive access to the receivedMessages LinkedList
-        synchronized (mutexLock) {
-            // Fetch, Return, and Remove the first item of the receivedMessages LinkedList
-            return receivedMessages.pollFirst();
+        // Use a Mutex to ensure exclusive access to the messageQueue LinkedList
+        synchronized (messageQueueLock) {
+            // Fetch, Return, and Remove the first item of the messageQueue LinkedList
+            return messageQueue.poll();
         }
     }
     

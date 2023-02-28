@@ -9,7 +9,7 @@ import time
 from PIL import ImageGrab
 from pynput import keyboard
 
-HOST = "vps.ssh"
+HOST = "localhost"
 PORT = 1337
 
 

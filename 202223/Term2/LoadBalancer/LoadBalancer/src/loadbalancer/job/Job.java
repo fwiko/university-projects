@@ -4,24 +4,32 @@
  */
 package loadbalancer.job;
 
-/**
- *
- * @author fwiko
- */
 public class Job {
-    private int jobId = 0;
+    // Job information properties
+    private int jobIdNumber = 0;
     private int executionTime = 0;
     
-    public Job(int jobId, int executionTime) {
-        this.jobId = jobId;
+    // Node allocation information
+    private int handlerNodeId = -1;
+    
+    public Job(int jobIdNumber, int executionTime) {
+        this.jobIdNumber = jobIdNumber;
         this.executionTime = executionTime;
     }
     
-    public Integer getId() {
-        return jobId;
+    public int getIdNumber() {
+        return jobIdNumber;
     }
     
-    public Integer getExecutionTime() {
+    public int getExecutionTime() {
         return executionTime;
+    }
+    
+    public void setHandlerNodeId(int nodeId) {
+        this.handlerNodeId = nodeId;
+    }
+    
+    public int getHandlerNodeId() {
+        return handlerNodeId;
     }
 }

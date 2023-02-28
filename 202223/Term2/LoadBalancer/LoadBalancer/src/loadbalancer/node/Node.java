@@ -5,6 +5,8 @@ import java.net.UnknownHostException;
 import loadbalancer.managers.JobManager;
 
 public class Node {
+    
+    // Node infomation properties
     private final int idNum;
     private final int maxCapacity;
     private InetAddress ipAddress;

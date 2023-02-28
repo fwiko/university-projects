@@ -9,8 +9,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
 import loadbalancer.job.Job;
-import loadbalancer.message.MessageOutbound;
-import loadbalancer.message.types.MessageTypeOutbound;
+import loadbalancer.messages.MessageOutbound;
+import loadbalancer.messages.types.MessageOutboundType;
 import loadbalancer.node.Node;
 
 /**
@@ -49,7 +49,7 @@ public class JobManager {
         return instance;
     }
 
-    public void queueJob(int executionTime) {
+    public Job queueNewJob(int executionTime) {
         // Create a new Job object
         Job newJob = new Job(nextJobId, executionTime);
         
@@ -60,6 +60,8 @@ public class JobManager {
         
         // Increment the next Job ID value
         nextJobId += 1;
+        
+        return newJob;
     }
     
     public void allocateJob(Job job, Node node) {

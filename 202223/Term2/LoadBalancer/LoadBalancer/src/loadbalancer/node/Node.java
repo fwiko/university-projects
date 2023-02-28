@@ -12,12 +12,12 @@ public class Node {
     private InetAddress ipAddress;
     private int portNumber;
 
-    public Node(int idNum, String ipAddress, int portNumber, int maxCapacity) {
+    public Node(int idNum, InetAddress ipAddress, int portNumber, int maxCapacity) {
         this.idNum = idNum;
         this.maxCapacity = maxCapacity;
         
-        setIpAddress(ipAddress);
-        setPortNumber(idNum);
+        this.ipAddress = ipAddress;
+        this.portNumber = portNumber;
     }
     
     public int getIdNum() {

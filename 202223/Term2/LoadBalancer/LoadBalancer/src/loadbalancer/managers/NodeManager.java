@@ -1,5 +1,6 @@
 package loadbalancer.managers;
 
+import java.net.InetAddress;
 import java.util.ArrayList;
 import java.util.HashMap;
 import loadbalancer.node.Node;
@@ -27,22 +28,19 @@ public class NodeManager {
         return instance;
     }
     
-    public void registerNode(String ipAddress, int portNumber, int maxCapacity) {
+    public Node registerNode(InetAddress ipAddress, int portNumber, int maxCapacity) {
         // Attempt to create a new Node object with the given IP Address, Port Number, and Maximum Capacity
         Node newNode = null;
-        try {
-            newNode = new Node(nextNodeId, ipAddress, portNumber, maxCapacity);
-        } catch (IllegalArgumentException e) {
-            System.out.println(String.format("Node Manager (Error): Failed to register new Node (%s)", e.getMessage()));
-            return;
-        }
+        newNode = new Node(nextNodeId, ipAddress, portNumber, maxCapacity);
         
         // Add the new Node to the list of Nodes and increment the next Node ID value
         registeredNodes.add(newNode);
         nextNodeId += 1;
         nodeWarnings.put(newNode, 0);
         
-        System.out.println(String.format("Node Manager (Info): Registered Node %d from %s:%d", newNode.getIdNum(), newNode.getIpAddr(), newNode.getPortNum()));
+        System.out.println(String.format("Node Manager (Info): Successfully registered Node %d on socket %s:%d", newNode.getIdNum(), newNode.getIpAddr(), newNode.getPortNum()));
+        
+        return newNode;
     }
     
     public void removeNode(int idNumber) {

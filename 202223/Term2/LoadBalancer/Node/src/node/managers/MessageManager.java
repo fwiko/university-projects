@@ -1,27 +1,36 @@
-package loadbalancer.managers;
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
+ */
+package node.managers;
 
 import java.io.IOException;
+import static java.lang.Thread.interrupted;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.StandardProtocolFamily;
 import java.nio.ByteBuffer;
 import java.nio.channels.DatagramChannel;
 import java.util.LinkedList;
-import loadbalancer.messages.MessageInbound;
-import loadbalancer.messages.MessageOutbound;
+import node.messages.MessageInbound;
+import node.messages.MessageOutbound;
 
+/**
+ *
+ * @author fwiko
+ */
 public class MessageManager {
     private static MessageManager instance;
 
     private Thread messageReceiver = null;
     private DatagramChannel datagramChannel = null;
-
+    
     // Linked List data structure used to store yet to be processed Messages
     private LinkedList<MessageInbound> messageQueue;
 
     // Mutexes used to provide exclusive access to the messageQueue Linked List
     private final Object messageQueueLock = new Object();
-
+    
     private MessageManager() {
         messageQueue = new LinkedList<>();
     }
@@ -33,7 +42,7 @@ public class MessageManager {
         instance = new MessageManager();
         return instance;
     }
-
+    
     public void start(InetAddress ipAddress, int portNumber) throws IOException {
             datagramChannel = DatagramChannel.open(StandardProtocolFamily.INET)
                     .bind(new InetSocketAddress(ipAddress, portNumber));
@@ -64,7 +73,9 @@ public class MessageManager {
 
                     // If the Message is not empty, create a new MessageInbound Object using "," as a separator
                     if (!messageString.isEmpty()) {
-                        queueMessage(new MessageInbound(messageString));
+                        MessageInbound newMessage = new MessageInbound(messageString);
+                        System.out.printf("Message Manager (Info): Received new %s Message\n", newMessage.getType().toString());
+                        queueMessage(newMessage);
                     }
                 }
             }

@@ -4,42 +4,38 @@ import java.net.InetAddress;
 import java.net.UnknownHostException;
 
 public class LoadBalancer {
-
     public static void main(String[] args) {
-        // Attempt to retrieve the first input argument (port number)
+        int portNumber = -1;
+        InetAddress ipAddress = null;
+
+        // If an insufficient number of arguments have been passed
         if (args.length < 1) {
             System.out.println("Usage: java loadbalancer <port>");
             System.exit(0);
         }
-        
-        // Process the input port number that Server will listen for Messages on
-        int portNumber = 0;
+
+        // Parse the input Port Number that the Load-Balancer Server will listen for Messages on
         try {
             portNumber = Integer.parseInt(args[0]);
         } catch (NumberFormatException e) {
-            System.err.println("Error: Input \"" + args[0] + "\" is not a valid Integer.");
+            System.err.println("Load-Balancer (Error): Port must be an Integer");
             System.exit(0);
         }
-        
-        // Configure the IP address that the server will listen for Messages on
-        InetAddress ipAddress = null;
+
+        // Set the IP Address that the Load-Balancer Server will listen for Messages on
         try {
             ipAddress = InetAddress.getLocalHost();
         } catch (UnknownHostException e) {
-            System.err.println("Error: Failed to get LocalHost address.");
+            System.err.println("Load-Balancer (Error): Failed to fetch Local Host Address");
             System.exit(0);
         }
-        
-        // Initialise a new Server/Listener instance
-        Server loadBalancerServer = null;
+
+        // Create a new LoadBalancerServer instance used to process incoming Messages and allocate Jobs
+        LoadBalancerServer loadBalancerServer = LoadBalancerServer.getInstance();
         try {
-            loadBalancerServer = new Server(ipAddress.getHostAddress(), portNumber);
+            loadBalancerServer.start(ipAddress, portNumber);
         } catch (IllegalArgumentException e) {
-            System.err.println(e.getMessage());
-            System.exit(0);
+            System.err.printf("Load-Balancer (Error): Failed to start Load-Balancer Server (%s)\n", e.getMessage());
         }
-        
-        // Start the Server to listen for and handle Messages from Initiator and Node(s)
-        loadBalancerServer.start();
     }
 }

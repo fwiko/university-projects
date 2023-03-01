@@ -12,22 +12,19 @@ import node.messages.MessageInbound;
 import node.messages.MessageOutbound;
 
 public class MessageManager {
-    //
+    // Singleton instance of MessageManager
     private static MessageManager instance;
     
-    //
+    // Thread used to receive Messages - to stop blocking
     private Thread messageReceiver = null;
     
-    //
-    private boolean running = false;
-    
-    //
+    // DatagramChannel to send and receive datagram packets
     private DatagramChannel datagramChannel = null;
     
-    //
+    // LinkedList of received Message objects yet to be handled
     private final LinkedList<MessageInbound> messageQueue;
     
-    //
+    // Mutex object used for exclusive access to the messageQueue LinkedList
     private final Object messageQueueLock = new Object();
     
     private MessageManager() {
@@ -35,20 +32,23 @@ public class MessageManager {
     }
 
     public static MessageManager getInstance() {
+        // If an instance of the MessageManager already exists
         if (instance != null) {
             return instance;
         }
+        // Create a new instance of the MessageManager
         instance = new MessageManager();
         return instance;
     }
     
     public void start(InetAddress ipAddress, int portNumber) throws IOException {
-        //
+        // Open the DatagramChannel and bind to the specified IP Address and Port Number of the Node
         datagramChannel = DatagramChannel.open(StandardProtocolFamily.INET)
                 .bind(new InetSocketAddress(ipAddress, portNumber));
+        // Set the DatagramChannel to non-blocking
         datagramChannel.configureBlocking(false);
         
-        //
+        // Begin to receive Messages from the Load-Balancer
         receive();
     }
 
@@ -56,8 +56,6 @@ public class MessageManager {
         messageReceiver = new Thread() {
             @Override
             public void run() {
-                //
-                running = true;
                 
                 System.out.printf("MessageManager - INFO: Listening for Messages on socket %s:%s\n", datagramChannel.socket().getLocalAddress().getHostAddress(), datagramChannel.socket().getLocalPort());
                 
@@ -72,7 +70,6 @@ public class MessageManager {
                     } catch (IOException e) {
                         System.out.println("MessageManager - ERROR: IOException when receiving Message");
                         messageReceiver.interrupt();
-                        running = false;
                         break;
                     }
                     
@@ -125,15 +122,12 @@ public class MessageManager {
     }
 
     public void stop() {
-        //
+        // 
         messageReceiver.interrupt();
-        
-        //
-        running = false;
     }
     
     public boolean isStopped() {
         //
-        return messageReceiver.isInterrupted() || !running;
+        return messageReceiver.isInterrupted();
     }
 }

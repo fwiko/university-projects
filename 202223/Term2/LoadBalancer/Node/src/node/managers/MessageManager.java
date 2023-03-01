@@ -63,10 +63,10 @@ public class MessageManager {
                 
                 //
                 while (!interrupted()) {
-                    //
+                    // ByteBuffer object used to store up to 1024 Bytes of data (similar to byte[])
                     ByteBuffer buffer = ByteBuffer.allocate(1024);
                     
-                    //
+                    // Receive incoming Messages through the DatagramChannel and write their contents to the buffer
                     try {
                         datagramChannel.receive(buffer);
                     } catch (IOException e) {
@@ -94,13 +94,10 @@ public class MessageManager {
     }
 
     public void sendMessage(MessageOutbound message, InetAddress ipAddress, int portNumber){
-        //
-        byte[] messageBytes = message.packString().getBytes();
+        // Pack the Message object into a String, Encode the String as Bytes and store in the BytesBuffer buffer
+        ByteBuffer buffer = ByteBuffer.wrap(message.packString().getBytes());
         
-        //
-        ByteBuffer buffer = ByteBuffer.wrap(messageBytes);
-        
-        //
+        // Attempt to send the Message across the DatagramChannel datagramChannel to the specified IP Address and Port Number (Load-Balancer)
         try {
             datagramChannel.send(buffer, new InetSocketAddress(ipAddress, portNumber));
         } catch (IOException e) {

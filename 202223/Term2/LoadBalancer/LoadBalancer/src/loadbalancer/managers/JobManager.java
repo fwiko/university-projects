@@ -9,8 +9,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
 import loadbalancer.job.Job;
-import loadbalancer.messages.MessageOutbound;
-import loadbalancer.messages.types.MessageOutboundType;
 import loadbalancer.node.Node;
 
 /**
@@ -67,6 +65,9 @@ public class JobManager {
     public void allocateJob(Job job, Node node) {
         // Add the new Job allocation to the LinkedHashMap of allocated Jobs
         synchronized (allocatedJobsLock) {
+            synchronized (jobQueueLock) {
+                jobQueue.remove(job);
+            }
             allocatedJobs.add(job);
             job.setHandlerNodeId(node.getIdNum());
         }
@@ -93,8 +94,8 @@ public class JobManager {
     
     public Job getNextJob() {
         synchronized (jobQueueLock) {
-            // Fetch and Remove the first element of the jobQueue LinkedList
-            return jobQueue.pollFirst();
+            // Fetch (don't remove) the first element of the jobQueue LinkedList
+            return jobQueue.peekFirst();
         }
     }
     

@@ -63,6 +63,10 @@ public class LoadBalancerServer {
             System.out.println(e);
         }
         
+        jobManager.queueNewJob(10);
+        jobManager.queueNewJob(10);
+        jobManager.queueNewJob(10);
+        
         while (running) {
             // Retreive the next Message - from the Message Manager's Message queue
             MessageInbound nextMessage = messageManager.getNextMessage();
@@ -81,7 +85,7 @@ public class LoadBalancerServer {
             // If the system is no longer running (being shut down) - break out of the loop
             if (!running) { break; }
             
-            // Retreive the next queued Job - from the Job Manager's Job queue
+            // Retreive the next queued Job - from the Job Manager's Job queue - this does not remove the element so that if a Node isn't available the Job will remain (Atomic)
             Job nextJob = jobManager.getNextJob();
             
             // If the Job Manager's Job queue was empty (no pending Jobs) - reset to the top of the loop
@@ -290,7 +294,9 @@ public class LoadBalancerServer {
                 running = false;
                 break;
             }
-            default -> throw new AssertionError();
+            default -> {
+                //
+            }
         }
     }
     

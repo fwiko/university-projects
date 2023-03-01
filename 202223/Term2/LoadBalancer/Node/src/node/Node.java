@@ -31,7 +31,7 @@ public class Node {
         
         // Set the Port Number that the Node Client will listen for Messages on
         try {
-            portNumber = Integer.parseInt(args[0]);
+            portNumber = Integer.parseInt(args[1]);
         } catch (NumberFormatException e) {
             System.err.printf("Node (Error): Invalid Node Port Number %s\n", args[1]);
             System.exit(0);

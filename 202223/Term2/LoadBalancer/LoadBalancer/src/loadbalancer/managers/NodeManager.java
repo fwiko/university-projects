@@ -36,7 +36,7 @@ public class NodeManager {
         // Start the keep alive Timer loop for the new Node to send IS_ALIVE Messages
         newNode.keepAlive();
         
-        System.out.printf("NodeManager - INFO: Registered Node %d on socket %s:%d", newNode.getIdNumber(), newNode.getIpAddr(), newNode.getPortNum());
+        System.out.printf("NodeManager - INFO: Registered Node %d on socket %s:%d\n", newNode.getIdNumber(), newNode.getIpAddr().getHostAddress(), newNode.getPortNum());
         return newNode;
     }
     

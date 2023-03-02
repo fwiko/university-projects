@@ -1,4 +1,4 @@
-package loadbalancer.managers;
+package initiator.managers;
 
 import java.io.IOException;
 import static java.lang.Thread.interrupted;
@@ -8,8 +8,8 @@ import java.net.StandardProtocolFamily;
 import java.nio.ByteBuffer;
 import java.nio.channels.DatagramChannel;
 import java.util.LinkedList;
-import loadbalancer.messages.MessageInbound;
-import loadbalancer.messages.MessageOutbound;
+import initiator.messages.MessageInbound;
+import initiator.messages.MessageOutbound;
 
 public class MessageManager {
     // Singleton instance of MessageManager

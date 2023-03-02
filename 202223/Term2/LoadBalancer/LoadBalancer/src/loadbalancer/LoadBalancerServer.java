@@ -65,9 +65,9 @@ public class LoadBalancerServer {
             System.out.println(e);
         }
         
-        jobManager.queueNewJob(1000);
-        jobManager.queueNewJob(30);
-        jobManager.queueNewJob(10);
+        jobManager.createNewJob(1000);
+        jobManager.createNewJob(30);
+        jobManager.createNewJob(10);
         
         while (running) {
             // Retreive the next Message - from the Message Manager's Message queue
@@ -224,7 +224,7 @@ public class LoadBalancerServer {
                 }
                 
                 // Queue the new Job with the JobManager
-                Job job = jobManager.queueNewJob(executionTime);
+                Job job = jobManager.createNewJob(executionTime);
                 
                 // Send a NEW_JOB_SUCCESS Message to the Initiator
                 MessageOutbound newJobSuccessMessage = new MessageOutbound(MessageOutboundType.NEW_JOB_SUCCESS, String.valueOf(job.getIdNumber()));
@@ -295,6 +295,9 @@ public class LoadBalancerServer {
                 // Send STOP_NODE Messages to all registered Nodes
                 MessageOutbound stopNodeMessage = new MessageOutbound(MessageOutboundType.STOP_NODE);
                 for ( Node node : registeredNodes ) {
+                    // Stop the Node's keep alive timer Thread
+                    node.stopKeepAliveThread();
+                    
                     messageManager.sendMessage(stopNodeMessage, node.getIpAddr(), node.getPortNum());
                 }
                 

@@ -43,19 +43,23 @@ public class JobManager {
         return instance;
     }
 
-    public Job queueNewJob(int executionTime) {
+    public Job createNewJob(int executionTime) {
         // Create a new Job object
         Job newJob = new Job(nextJobId, executionTime);
         
         // Add the new Job object to the Job queue LinkedList
-        synchronized (jobQueueLock) {
-            jobQueue.add(newJob);
-        }
+        queueJob(newJob);
         
         // Increment the next Job ID value
         nextJobId += 1;
         
         return newJob;
+    }
+    
+    public void queueJob(Job job) {
+        synchronized (jobQueueLock) {
+            jobQueue.add(job);
+        }
     }
     
     public void allocateJob(Job job, Node node) {
@@ -95,7 +99,7 @@ public class JobManager {
         }
     }
     
-    public List getNodeJobs(Node node) {
+    public List<Job> getNodeJobs(Node node) {
         synchronized (allocatedJobsLock) {
             // Return a filtered List of Jobs containing only those allocated to the specified Node
             return allocatedJobs

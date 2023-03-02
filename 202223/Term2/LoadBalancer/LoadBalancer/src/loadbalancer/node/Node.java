@@ -3,6 +3,7 @@ package loadbalancer.node;
 import java.net.InetAddress;
 import java.util.Timer;
 import java.util.TimerTask;
+import loadbalancer.job.Job;
 import loadbalancer.managers.JobManager;
 import loadbalancer.managers.MessageManager;
 import loadbalancer.managers.NodeManager;
@@ -18,6 +19,7 @@ public class Node {
     
     private NodeManager nodeManager = null;
     private MessageManager messageManager = null;
+    private JobManager jobManager = null;
     
     // Warnings for no response to IS_ALIVE Messages
     private int warnings = 0;
@@ -32,6 +34,7 @@ public class Node {
         
         nodeManager = NodeManager.getInstance();
         messageManager = MessageManager.getInstance();
+        jobManager = JobManager.getInstance();
     }
     
     public int getIdNumber() {
@@ -87,14 +90,23 @@ public class Node {
         }, 10000, 10000);
     }
     
+    public void stopKeepAliveThread() {
+        warningTimer.cancel();
+        warningTimer.purge();
+    }
+    
     private void unregisterSelf() {
         // Unregister (remove) Node from the NodeManager
         nodeManager.unregisterNode(this);
+        
+        for (Job job : jobManager.getNodeJobs(this)) {
+            jobManager.deallocateJob(job);
+            jobManager.queueJob(job);
+        }
     }
     
     public void resetWarnings() {
         // Reset Node's warnings to zero (0)
         warnings = 0;
-        
     }
 }

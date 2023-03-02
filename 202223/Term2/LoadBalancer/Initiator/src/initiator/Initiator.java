@@ -4,8 +4,8 @@
  */
 package initiator;
 
-import initiator.message.MessageOutbound;
-import initiator.message.types.MessageTypeOutbound;
+import initiator.messages.MessageOutbound;
+import initiator.messages.types.MessageOutboundType;
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
@@ -40,12 +40,7 @@ public class Initiator {
         } catch (SocketException e) {
             e.printStackTrace();
             return;}
-        
-        byte[] buffer = new byte[1024];
-        
-        MessageOutbound message = new MessageOutbound(MessageTypeOutbound.STOP_SYSTEM, ",", ipAddress.getHostAddress(), String.valueOf(recPort));
-        buffer = message.packString(",").getBytes();
-        
+
         InetAddress initiatorIpAddress;
         try {
             initiatorIpAddress = InetAddress.getLocalHost();
@@ -54,14 +49,9 @@ public class Initiator {
             return;
         }
         
-        DatagramPacket packet = new DatagramPacket(buffer, buffer.length, initiatorIpAddress, port);
-        System.out.println("Sender: Ready to send on " + socket.getLocalAddress().toString() + " port: " + socket.getLocalPort());
-
-        try {
-            socket.send(packet);
-        } catch (IOException e) {
-            
-        }
+        InitiatorClient initiatorClient = new InitiatorClient();
+        initiatorClient.start(initiatorIpAddress, recPort, initiatorIpAddress, recPort);
+        
     }
     
 }

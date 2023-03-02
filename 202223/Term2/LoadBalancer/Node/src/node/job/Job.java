@@ -23,6 +23,7 @@ public class Job {
                     Thread.sleep(executionTime * 1000);
                 } catch (InterruptedException e) {
                     status = JobStatus.INTERRUPTED;
+                    return;
                 }
                 status = JobStatus.FINISHED;
             }

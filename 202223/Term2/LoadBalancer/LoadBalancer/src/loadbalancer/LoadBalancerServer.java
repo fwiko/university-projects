@@ -63,8 +63,8 @@ public class LoadBalancerServer {
             System.out.println(e);
         }
         
-        jobManager.queueNewJob(10);
-        jobManager.queueNewJob(10);
+        jobManager.queueNewJob(1000);
+        jobManager.queueNewJob(30);
         jobManager.queueNewJob(10);
         
         while (running) {
@@ -78,7 +78,7 @@ public class LoadBalancerServer {
                 try {
                     handleMessage(nextMessage);
                 } catch (IllegalArgumentException e) {
-                    System.err.printf("Load-Balanacer Server (Error): Failed to handle %s Message (%s)", nextMessage.getType().toString(), e.getMessage());
+                    System.err.printf("Load-Balanacer Server (Error): Failed to handle %s Message (%s)\n", nextMessage.getType().toString(), e.getMessage());
                 }
             }
             
@@ -192,7 +192,7 @@ public class LoadBalancerServer {
                 Node node = nodeManager.registerNode(nodeIpAddress, nodePortNumber, nodeCapacity);
                 
                 // Send a REG_NODE_SUCCESS Message to the Node
-                MessageOutbound registerSuccessMessage = new MessageOutbound(MessageOutboundType.REG_NODE_SUCCESS, String.valueOf(node.getIdNum()));
+                MessageOutbound registerSuccessMessage = new MessageOutbound(MessageOutboundType.REG_NODE_SUCCESS, String.valueOf(node.getIdNumber()));
                 messageManager.sendMessage(registerSuccessMessage, nodeIpAddress, nodePortNumber);
                 
                 break;
@@ -294,9 +294,7 @@ public class LoadBalancerServer {
                 running = false;
                 break;
             }
-            default -> {
-                //
-            }
+            default -> throw new IllegalArgumentException(String.format("Unknown instruction"));
         }
     }
     

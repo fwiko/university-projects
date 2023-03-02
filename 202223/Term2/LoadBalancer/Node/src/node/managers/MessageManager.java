@@ -13,7 +13,7 @@ import node.messages.MessageOutbound;
 
 public class MessageManager {
     // Singleton instance of MessageManager
-    private static MessageManager instance;
+    private static MessageManager instance = null;
     
     // Thread used to receive Messages - to stop blocking
     private Thread messageReceiver = null;
@@ -59,13 +59,14 @@ public class MessageManager {
                 
                 System.out.printf("MessageManager - INFO: Listening for Messages on socket %s:%s\n", datagramChannel.socket().getLocalAddress().getHostAddress(), datagramChannel.socket().getLocalPort());
                 
-                //
+                // While the messageReceiver Thread has not been interrupted
                 while (!interrupted()) {
                     // ByteBuffer object used to store up to 1024 Bytes of data (similar to byte[])
                     ByteBuffer buffer = ByteBuffer.allocate(1024);
                     
-                    // Receive incoming Messages through the DatagramChannel and write their contents to the buffer
+                    // Attempt to receive incoming Message through the DatagramChannel
                     try {
+                        // Write the received Message contents to the buffer
                         datagramChannel.receive(buffer);
                     } catch (IOException e) {
                         System.out.println("MessageManager - ERROR: IOException when receiving Message");
@@ -73,25 +74,29 @@ public class MessageManager {
                         break;
                     }
                     
-                    //
+                    // Convert the contents of the buffer to a String and remove white-space
                     String messageString = new String(buffer.array()).trim();
+                    
+                    // If the received Message is not empty
                     if (!messageString.isEmpty()) {
-                        //
+                        // Create a new Message object - passing in the received Message String
                         MessageInbound newMessage = new MessageInbound(messageString);
                         
                         System.out.printf("MessageManager - INFO: Received %s Message\n", newMessage.getType().toString());
                         
-                        //
+                        // Add the received Message object to the messageQueue
                         queueMessage(newMessage);
                     }
                 }
             }
         };
+        
+        // Start the messageReceiver Thread
         messageReceiver.start();
     }
 
     public void sendMessage(MessageOutbound message, InetAddress ipAddress, int portNumber){
-        // Pack the Message object into a String, Encode the String as Bytes and store in the BytesBuffer buffer
+        // Convert the Message object to a string, Encode it as Bytes and store it in the buffer
         ByteBuffer buffer = ByteBuffer.wrap(message.packString().getBytes());
         
         // Attempt to send the Message across the DatagramChannel datagramChannel to the specified IP Address and Port Number (Load-Balancer)
@@ -106,28 +111,28 @@ public class MessageManager {
     }
 
     private void queueMessage(MessageInbound message) {
-        //
+        // Activate (Lock) the messageQueue LinkedList Mutex object
         synchronized (messageQueueLock) {
-            //
+            // Add the given Message object to the Message queue
             messageQueue.add(message);
         }
     }
 
     public MessageInbound getNextMessage() {
-        //
+        // Activate (Lock) the messageQueue LinkedList Mutex object
         synchronized (messageQueueLock) {
-            //
+            // Fetch the next Message object (first in list) from the Message queue
             return messageQueue.poll();
         }
     }
 
     public void stop() {
-        // 
+        // Interrupt (stop) the messageReceiver Thread
         messageReceiver.interrupt();
     }
     
     public boolean isStopped() {
-        //
+        // Return true if the messageReceiver Thread has been interrupted
         return messageReceiver.isInterrupted();
     }
 }

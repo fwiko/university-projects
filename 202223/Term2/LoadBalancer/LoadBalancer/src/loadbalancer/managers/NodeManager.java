@@ -2,6 +2,7 @@ package loadbalancer.managers;
 
 import java.net.InetAddress;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import loadbalancer.node.Node;
 
@@ -11,9 +12,9 @@ public class NodeManager {
     private final ArrayList<Node> registeredNodes;
     private final HashMap<Node, Integer> nodeWarnings;
     
-    private int nextNodeId = 1;
-    
     private final Object registeredNodesLock = new Object();
+    
+    private int nextNodeId = 1;
     
     private NodeManager() {
         this.registeredNodes = new ArrayList<>();
@@ -38,7 +39,7 @@ public class NodeManager {
         nextNodeId += 1;
         nodeWarnings.put(newNode, 0);
         
-        System.out.println(String.format("Node Manager (Info): Successfully registered Node %d on socket %s:%d", newNode.getIdNum(), newNode.getIpAddr(), newNode.getPortNum()));
+        System.out.println(String.format("Node Manager (Info): Successfully registered Node %d on socket %s:%d", newNode.getIdNumber(), newNode.getIpAddr(), newNode.getPortNum()));
         
         return newNode;
     }
@@ -48,8 +49,10 @@ public class NodeManager {
             // Iterate through the list of registered Nodes
             for (Node node : registeredNodes) {
                 // if the Node object's ID matches the specified idNum - remove it from the list
-                if (node.getIdNum() == idNumber) {
+                if (node.getIdNumber() == idNumber) {
+                    // Remove the node with the specified ID number from the list of registered Nodes
                     registeredNodes.remove(node);
+                    // Remove the node with the specified ID number from the Node warnings HashMap
                     nodeWarnings.remove(node);
                 }
             }
@@ -77,27 +80,40 @@ public class NodeManager {
             // Iterate through the list of registered Nodes
             for (Node node : registeredNodes) {
                 // if the Node object's ID matches the specified idNum - return the Node
-                if (node.getIdNum() == idNumber) {
+                if (node.getIdNumber() == idNumber) {
                     return node;
                 }
             }
         }
+        // If no node has the specified ID - return null
         return null;
     }
     
     private void sortNodes() {
-        registeredNodes.sort((n1, n2) -> Float.compare(n1.getUsage(), n2.getUsage()));
+        // Sort the list of registered Nodes based on the usage metric
+        Collections.sort(registeredNodes, (Node n1, Node n2) -> {
+            if (n1.getUsage() != n2.getUsage()) {
+                // Usage metrics are Floats and cannot be returned from Collections.sort - must return 1 or -1 flag instead
+                return n1.getUsage() > n2.getUsage() ? 1 : -1; 
+            }
+            // If the usage is identical - sort based on Maximum Capacity of the Nodes
+            return n1.getMaxCapacity() - n2.getMaxCapacity();
+        });
     }
     
-    public int getWarnings(Node node) {
+    public int getNodeWarnings(Node node) {
+        // Return the number of warnings a Node has been given
         return nodeWarnings.getOrDefault(node, 0);
     }
     
-    public void resetWarnings(Node node) {
+    public void resetNodeWarnings(Node node) {
+        // Reset a Node's warnings to zero (0)
         nodeWarnings.put(node, 0);
     }
     
-    public void incrementWarnings(Node node) {
-        nodeWarnings.put(node, getWarnings(node) + 1);
+    public void incrementNodeWarnings(Node node) {
+        // Increment a Node's warnings by one (1)
+        nodeWarnings.put(node, getNodeWarnings(node) + 1);
     }
+    
 }

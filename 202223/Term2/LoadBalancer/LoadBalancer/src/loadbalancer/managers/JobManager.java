@@ -25,16 +25,12 @@ public class JobManager {
     private final Object jobQueueLock = new Object();
     private final Object allocatedJobsLock = new Object();
     
-    // Message manager singleton class instance
-    private final MessageManager messageManager;
-    
     // Next Job ID to assign to a Job
     private int nextJobId = 1;
     
     private JobManager() {
         this.jobQueue = new LinkedList<>();
         this.allocatedJobs = new ArrayList<>();
-        this.messageManager = MessageManager.getInstance();
     }
 
     public static JobManager getInstance() {
@@ -69,7 +65,7 @@ public class JobManager {
                 jobQueue.remove(job);
             }
             allocatedJobs.add(job);
-            job.setHandlerNodeId(node.getIdNum());
+            job.setHandlerNodeId(node.getIdNumber());
         }
     }
     
@@ -104,7 +100,7 @@ public class JobManager {
             // Return a filtered List of Jobs containing only those allocated to the specified Node
             return allocatedJobs
                     .stream()
-                    .filter(allocJob -> allocJob.getHandlerNodeId() == node.getIdNum())
+                    .filter(allocJob -> allocJob.getHandlerNodeId() == node.getIdNumber())
                     .collect(Collectors.toList());
         }
     }

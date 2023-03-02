@@ -2,6 +2,8 @@ package initiator;
 
 import initiator.managers.MessageManager;
 import initiator.messages.MessageInbound;
+import initiator.messages.MessageOutbound;
+import initiator.messages.types.MessageOutboundType;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -77,8 +79,7 @@ public class InitiatorClient {
                     MessageInbound nextMessage = messageManager.getNextMessage();
 
                     if (nextMessage != null) {
-                        System.out.printf("NodeClient - INFO: Handling %s Message\n", nextMessage.getType().toString());
-                        
+
                         try {
                             handleMessage(nextMessage);
                         } catch (IllegalArgumentException e) {
@@ -116,11 +117,47 @@ public class InitiatorClient {
         
     }
     
-    private void handleInput(String inputString) {
-        System.out.println(inputString);
+    private void handleInput(String inputString) throws IllegalArgumentException {
+        
+        // Split given input String into arguments
+        String[] inputArguments = inputString.split(" ");
+        
+        switch (inputArguments[0].toUpperCase()) {
+            case "JOB" -> {
+                if (inputArguments.length < 2) { throw new IllegalArgumentException("Usage: JOB <execution_time>"); } 
+                
+                int jobExecutionTime = -1;
+                try {
+                    jobExecutionTime = Integer.parseInt(inputArguments[1]);
+                    if (jobExecutionTime < 1) {
+                        throw new IllegalArgumentException("Execution time must be greater than one");
+                    }
+                } catch (NumberFormatException e) {
+                    throw new IllegalArgumentException("Execution time must be an Integer");
+                }
+                
+                
+                
+                break;
+            }
+            case "STOP" -> {
+                messageManager.stop();
+                running = false;
+                
+                MessageOutbound loadBalancerStopMessage = new MessageOutbound(MessageOutboundType.STOP_SYSTEM);
+                messageManager.sendMessage(loadBalancerStopMessage, loadBalancerIpAddress, loadBalancerPortNumber);
+                
+                break;
+            }
+            default -> {
+                
+            }
+        }
     }
     
     private void register() {
-        
+        // Send a registration (REG_INITIATOR) Message to the LoadBalancer
+        MessageOutbound registrationMessage = new MessageOutbound(MessageOutboundType.REG_INITIATOR, initiatorIpAddress.getHostAddress(), String.valueOf(initiatorIpAddress));
+        messageManager.sendMessage(registrationMessage, loadBalancerIpAddress, loadBalancerPortNumber);
     }
 }

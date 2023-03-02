@@ -47,7 +47,6 @@ public class MessageManager {
                 .bind(new InetSocketAddress(ipAddress, portNumber));
         // Set the DatagramChannel to non-blocking
         datagramChannel.configureBlocking(false);
-        
         // Begin to receive Messages from the Load-Balancer
         receive();
     }
@@ -56,9 +55,6 @@ public class MessageManager {
         messageReceiver = new Thread() {
             @Override
             public void run() {
-                
-                System.out.printf("MessageManager - INFO: Listening for Messages on socket %s:%s\n", datagramChannel.socket().getLocalAddress().getHostAddress(), datagramChannel.socket().getLocalPort());
-                
                 // While the messageReceiver Thread has not been interrupted
                 while (!interrupted()) {
                     // ByteBuffer object used to store up to 1024 Bytes of data (similar to byte[])
@@ -81,9 +77,7 @@ public class MessageManager {
                     if (!messageString.isEmpty()) {
                         // Create a new Message object - passing in the received Message String
                         MessageInbound newMessage = new MessageInbound(messageString);
-                        
-                        System.out.printf("MessageManager - INFO: Received %s Message\n", newMessage.getType().toString());
-                        
+
                         // Add the received Message object to the messageQueue
                         queueMessage(newMessage);
                     }
@@ -93,6 +87,7 @@ public class MessageManager {
         
         // Start the messageReceiver Thread
         messageReceiver.start();
+
     }
 
     public void sendMessage(MessageOutbound message, InetAddress ipAddress, int portNumber){
@@ -104,10 +99,7 @@ public class MessageManager {
             datagramChannel.send(buffer, new InetSocketAddress(ipAddress, portNumber));
         } catch (IOException e) {
             System.err.printf("MessageManager - ERROR: Failed to send %s Message to socket %s:%d\n", message.getType().toString(), ipAddress.getHostAddress(), portNumber);
-            return;
         }
-        
-        System.out.printf("MessageManager - INFO: Sent %s Message to socket %s:%d\n", message.getType().toString(), ipAddress.getHostAddress(), portNumber);
     }
 
     private void queueMessage(MessageInbound message) {

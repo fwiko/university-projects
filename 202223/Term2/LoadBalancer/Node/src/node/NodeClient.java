@@ -114,7 +114,7 @@ public class NodeClient {
     
     private void handleMessage(MessageInbound message) throws IllegalArgumentException {
         switch (message.getType()) {
-            case NEW_JOB -> {
+            case NEW_JOB -> { // ------------------------------------------------------------------------------------------------------------------------------------------------------------------- NEW_JOB
                 if (message.getParameters().length < 2) { throw new IllegalArgumentException("Insufficient Message parameters"); }
                 
                 // Attempt to parse the Job ID Number parameter from the NEW_JOB Message
@@ -150,7 +150,7 @@ public class NodeClient {
                 
                 break;
             }
-            case REG_NODE_SUCCESS -> {
+            case REG_NODE_SUCCESS -> { // ---------------------------------------------------------------------------------------------------------------------------------------------------------- REG_NODE_SUCCESS
                 if (message.getParameters().length < 1) { throw new IllegalArgumentException("Insufficient Message parameters"); }
                 
                 // Attempt to parse the Node ID Number parameter of the REG_NODE_SUCCESS Message
@@ -164,7 +164,7 @@ public class NodeClient {
                 
                 break;
             }
-            case REG_NODE_FAILURE -> {
+            case REG_NODE_FAILURE -> { // ---------------------------------------------------------------------------------------------------------------------------------------------------------- REG_NODE_FAILURE
                 // Set the running flag to false
                 running = false;
                 
@@ -175,7 +175,7 @@ public class NodeClient {
                 
                 break;
             }
-            case NOT_REGISTERED -> {
+            case NOT_REGISTERED -> { // ------------------------------------------------------------------------------------------------------------------------------------------------------------ NOT_REGISTERED
                 // Tell the JobManager to stop all running Jobs
                 jobManager.stopAllJobs();
                 
@@ -184,14 +184,14 @@ public class NodeClient {
                 
                 break;
             }
-            case IS_ALIVE -> {
+            case IS_ALIVE -> { // ------------------------------------------------------------------------------------------------------------------------------------------------------------------ IS_ALIVE
                 // Send a alive acknowledgement (ACK_IS_ALIVE) Message to the LoadBalancer
-                MessageOutbound isAliveConfirmationMessage = new MessageOutbound(MessageOutboundType.ACK_IS_ALIVE);
+                MessageOutbound isAliveConfirmationMessage = new MessageOutbound(MessageOutboundType.ACK_IS_ALIVE, String.valueOf(nodeIdNumber));
                 messageManager.sendMessage(isAliveConfirmationMessage, loadBalancerIpAddress, loadBalancerPortNumber);
                 
                 break;
             }
-            case STOP_NODE -> {
+            case STOP_NODE -> { // ----------------------------------------------------------------------------------------------------------------------------------------------------------------- STOP_NODE
                 
                 // Set the running flag to false
                 running = false;

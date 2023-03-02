@@ -7,6 +7,7 @@ package loadbalancer;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.util.ArrayList;
 import loadbalancer.job.Job;
 import loadbalancer.managers.JobManager;
 import loadbalancer.managers.MessageManager;
@@ -37,6 +38,7 @@ public class LoadBalancerServer {
         if (instance != null) {
             return instance;
         }
+        
         // Create a new instance and return it
         instance = new LoadBalancerServer();
         return instance;
@@ -73,12 +75,10 @@ public class LoadBalancerServer {
             
             // If the next Message was successfully retreived from the Node Manager
             if (nextMessage != null) {
-                System.out.printf("Load-Balancer Server (Info): Handling %s Message\n", nextMessage.getType().toString());
-                
                 try {
                     handleMessage(nextMessage);
                 } catch (IllegalArgumentException e) {
-                    System.err.printf("Load-Balanacer Server (Error): Failed to handle %s Message (%s)\n", nextMessage.getType().toString(), e.getMessage());
+                    System.err.printf("LoadBalancerServer - ERROR: Failed to handle %s Message (%s)\n", nextMessage.getType().toString(), e.getMessage());
                 }
             }
             
@@ -89,9 +89,7 @@ public class LoadBalancerServer {
             Job nextJob = jobManager.getNextJob();
             
             // If the Job Manager's Job queue was empty (no pending Jobs) - reset to the top of the loop
-            if (nextJob == null) {
-                continue;
-            }
+            if (nextJob == null) { continue; }
             
             // Retreive the next Node - using the Load-Balancing algorithm 
             Node nextNode = null;
@@ -99,6 +97,7 @@ public class LoadBalancerServer {
             
             // If a Node was successfully retreived from the Node Manager
             if (nextNode != null) {
+                
                 // Register the Node as the new Job's "handler" with the Job Manager
                 jobManager.allocateJob(nextJob, nextNode);
                 
@@ -107,40 +106,50 @@ public class LoadBalancerServer {
                 messageManager.sendMessage(newJobMessage, nextNode.getIpAddr(), nextNode.getPortNum());
             }
         }
+        
         // When the system is no longer running - output a message to the terminal
-        System.out.println("Load-Balancer Server (Info): Server operation has stopped...");
+        System.out.println("LoadBalancerServer - INFO: Stopped");
     }
     
     private void handleMessage(MessageInbound message) throws IllegalArgumentException {
         switch (message.getType()) {
-            case REG_INITIATOR -> {
+            case REG_INITIATOR -> { // ------------------------------------------------------------------------------------------------------------------------------------------------------------- REG_INITIATOR
                 if (message.getParameters().length < 2) { throw new IllegalArgumentException("Insufficient Message parameters"); }
                 
                 // Set the Initiator IP Address value to the first REG_INITIATOR Message parameter
-                InetAddress tempInitiatorIpAddress = null;
+                InetAddress ipAddress = null;
                 try {
-                    tempInitiatorIpAddress = InetAddress.getByName(message.getParameter(0));
-                } catch (UnknownHostException e) { throw new IllegalArgumentException(String.format("IP Address \"%s\" is not recognised", message.getParameter(0))); }
+                    ipAddress = InetAddress.getByName(message.getParameter(0));
+                } catch (UnknownHostException e) {
+                    throw new IllegalArgumentException(String.format("IP Address \"%s\" is not recognised", message.getParameter(0)));
+                }
                 
                 // Set the Initiator Port Number value to the second REG_INITIATOR Message parameter;
-                int tempInitiatorPortNumber = -1;
+                int portNumber = -1;
                 try {
-                    tempInitiatorPortNumber = Integer.parseInt(message.getParameter(1));
-                    if (tempInitiatorPortNumber < 1 || tempInitiatorPortNumber >= 65535) {
-                        throw new IllegalArgumentException(String.format("Port %d is outside of the assignable range", tempInitiatorPortNumber));
+                    portNumber = Integer.parseInt(message.getParameter(1));
+                    
+                    // If the given Port Number is outside of the acceptable range
+                    if (portNumber < 1 || portNumber >= 65535) {
+                        throw new IllegalArgumentException(String.format("Port %d is outside of the assignable range", portNumber));
                     }
-                } catch (NumberFormatException e) { throw new IllegalArgumentException(String.format("Provided Port is not an Integer")); }
+                } catch (NumberFormatException e) { 
+                    throw new IllegalArgumentException(String.format("Provided Port is not an Integer"));
+                }
 
-                // Check if an Initiator has already been registered
+                // If an Initiator is already registered
                 if (initiatorRegistered) {
+                    
+                    // Respond with a REG_INITIATOR_FAILURE Message
                     MessageOutbound registerFailureMessage = new MessageOutbound(MessageOutboundType.REG_INITIATOR_FAILURE);
-                    messageManager.sendMessage(registerFailureMessage, tempInitiatorIpAddress, tempInitiatorPortNumber);
+                    messageManager.sendMessage(registerFailureMessage, ipAddress, portNumber);
+                    
                     break;
                 }
                 
                 // Set the Initiator IP Address and Port values to the provided parameters
-                this.initiatorIpAddress = tempInitiatorIpAddress;
-                this.initiatorPortNumber = tempInitiatorPortNumber;
+                this.initiatorIpAddress = ipAddress;
+                this.initiatorPortNumber = portNumber;
                 
                 // Send a REG_INITIATOR_SUCCESS Message to the Initiator
                 MessageOutbound registerSuccessMessage = new MessageOutbound(MessageOutboundType.REG_INITIATOR_SUCCESS);
@@ -153,42 +162,48 @@ public class LoadBalancerServer {
                 
                 break;
             }
-            case REG_NODE -> {
+            case REG_NODE -> { // ------------------------------------------------------------------------------------------------------------------------------------------------------------------ REG_NODE
                 if (message.getParameters().length < 3) { throw new IllegalArgumentException("Insufficient Message parameters"); }
 
-                // Attempt to conver the IP Address parameter to an InetAddress object
+                // Set the Node IP Address value to the first REG_NODE Message parameter
                 InetAddress nodeIpAddress = null;
                 try {
                     nodeIpAddress = InetAddress.getByName(message.getParameter(0));
                 } catch (UnknownHostException e) { throw new IllegalArgumentException("Provided IP Address is Unknown"); }
                 
-                // Attempt to convert the Port Number parameter of the REG_NODE Message to an Integer
+                // Set the Node Port Number value to the second REG_NODE Message parameter
                 int nodePortNumber = -1;
                 try {
                     nodePortNumber = Integer.parseInt(message.getParameter(1));
+                    
+                    // If the given Port Number is outside the acceptable port range
                     if (nodePortNumber < 1 || nodePortNumber >= 65535) {
                         throw new IllegalArgumentException(String.format("Port %d is outside of the assignable range", nodePortNumber));
                     }
                 } catch (NumberFormatException e) { throw new IllegalArgumentException("Provided Port is not an Integer"); }
                 
-                // Attempt to convert the Capacity parameter of the REG_NODE Message to an Integer
+                // Set the Node Capacity value to the third REG_NODE Message parameter
                 int nodeCapacity = -1;
                 try {
                     nodeCapacity = Integer.parseInt(message.getParameter(2));
+                    
+                    // If the given Capacity is below 1
+                    if (nodeCapacity < 1) {
+                        
+                        // Send a REG_NODE_FAILURE Message to the Node
+                        MessageOutbound registerFailureMessage = new MessageOutbound(MessageOutboundType.REG_NODE_FAILURE);
+                        messageManager.sendMessage(registerFailureMessage, nodeIpAddress, nodePortNumber);
+                        throw new IllegalArgumentException("Provided Capacity is below 1");
+                    }
                 } catch (NumberFormatException e) {
+                    
+                    // Send a REG_NODE_FAILURE Message to the Node
                     MessageOutbound registerFailureMessage = new MessageOutbound(MessageOutboundType.REG_NODE_FAILURE);
                     messageManager.sendMessage(registerFailureMessage, nodeIpAddress, nodePortNumber);
                     throw new IllegalArgumentException("Provided Capacity is not an Integer");
                 }
                 
-                // If the provided Capacity is below 1 - throw an error and send an error response
-                if (nodeCapacity < 1) {
-                    MessageOutbound registerFailureMessage = new MessageOutbound(MessageOutboundType.REG_NODE_FAILURE);
-                    messageManager.sendMessage(registerFailureMessage, nodeIpAddress, nodePortNumber);
-                    throw new IllegalArgumentException("Provided Capacity is below 1");
-                }
-                
-                // Register the new Node with the Node Manager
+                // Register the new Node with the NodeManager
                 Node node = nodeManager.registerNode(nodeIpAddress, nodePortNumber, nodeCapacity);
                 
                 // Send a REG_NODE_SUCCESS Message to the Node
@@ -197,10 +212,10 @@ public class LoadBalancerServer {
                 
                 break;
             }
-            case NEW_JOB -> {
+            case NEW_JOB -> { // ------------------------------------------------------------------------------------------------------------------------------------------------------------------- NEW_JOB
                 if (message.getParameters().length < 1) { throw new IllegalArgumentException("Insufficient Message parameters"); }
                 
-                // Attempt to convert the Execution Time parameter of the NEW_JOB Message to an Integer
+                // Set the Job Execution Time value to the first NEW_JOB Message parameter
                 int executionTime = -1;
                 try {
                     executionTime = Integer.parseInt(message.getParameter(0));
@@ -208,7 +223,7 @@ public class LoadBalancerServer {
                     throw new IllegalArgumentException("Provided Execution Time is not an Integer");
                 }
                 
-                // Add the new Job to the Job Manager's queue
+                // Queue the new Job with the JobManager
                 Job job = jobManager.queueNewJob(executionTime);
                 
                 // Send a NEW_JOB_SUCCESS Message to the Initiator
@@ -217,10 +232,10 @@ public class LoadBalancerServer {
                 
                 break;
             }
-            case FIN_JOB -> {
+            case FIN_JOB -> { // ------------------------------------------------------------------------------------------------------------------------------------------------------------------- FIN_JOB
                 if (message.getParameters().length < 1) { throw new IllegalArgumentException("Insufficient Message parameters"); }
 
-                // Attempt to convert the Job ID parameter of the FIN_JOB Message to an integer
+                // Set the Job ID Number value to the first FIN_JOB Message parameter
                 int jobId = -1;
                 try {
                     jobId = Integer.parseInt(message.getParameter(0));
@@ -228,13 +243,13 @@ public class LoadBalancerServer {
                     throw new IllegalArgumentException("Provided Job ID is not an Integer");
                 }
                 
-                // Get the Job object associated with the given Job ID from the Job Manager
+                // Get the Job object associated with the given Job ID Number from the JobManager
                 Job job = jobManager.getAllocatedJobById(jobId);
                 if (job == null) {
                     throw new IllegalArgumentException(String.format("Allocated Job with ID %d does not exist", jobId));
                 }
                 
-                // De-allocate the Job from the assigned Node with the Job Manager
+                // Deallocate the given Job from the JobManager (it is now finished)
                 jobManager.deallocateJob(job);
                 
                 // Forward the FIN_JOB Message to the Initiator
@@ -243,55 +258,46 @@ public class LoadBalancerServer {
                 
                 break;
             }
-            case ACK_IS_ALIVE -> {
+            case ACK_IS_ALIVE -> { // ------------------------------------------------------------------------------------------------------------------------------------------------------------- ACK_IS_ALIVE
                 if (message.getParameters().length < 1) { throw new IllegalArgumentException("Insufficient Message parameters"); }
-//                
-//                // Attempt to convert the Node ID parameter of the ACK_IS_ALIVE Message to an Integer
-//                int nodeId = -1;
-//                try {
-//                    nodeId = Integer.parseInt(message.getParameter(0));
-//                } catch (NumberFormatException e) {
-//                    System.err.println("Server (Error): Failed to handle alive acknowledgement (Invalid Node ID)");
-//                    break;
-//                }
-//                
-//                // Get the Node object associated with the given Node ID from the Node Manager
-//                Node node = nodeManager.getNodeById(nodeId);
-//                if (node == null) {
-//                    System.err.println(String.format("Server (Error): Failed to handle alive acknowledgement (Node with ID %d no longer exists)", nodeId));
-//                    break;
-//                }
-//                
-//                // Reset the warnings (three warning system) of the Node that sent the ACK_IS_ALIVE Message
-//                nodeManager.resetWarnings(node);
-            }
-            case EXITED_NODE -> {
-                if (message.getParameters().length < 1) { throw new IllegalArgumentException("Insufficient Message parameters"); }
+
+                // Set the Node ID Number value to the first ACK_IS_ALIVE Message parameter
+                int nodeId = -1;
+                try {
+                    nodeId = Integer.parseInt(message.getParameter(0));
+                } catch (NumberFormatException e) {
+                    System.err.println("Server (Error): Failed to handle alive acknowledgement (Invalid Node ID)");
+                    break;
+                }
                 
-//                // Attempt to convert the Node ID parameter of the EXITED_NODE Message to an Integer
-//                int nodeId = 0;
-//                try {
-//                    nodeId = Integer.parseInt(message.getParameter(0));
-//                } catch (NumberFormatException e) {
-//                    System.err.println(String.format("Server (Error): Failed to remove Node - %s is not a valid integer", message.getParameter(0)));
-//                    break;
-//                }
-//                
-//                // Get the Node object associated with the given Node ID from the Node Manager
-//                Node stoppedNode = nodeManager.getNodeById(nodeId);
-//                if (stoppedNode == null) {
-//                    System.err.println(String.format("Server (Error): Failed to remove Node - Could not find Node with ID %d", nodeId));
-//                    return;
-//                }
-//                
-//                // Re-allocate any Jobs the Node was handling
-//                
-//                // Remove/unregister the Node from the Node Manager
-//                nodeManager.removeNode(nodeId);
+                // Get the Node object associated with the given Node ID from the NodeManager
+                Node node = nodeManager.getNodeById(nodeId);
+                if (node == null) {
+                    System.err.println(String.format("Server (Error): Failed to handle alive acknowledgement (Node with ID %d no longer exists)", nodeId));
+                    break;
+                }
+                
+                // Reset the warnings (three warning system) of the Node that sent the ACK_IS_ALIVE Message
+                node.resetWarnings();
+                
+                break;
             }
-            case STOP_SYSTEM -> {
+            case STOP_SYSTEM -> { // --------------------------------------------------------------------------------------------------------------------------------------------------------------- STOP_SYSTEM
+                // Interrupt (stop) the MessageManager Thread
                 messageManager.stop();
+                
+                // Set the LoadBalancerServer running flag to false to stop the Message/Job handling loop
                 running = false;
+                
+                // Get all registered Nodes
+                ArrayList<Node> registeredNodes = nodeManager.getNodes();
+                
+                // Send STOP_NODE Messages to all registered Nodes
+                MessageOutbound stopNodeMessage = new MessageOutbound(MessageOutboundType.STOP_NODE);
+                for ( Node node : registeredNodes ) {
+                    messageManager.sendMessage(stopNodeMessage, node.getIpAddr(), node.getPortNum());
+                }
+                
                 break;
             }
             default -> throw new IllegalArgumentException(String.format("Unknown instruction"));

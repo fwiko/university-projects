@@ -17,5 +17,6 @@ public enum MessageOutboundType {
     NEW_JOB_SUCCESS,
     NEW_JOB_FAILURE,
     FIN_JOB,
-    IS_ALIVE
+    IS_ALIVE,
+    STOP_NODE
 }

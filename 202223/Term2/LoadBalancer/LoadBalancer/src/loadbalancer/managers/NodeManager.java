@@ -3,14 +3,12 @@ package loadbalancer.managers;
 import java.net.InetAddress;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import loadbalancer.node.Node;
 
 public class NodeManager {
     private static NodeManager instance;
     
     private final ArrayList<Node> registeredNodes;
-    private final HashMap<Node, Integer> nodeWarnings;
     
     private final Object registeredNodesLock = new Object();
     
@@ -18,7 +16,6 @@ public class NodeManager {
     
     private NodeManager() {
         this.registeredNodes = new ArrayList<>();
-        this.nodeWarnings = new HashMap<>();
     }
     
     public static NodeManager getInstance() {
@@ -30,32 +27,23 @@ public class NodeManager {
     }
     
     public Node registerNode(InetAddress ipAddress, int portNumber, int maxCapacity) {
-        // Attempt to create a new Node object with the given IP Address, Port Number, and Maximum Capacity
-        Node newNode = null;
-        newNode = new Node(nextNodeId, ipAddress, portNumber, maxCapacity);
-        
-        // Add the new Node to the list of Nodes and increment the next Node ID value
+        // Create a new Node object with the given IP Address, Port Number, and Maximum Capacity
+        Node newNode = new Node(nextNodeId, ipAddress, portNumber, maxCapacity);
+        // Add the new Node to the list of registered Nodes
         registeredNodes.add(newNode);
+        // Increment the nextNodeID value preparing for the next Node registration
         nextNodeId += 1;
-        nodeWarnings.put(newNode, 0);
+        // Start the keep alive Timer loop for the new Node to send IS_ALIVE Messages
+        newNode.keepAlive();
         
-        System.out.println(String.format("Node Manager (Info): Successfully registered Node %d on socket %s:%d", newNode.getIdNumber(), newNode.getIpAddr(), newNode.getPortNum()));
-        
+        System.out.printf("NodeManager - INFO: Registered Node %d on socket %s:%d", newNode.getIdNumber(), newNode.getIpAddr(), newNode.getPortNum());
         return newNode;
     }
     
-    public void removeNode(int idNumber) {
+    public void unregisterNode(Node node) {
         synchronized (registeredNodesLock) {
-            // Iterate through the list of registered Nodes
-            for (Node node : registeredNodes) {
-                // if the Node object's ID matches the specified idNum - remove it from the list
-                if (node.getIdNumber() == idNumber) {
-                    // Remove the node with the specified ID number from the list of registered Nodes
-                    registeredNodes.remove(node);
-                    // Remove the node with the specified ID number from the Node warnings HashMap
-                    nodeWarnings.remove(node);
-                }
-            }
+            // Remove the specified Node object from the list of registered Nodes
+            registeredNodes.remove(node);
         }
     }
     
@@ -101,19 +89,12 @@ public class NodeManager {
         });
     }
     
-    public int getNodeWarnings(Node node) {
-        // Return the number of warnings a Node has been given
-        return nodeWarnings.getOrDefault(node, 0);
-    }
-    
     public void resetNodeWarnings(Node node) {
         // Reset a Node's warnings to zero (0)
-        nodeWarnings.put(node, 0);
+        node.resetWarnings();
     }
     
-    public void incrementNodeWarnings(Node node) {
-        // Increment a Node's warnings by one (1)
-        nodeWarnings.put(node, getNodeWarnings(node) + 1);
+    public ArrayList<Node> getNodes() {
+        return registeredNodes;
     }
-    
 }

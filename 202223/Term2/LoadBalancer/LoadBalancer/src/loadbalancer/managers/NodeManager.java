@@ -3,6 +3,7 @@ package loadbalancer.managers;
 import java.net.InetAddress;
 import java.util.ArrayList;
 import java.util.Collections;
+import loadbalancer.AllocationMethod;
 import loadbalancer.node.Node;
 
 public class NodeManager {
@@ -13,6 +14,9 @@ public class NodeManager {
     private final Object registeredNodesLock = new Object();
     
     private int nextNodeId = 1;
+    
+    // Pointer used for Round-Robin AllocationMethod
+    private int roundRobinPointer = 0;
     
     private NodeManager() {
         this.registeredNodes = new ArrayList<>();
@@ -36,7 +40,7 @@ public class NodeManager {
         // Start the keep alive Timer loop for the new Node to send IS_ALIVE Messages
         newNode.keepAlive();
         
-        System.out.printf("NodeManager - INFO: Registered Node %d on socket %s:%d\n", newNode.getIdNumber(), newNode.getIpAddr().getHostAddress(), newNode.getPortNum());
+        System.out.printf("        NodeManager - INFO: Registered Node %d on socket %s:%d\n", newNode.getIdNumber(), newNode.getIpAddr().getHostAddress(), newNode.getPortNum());
         return newNode;
     }
     
@@ -47,16 +51,52 @@ public class NodeManager {
         }
     }
     
-    public Node getNextNode() {
+    public Node getNextNode(AllocationMethod allocationMethod) {
         // If the list of registered Nodes is not empty
         if (!registeredNodes.isEmpty()) {
             synchronized (registeredNodesLock) {
-                // Sort the list of nodes by usage in ascending order
-                sortNodes();
-                // If the first element in the sorted list is at under 100% usage - return it
-                if (registeredNodes.get(0).getUsage() < 100) {
-                    return registeredNodes.get(0);
+                Node node = null;
+                switch (allocationMethod) {
+                    case NORMAL -> {
+                        // If the node at the last point of reference is available - return it
+                        if (registeredNodes.get(roundRobinPointer).getUsage() < (float) 100) {
+                            node = registeredNodes.get(roundRobinPointer);
+                            
+                            // Set roundRobinPointer to next position if circular loop
+                            roundRobinPointer = (roundRobinPointer + 1) % registeredNodes.size();
+                            break;
+                        }
+                        
+                        // Do a full "circular" iteration of the registeredNodes list from the last point of reference
+                        for (int i = 0; i < registeredNodes.size(); i++) {
+                            // Use modulo to normalise the roundRobinPointer value (reset to 0 if hits list length) to get next roundRobinPointer position
+                            roundRobinPointer = roundRobinPointer++ % registeredNodes.size();
+                            
+                            // If the current node is under 100% usage - return it
+                            if (registeredNodes.get(roundRobinPointer).getUsage() < (float) 100) {
+                                node = registeredNodes.get(roundRobinPointer);
+                                
+                                // Set roundRobinPointer to next position if circular loop
+                                roundRobinPointer = (roundRobinPointer + 1) % registeredNodes.size();
+                                break;
+                            }
+                        }
+                        
+                        break;
+                    }
+                    case WEIGHTED -> {
+                        // Sort the list of nodes by usage in ascending order
+                        sortNodes();
+                        
+                        // If the first element in the sorted list is at under 100% usage - return it
+                        if (registeredNodes.get(0).getUsage() < 100) {
+                            node = registeredNodes.get(0);
+                        }
+                        
+                        break;
+                    }
                 }
+                return node;
             }
         }
         // If all Nodes are at 100% usage - return null
@@ -85,7 +125,7 @@ public class NodeManager {
                 return n1.getUsage() > n2.getUsage() ? 1 : -1; 
             }
             // If the usage is identical - sort based on Maximum Capacity of the Nodes
-            return n1.getMaxCapacity() - n2.getMaxCapacity();
+            return n2.getMaxCapacity() - n1.getMaxCapacity();
         });
     }
     

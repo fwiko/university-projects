@@ -145,7 +145,7 @@ public class NodeClient {
                 jobManager.startJob(jobIdNumber, jobExecutionTime);
                 
                 // Send a new job received success (NEW_JOB_SUCCESS) Message to the LoadBalancer
-                MessageOutbound newJobSuccessMessage = new MessageOutbound(MessageOutboundType.NEW_JOB_SUCCESS);
+                MessageOutbound newJobSuccessMessage = new MessageOutbound(MessageOutboundType.NEW_JOB_SUCCESS, String.valueOf(jobIdNumber));
                 messageManager.sendMessage(newJobSuccessMessage, loadBalancerIpAddress, loadBalancerPortNumber);
                 
                 break;

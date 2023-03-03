@@ -60,6 +60,8 @@ public class JobManager {
         synchronized (jobQueueLock) {
             jobQueue.add(job);
         }
+        
+        System.out.printf("         JobManager - INFO: Added Job %d to the Queue\n", job.getIdNumber());
     }
     
     public void allocateJob(Job job, Node node) {
@@ -71,6 +73,8 @@ public class JobManager {
             allocatedJobs.add(job);
             job.setHandlerNodeId(node.getIdNumber());
         }
+        
+        System.out.printf("         JobManager - INFO: Allocated Job %d to Node %d (Now at %f%% usage)\n", job.getIdNumber(), node.getIdNumber(), node.getUsage());
     }
     
 
@@ -79,6 +83,8 @@ public class JobManager {
             // Remove the specified Job from the allocatedJobs ArrayList
             allocatedJobs.remove(job);
         }
+        
+        System.out.printf("         JobManager - INFO: Deallocated Job %d from Node %d\n", job.getIdNumber(), job.getHandlerNodeId());
     }
     
     public Job getAllocatedJobById(int jobIdNumber) {

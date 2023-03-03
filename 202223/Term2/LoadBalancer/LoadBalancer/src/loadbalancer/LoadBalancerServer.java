@@ -14,6 +14,7 @@ import loadbalancer.managers.MessageManager;
 import loadbalancer.managers.NodeManager;
 import loadbalancer.messages.MessageInbound;
 import loadbalancer.messages.MessageOutbound;
+import static loadbalancer.messages.types.MessageInboundType.NEW_JOB_FAILURE;
 import loadbalancer.messages.types.MessageOutboundType;
 import loadbalancer.node.Node;
 
@@ -44,7 +45,7 @@ public class LoadBalancerServer {
         return instance;
     }
         
-    public void start(InetAddress ipAddress, int portNumber) throws IllegalArgumentException {
+    public void start(InetAddress ipAddress, int portNumber, AllocationMethod allocationMethod) throws IllegalArgumentException {
         // If the specified Port Number is outside the valid Port range - throw an IllegalArgumentException
         if (portNumber < 1 || portNumber >= 65535) {
             throw new IllegalArgumentException(String.format(
@@ -74,7 +75,7 @@ public class LoadBalancerServer {
                 try {
                     handleMessage(nextMessage);
                 } catch (IllegalArgumentException e) {
-                    System.err.printf("LoadBalancerServer - ERROR: Failed to handle %s Message (%s)\n", nextMessage.getType().toString(), e.getMessage());
+                    System.err.printf(" LoadBalancerServer - ERROR: Failed to handle %s Message (%s)\n", nextMessage.getType().toString(), e.getMessage());
                 }
             }
             
@@ -89,7 +90,7 @@ public class LoadBalancerServer {
             
             // Retreive the next Node - using the Load-Balancing algorithm 
             Node nextNode = null;
-            nextNode = nodeManager.getNextNode();
+            nextNode = nodeManager.getNextNode(allocationMethod);
             
             // If a Node was successfully retreived from the Node Manager
             if (nextNode != null) {
@@ -104,7 +105,7 @@ public class LoadBalancerServer {
         }
         
         // When the system is no longer running - output a message to the terminal
-        System.out.println("LoadBalancerServer - INFO: Stopped");
+        System.out.println(" LoadBalancerServer - INFO: Stopped");
     }
     
     private void handleMessage(MessageInbound message) throws IllegalArgumentException {
@@ -154,7 +155,7 @@ public class LoadBalancerServer {
                 // Set the initiatorRegistered flag to TRUE
                 initiatorRegistered = true;
 
-                System.out.printf("Load-Balancer Server (Info): Initiator successfully registered on socket %s:%d", initiatorIpAddress, initiatorPortNumber);
+                System.out.printf(" LoadBalancerServer - INFO: Initiator successfully registered on socket %s:%d\n", initiatorIpAddress.getHostAddress(), initiatorPortNumber);
                 
                 break;
             }
@@ -262,14 +263,13 @@ public class LoadBalancerServer {
                 try {
                     nodeId = Integer.parseInt(message.getParameter(0));
                 } catch (NumberFormatException e) {
-                    System.err.println("Server (Error): Failed to handle alive acknowledgement (Invalid Node ID)");
-                    break;
+                    throw new IllegalArgumentException("Node ID must be an Integer");
                 }
                 
                 // Get the Node object associated with the given Node ID from the NodeManager
                 Node node = nodeManager.getNodeById(nodeId);
                 if (node == null) {
-                    System.err.println(String.format("Server (Error): Failed to handle alive acknowledgement (Node with ID %d no longer exists)", nodeId));
+                    System.err.printf(" LoadBalancerServer - ERROR: Failed to handle ACK_IS_ALIVE Message (Node with ID %d is no longer registered)\n", nodeId);
                     break;
                 }
                 
@@ -291,16 +291,48 @@ public class LoadBalancerServer {
                 // Send STOP_NODE Messages to all registered Nodes
                 MessageOutbound stopNodeMessage = new MessageOutbound(MessageOutboundType.STOP_NODE);
                 for ( Node node : registeredNodes ) {
+                    messageManager.sendMessage(stopNodeMessage, node.getIpAddr(), node.getPortNum());
+                    
                     // Stop the Node's keep alive timer Thread
                     node.stopKeepAliveThread();
-                    
-                    messageManager.sendMessage(stopNodeMessage, node.getIpAddr(), node.getPortNum());
                 }
+                
+                break;
+            }
+            case NEW_JOB_SUCCESS -> {
+                if (message.getParameters().length < 1) { throw new IllegalArgumentException("Insufficient Message parameters"); }
+                
+                // Forward the NEW_JOB_SUCCESS Message to the Initiator
+                MessageOutbound newJobSuccessMessage = new MessageOutbound(MessageOutboundType.NEW_JOB_SUCCESS, message.getParameter(0));
+                messageManager.sendMessage(newJobSuccessMessage, initiatorIpAddress, initiatorPortNumber);
+                
+                System.out.printf(" LoadBalancerServer - INFO: Allocation of Job %s was Successful\n", message.getParameter(0));
+                
+                break;
+            }
+            case NEW_JOB_FAILURE -> {
+                if (message.getParameters().length < 1) { throw new IllegalArgumentException("Insufficient Message parameters"); }
+                
+                // Set the failed Job ID value to the first NEW_JOB_FAILURE Parameter
+                int failedJobId = -1;
+                try {
+                    failedJobId = Integer.parseInt(message.getParameter(0));
+                } catch (NumberFormatException e) {
+                    throw new IllegalArgumentException("Provided Job ID is not an Integer");
+                }
+                
+                // Deallocate the Job from the JobManager
+                jobManager.deallocateJob(jobManager.getAllocatedJobById(failedJobId));
+                
+                // Forward the NEW_JOB_FAILURE Message to the Initiator
+                MessageOutbound newJobSuccessMessage = new MessageOutbound(MessageOutboundType.NEW_JOB_FAILURE, message.getParameter(0));
+                messageManager.sendMessage(newJobSuccessMessage, initiatorIpAddress, initiatorPortNumber);
+                
+                System.err.printf(" LoadBalancerServer - ERROR: Failed to allocate Job %s ()\n", message.getParameter(0));
                 
                 break;
             }
             default -> throw new IllegalArgumentException(String.format("Unknown instruction"));
         }
     }
-    
 }

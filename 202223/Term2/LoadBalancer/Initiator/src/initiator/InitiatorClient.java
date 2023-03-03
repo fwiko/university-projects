@@ -163,7 +163,7 @@ public class InitiatorClient {
     
     private void register() {
         // Send a registration (REG_INITIATOR) Message to the LoadBalancer
-        MessageOutbound registrationMessage = new MessageOutbound(MessageOutboundType.REG_INITIATOR, initiatorIpAddress.getHostAddress(), String.valueOf(initiatorIpAddress));
+        MessageOutbound registrationMessage = new MessageOutbound(MessageOutboundType.REG_INITIATOR, initiatorIpAddress.getHostAddress(), String.valueOf(initiatorPortNumber));
         messageManager.sendMessage(registrationMessage, loadBalancerIpAddress, loadBalancerPortNumber);
     }
 }

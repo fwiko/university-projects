@@ -136,16 +136,22 @@ public class InitiatorClient {
                     throw new IllegalArgumentException("Execution time must be an Integer");
                 }
                 
-                
+                MessageOutbound newJobMessage = new MessageOutbound(MessageOutboundType.NEW_JOB, String.valueOf(jobExecutionTime));
+                messageManager.sendMessage(newJobMessage,  loadBalancerIpAddress, loadBalancerPortNumber);
                 
                 break;
             }
             case "STOP" -> {
+                // Stop the MessageManager Thread
                 messageManager.stop();
-                running = false;
-                
+
+                // Send a STOP_SYSTEM Message to the LoadBalancer
                 MessageOutbound loadBalancerStopMessage = new MessageOutbound(MessageOutboundType.STOP_SYSTEM);
                 messageManager.sendMessage(loadBalancerStopMessage, loadBalancerIpAddress, loadBalancerPortNumber);
+                System.out.println("InitiatorClient - INFO: Stopping LoadBalancer...");
+                
+                // Set the running flag to false to stop the User-Input loop
+                running = false;
                 
                 break;
             }

@@ -175,15 +175,6 @@ public class NodeClient {
                 
                 break;
             }
-            case NOT_REGISTERED -> { // ------------------------------------------------------------------------------------------------------------------------------------------------------------ NOT_REGISTERED
-                // Tell the JobManager to stop all running Jobs
-                jobManager.stopAllJobs();
-                
-                // Send a registration (REG_NODE) Message to the LoadBalancer
-                register();
-                
-                break;
-            }
             case IS_ALIVE -> { // ------------------------------------------------------------------------------------------------------------------------------------------------------------------ IS_ALIVE
                 // Send a alive acknowledgement (ACK_IS_ALIVE) Message to the LoadBalancer
                 MessageOutbound isAliveConfirmationMessage = new MessageOutbound(MessageOutboundType.ACK_IS_ALIVE, String.valueOf(nodeIdNumber));

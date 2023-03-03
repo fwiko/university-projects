@@ -65,10 +65,6 @@ public class LoadBalancerServer {
             System.out.println(e);
         }
         
-        jobManager.createNewJob(1000);
-        jobManager.createNewJob(30);
-        jobManager.createNewJob(10);
-        
         while (running) {
             // Retreive the next Message - from the Message Manager's Message queue
             MessageInbound nextMessage = messageManager.getNextMessage();

@@ -61,7 +61,7 @@ public class JobManager {
             jobQueue.add(job);
         }
         
-        System.out.printf("         JobManager - INFO: Added Job %d to the Queue\n", job.getIdNumber());
+        System.out.printf("JobManager - INFO: Added Job %d to the Queue\n", job.getIdNumber());
     }
     
     public void allocateJob(Job job, Node node) {
@@ -74,7 +74,7 @@ public class JobManager {
             job.setHandlerNodeId(node.getIdNumber());
         }
         
-        System.out.printf("         JobManager - INFO: Allocated Job %d to Node %d (Now at %f%% usage)\n", job.getIdNumber(), node.getIdNumber(), node.getUsage());
+        System.out.printf("JobManager - INFO: Allocated Job %d to Node %d (Now at %f%% usage)\n", job.getIdNumber(), node.getIdNumber(), node.getUsage());
     }
     
 
@@ -84,7 +84,7 @@ public class JobManager {
             allocatedJobs.remove(job);
         }
         
-        System.out.printf("         JobManager - INFO: Deallocated Job %d from Node %d\n", job.getIdNumber(), job.getHandlerNodeId());
+        System.out.printf("JobManager - INFO: Deallocated Job %d from Node %d\n", job.getIdNumber(), job.getHandlerNodeId());
     }
     
     public Job getAllocatedJobById(int jobIdNumber) {
@@ -118,5 +118,17 @@ public class JobManager {
     public int getNumberOfNodeJobs(Node node) {
         // Return the number of Jobs allocated to the specified Node
         return getNodeJobs(node).size();
+    }
+    
+    public LinkedList<Job> getQueuedJobs() {
+        synchronized (jobQueueLock) {
+            return jobQueue;
+        }
+    }
+    
+    public ArrayList<Job> getAllocatedJobs() {
+        synchronized (allocatedJobsLock) {
+            return allocatedJobs;
+        }
     }
 }

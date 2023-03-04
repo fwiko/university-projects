@@ -57,7 +57,7 @@ public class MessageManager {
             @Override
             public void run() {
                 
-                System.out.printf("     MessageManager - INFO: Listening for Messages on socket %s:%s\n", datagramChannel.socket().getLocalAddress().getHostAddress(), datagramChannel.socket().getLocalPort());
+                System.out.printf("MessageManager - INFO: Listening for Messages on socket %s:%s\n", datagramChannel.socket().getLocalAddress().getHostAddress(), datagramChannel.socket().getLocalPort());
                 
                 // While the messageReceiver Thread has not been interrupted
                 while (!interrupted()) {
@@ -69,7 +69,7 @@ public class MessageManager {
                         // Write the received Message contents to the buffer
                         datagramChannel.receive(buffer);
                     } catch (IOException e) {
-                        System.out.println("     MessageManager - ERROR: IOException when receiving Message");
+                        System.out.println("MessageManager - ERROR: IOException when receiving Message");
                         messageReceiver.interrupt();
                         break;
                     }
@@ -82,7 +82,7 @@ public class MessageManager {
                         // Create a new Message object - passing in the received Message String
                         MessageInbound newMessage = new MessageInbound(messageString);
                         
-                        System.out.printf("     MessageManager - INFO: Received %s Message\n", newMessage.getType().toString());
+                        System.out.printf("MessageManager - INFO: Received %s Message\n", newMessage.getType().toString());
                         
                         // Add the received Message object to the messageQueue
                         queueMessage(newMessage);
@@ -103,11 +103,11 @@ public class MessageManager {
         try {
             datagramChannel.send(buffer, new InetSocketAddress(ipAddress, portNumber));
         } catch (IOException e) {
-            System.err.printf("     MessageManager - ERROR: Failed to send %s Message to socket %s:%d\n", message.getType().toString(), ipAddress.getHostAddress(), portNumber);
+            System.err.printf("MessageManager - ERROR: Failed to send %s Message to socket %s:%d\n", message.getType().toString(), ipAddress.getHostAddress(), portNumber);
             return;
         }
         
-        System.out.printf("     MessageManager - INFO: Sent %s Message to socket %s:%d\n", message.getType().toString(), ipAddress.getHostAddress(), portNumber);
+        System.out.printf("MessageManager - INFO: Sent %s Message to socket %s:%d\n", message.getType().toString(), ipAddress.getHostAddress(), portNumber);
     }
 
     private void queueMessage(MessageInbound message) {

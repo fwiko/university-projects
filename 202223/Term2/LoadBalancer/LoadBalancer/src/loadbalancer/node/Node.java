@@ -69,7 +69,7 @@ public class Node {
             @Override
             public void run() {
                 if (warnings >= 3) {
-                    System.out.printf("               Node %d - INFO: Unregistering (Failed to respond to 3 IS_ALIVE Messages)\n", idNumber);
+                    System.out.printf("Node %d - INFO: Unregistering (Failed to respond to 3 IS_ALIVE Messages)\n", idNumber);
                     
                     // Leave timer instance and unregister Node from the NodeManager
                     unregisterSelf();

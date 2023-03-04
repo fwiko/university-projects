@@ -40,7 +40,7 @@ public class NodeManager {
         // Start the keep alive Timer loop for the new Node to send IS_ALIVE Messages
         newNode.keepAlive();
         
-        System.out.printf("        NodeManager - INFO: Registered Node %d on socket %s:%d\n", newNode.getIdNumber(), newNode.getIpAddr().getHostAddress(), newNode.getPortNum());
+        System.out.printf("NodeManager - INFO: Registered Node %d on socket %s:%d\n", newNode.getIdNumber(), newNode.getIpAddr().getHostAddress(), newNode.getPortNum());
         return newNode;
     }
     
@@ -136,5 +136,17 @@ public class NodeManager {
     
     public ArrayList<Node> getNodes() {
         return registeredNodes;
+    }
+    
+    public String getNodeSummary() {
+        String summaryString = "";
+        
+        synchronized (registeredNodes) {
+            for ( Node node : registeredNodes ) {
+                summaryString += String.format("Node %d: %f%% Usage\n", node.getIdNumber(), node.getUsage());
+            }
+        }
+        
+        return summaryString;
     }
 }

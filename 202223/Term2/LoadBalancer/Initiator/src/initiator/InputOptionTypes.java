@@ -2,5 +2,7 @@ package initiator;
 
 public enum InputOptionTypes {
     JOB,
-    STOP
+    STOP,
+    INFO,
+    HELP
 }

@@ -75,7 +75,7 @@ public class LoadBalancerServer {
                 try {
                     handleMessage(nextMessage);
                 } catch (IllegalArgumentException e) {
-                    System.err.printf(" LoadBalancerServer - ERROR: Failed to handle %s Message (%s)\n", nextMessage.getType().toString(), e.getMessage());
+                    System.err.printf("LoadBalancerServer - ERROR: Failed to handle %s Message (%s)\n", nextMessage.getType().toString(), e.getMessage());
                 }
             }
             
@@ -105,7 +105,7 @@ public class LoadBalancerServer {
         }
         
         // When the system is no longer running - output a message to the terminal
-        System.out.println(" LoadBalancerServer - INFO: Stopped");
+        System.out.println("LoadBalancerServer - INFO: Stopped");
     }
     
     private void handleMessage(MessageInbound message) throws IllegalArgumentException {
@@ -155,7 +155,7 @@ public class LoadBalancerServer {
                 // Set the initiatorRegistered flag to TRUE
                 initiatorRegistered = true;
 
-                System.out.printf(" LoadBalancerServer - INFO: Initiator successfully registered on socket %s:%d\n", initiatorIpAddress.getHostAddress(), initiatorPortNumber);
+                System.out.printf("LoadBalancerServer - INFO: Initiator successfully registered on socket %s:%d\n", initiatorIpAddress.getHostAddress(), initiatorPortNumber);
                 
                 break;
             }
@@ -269,7 +269,7 @@ public class LoadBalancerServer {
                 // Get the Node object associated with the given Node ID from the NodeManager
                 Node node = nodeManager.getNodeById(nodeId);
                 if (node == null) {
-                    System.err.printf(" LoadBalancerServer - ERROR: Failed to handle ACK_IS_ALIVE Message (Node with ID %d is no longer registered)\n", nodeId);
+                    System.err.printf("LoadBalancerServer - ERROR: Failed to handle ACK_IS_ALIVE Message (Node with ID %d is no longer registered)\n", nodeId);
                     break;
                 }
                 
@@ -306,7 +306,7 @@ public class LoadBalancerServer {
                 MessageOutbound newJobSuccessMessage = new MessageOutbound(MessageOutboundType.NEW_JOB_SUCCESS, message.getParameter(0));
                 messageManager.sendMessage(newJobSuccessMessage, initiatorIpAddress, initiatorPortNumber);
                 
-                System.out.printf(" LoadBalancerServer - INFO: Allocation of Job %s was Successful\n", message.getParameter(0));
+                System.out.printf("LoadBalancerServer - INFO: Allocation of Job %s was Successful\n", message.getParameter(0));
                 
                 break;
             }
@@ -328,7 +328,21 @@ public class LoadBalancerServer {
                 MessageOutbound newJobSuccessMessage = new MessageOutbound(MessageOutboundType.NEW_JOB_FAILURE, message.getParameter(0));
                 messageManager.sendMessage(newJobSuccessMessage, initiatorIpAddress, initiatorPortNumber);
                 
-                System.err.printf(" LoadBalancerServer - ERROR: Failed to allocate Job %s ()\n", message.getParameter(0));
+                System.err.printf("LoadBalancerServer - ERROR: Failed to allocate Job %s ()\n", message.getParameter(0));
+                
+                break;
+            }
+            case GET_INFORMATION -> {
+                // Connected Nodes, Queued Jobs, Allocated Jobs, Individual Node Workload Summary
+                
+                String informationString = "";
+                informationString += String.format("Registered Nodes: %d\n", nodeManager.getNodes().size());
+                informationString += String.format("Queued Jobs:      %d\n", jobManager.getQueuedJobs().size());
+                informationString += String.format("Allocated Jobs:   %d\n\n", jobManager.getAllocatedJobs().size());
+                informationString += nodeManager.getNodeSummary();
+                
+                MessageOutbound informationMessage = new MessageOutbound(MessageOutboundType.INFORMATION, informationString);
+                messageManager.sendMessage(informationMessage, initiatorIpAddress, initiatorPortNumber);
                 
                 break;
             }

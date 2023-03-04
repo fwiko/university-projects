@@ -79,7 +79,6 @@ public class NodeClient {
             
             // If there is a queued Message available
             if (nextMessage != null) {
-                System.out.printf("NodeClient - INFO: Handling %s Message\n", nextMessage.getType().toString());
                 
                 // Attempt to handle the retreived Message
                 try {

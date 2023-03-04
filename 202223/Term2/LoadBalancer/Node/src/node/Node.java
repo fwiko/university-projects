@@ -17,7 +17,7 @@ public class Node {
 
         // If an insufficient number of arguments have been passed
         if (args.length < 4) {
-            System.out.println("Usage: java node <capacity> <port> <load_balancer_address> <load_balancer_port>");
+            System.err.println("Usage: java node <capacity> <port> <load_balancer_address> <load_balancer_port>");
             System.exit(0);
         }
         
@@ -25,7 +25,7 @@ public class Node {
         try {
             capacity = Integer.parseInt(args[0]);
         } catch (NumberFormatException e) { 
-            System.err.printf("Node (Error): Invalid Node Capacity %s\n", args[0]);
+            System.err.printf("Node - ERROR: Invalid Node Capacity %s\n", args[0]);
             System.exit(0);
         }
         
@@ -33,7 +33,7 @@ public class Node {
         try {
             portNumber = Integer.parseInt(args[1]);
         } catch (NumberFormatException e) {
-            System.err.printf("Node (Error): Invalid Node Port Number %s\n", args[1]);
+            System.err.printf("Node - ERROR: Invalid Node Port Number %s\n", args[1]);
             System.exit(0);
         }
 
@@ -41,7 +41,7 @@ public class Node {
         try {
             ipAddress = InetAddress.getLocalHost();
         } catch (UnknownHostException e) {
-            System.err.println("Node (Error): Failed to get Local-Host Address");
+            System.err.println("Node - ERROR: Failed to get Local-Host Address");
             System.exit(0);
         }
 
@@ -49,7 +49,7 @@ public class Node {
         try {
             loadBalancerIpAddress = InetAddress.getByName(args[2]);
         } catch (UnknownHostException e) {
-            System.err.printf("Node (Error): Invalid Load-Balancer IP Address \"%s\"\n", args[2]);
+            System.err.printf("Node - ERROR: Invalid Load-Balancer IP Address \"%s\"\n", args[2]);
             System.exit(0);
         }
         
@@ -57,7 +57,7 @@ public class Node {
         try {
             loadBalancerPortNumber = Integer.parseInt(args[3]);
         } catch (NumberFormatException e) {
-            System.err.printf("Node (Error): Invalid Load-Balancer Port Number %s\n", args[3]);
+            System.err.printf("Node - ERROR: Invalid Load-Balancer Port Number %s\n", args[3]);
             System.exit(0);
         }
         
@@ -66,7 +66,7 @@ public class Node {
         try {
             nodeClient.start(capacity, ipAddress, portNumber, loadBalancerIpAddress, loadBalancerPortNumber);
         } catch (IllegalArgumentException e) {
-            System.err.printf("Node (Error): Failed to start Node Client (%s)\n", e.getMessage());
+            System.err.printf("Node - ERROR: Failed to start Node Client (%s)\n", e.getMessage());
         }
     }
 }

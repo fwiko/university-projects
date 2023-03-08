@@ -8,7 +8,6 @@ public enum MessageInboundType {
     NEW_JOB_SUCCESS,
     FIN_JOB,
     ACK_IS_ALIVE,
-    EXITED_NODE,
     STOP_SYSTEM,
     GET_INFORMATION
 }

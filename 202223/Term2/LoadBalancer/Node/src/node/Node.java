@@ -4,6 +4,7 @@ import java.net.InetAddress;
 import java.net.UnknownHostException;
 
 public class Node {
+    
     public static void main(String[] args) {
         
         // If less than four (4) arguments have been provided - Exit
@@ -59,6 +60,8 @@ public class Node {
         
         // Create and Start the Node Client
         NodeClient nodeClient = new NodeClient(maximumCapacity, ipAddress, portNumber, loadBalancerIpAddress, loadBalancerPortNumber);
+        nodeClient.start();
         
     }
+    
 }

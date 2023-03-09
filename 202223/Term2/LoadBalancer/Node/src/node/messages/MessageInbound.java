@@ -8,6 +8,7 @@ public class MessageInbound extends Message {
     }
 
     public MessageInboundType getType() {
+        // Map the "instruction" string of the Message super-class to a value of the MessageInboundType enumerator
         return MessageInboundType.valueOf(instruction);
     }
 }

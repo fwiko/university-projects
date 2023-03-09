@@ -8,7 +8,6 @@ public class MessageInbound extends Message {
     }
 
     public MessageInboundType getType() {
-        // Get the instruction Enum value associated with the instruction String value
         return MessageInboundType.valueOf(instruction);
     }
 }

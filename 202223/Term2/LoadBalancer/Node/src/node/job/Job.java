@@ -1,34 +1,38 @@
 package node.job;
 
 public class Job {
-    //
-    private int idNumber = -1;
-    private int executionTime = -1;
     private JobStatus status = null;
     
-    //
-    private Thread workThread = null;
+    private int idNumber = -1;
+    private int executionTime = -1;
+    
+    private Thread jobThread = null;
     
     public Job(int idNumber, int executionTime) {
         this.idNumber = idNumber;
         this.executionTime = executionTime;
-    }
+    }    
     
     public void start() {
-        workThread = new Thread() {
+        jobThread = new Thread() {
             @Override
             public void run() {
                 status = JobStatus.RUNNING;
                 try {
                     Thread.sleep(executionTime * 1000);
-                } catch (InterruptedException e) {
+                } catch (InterruptedException exception) {
                     status = JobStatus.INTERRUPTED;
                     return;
                 }
                 status = JobStatus.FINISHED;
             }
         };
-        workThread.start();
+        
+        jobThread.start();
+    }
+    
+    public JobStatus getStatus() {
+        return status;
     }
     
     public int getIdNumber() {
@@ -39,12 +43,7 @@ public class Job {
         return executionTime;
     }
     
-    public JobStatus getStatus() {
-        return status;
-    }
-    
     public void stop() {
-        //
-        workThread.interrupt();
+        jobThread.interrupt();
     }
 }

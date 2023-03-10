@@ -1,134 +1,135 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package loadbalancer.managers;
 
-import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.LinkedList;
-import java.util.List;
 import java.util.stream.Collectors;
 import loadbalancer.job.Job;
 import loadbalancer.node.Node;
 
-/**
- *
- * @author fwiko
- */
 public class JobManager {
-    private static JobManager instance;
+    // Value holding the singleton instance of the Job Manager
+    private static JobManager instance = null;
     
-    private final LinkedList<Job> jobQueue;
-    private final ArrayList<Job> allocatedJobs;
+    // LinkedList used to queue Jobs in FIFO (First-In, First-Out) order
+    private LinkedList<Job> jobQueue = null;
     
-    // Mutexes used for exclusive access to jobQueue and allocatedJobs
-    private final Object jobQueueLock = new Object();
-    private final Object allocatedJobsLock = new Object();
+    // LinkedHashMap used to pair Jobs to their "handler" Nodes
+    private LinkedHashMap<Job, Node> jobAllocations = null;
     
-    // Next Job ID to assign to a Job
+    // Mutex objects used to allow exclusive access to the "jobQueue" LinkedList and "jobAllocations" LinkedHashMap
+    private final Object jobQueueMutex = new Object();
+    private final Object jobAllocationsMutex = new Object();
+
+    // The next Job ID to assign to a Job when one is created
     private int nextJobId = 1;
     
     private JobManager() {
         this.jobQueue = new LinkedList<>();
-        this.allocatedJobs = new ArrayList<>();
+        this.jobAllocations = new LinkedHashMap<>();
     }
-
+    
     public static JobManager getInstance() {
-        // If the JobManager instance already exists, return the instance
-        if (instance != null) {
-            return instance;
+        // If there is no current instance of the Job Manager, create a new Instance
+        if (instance == null) {
+            instance = new JobManager();
         }
-        // If the JobManager instance does not exist, create a new instance
-        instance = new JobManager();
+        
         return instance;
     }
-
-    public Job createNewJob(int executionTime) {
-        // Create a new Job object
-        Job newJob = new Job(nextJobId, executionTime);
+    
+    public Job addNewJob(int executionTime) {
+        // Create a new Job object with the next Job ID Number and given Execution Time
+        Job job = new Job(nextJobId, executionTime);
         
-        // Add the new Job object to the Job queue LinkedList
-        queueJob(newJob);
+        // Add the new Job object to the Job queue
+        queueJob(job);
         
-        // Increment the next Job ID value
+        // Increment the next Job ID Number value by 1
         nextJobId += 1;
         
-        return newJob;
+        return job;
     }
     
     public void queueJob(Job job) {
-        synchronized (jobQueueLock) {
+        // Aquire the "jobQueueMutex" Mutex and add the given Job to the "jobQueue" LinkedList
+        synchronized (jobQueueMutex) {
             jobQueue.add(job);
         }
-        
-        System.out.printf("JobManager - INFO: Added Job %d to the Queue\n", job.getIdNumber());
     }
     
     public void allocateJob(Job job, Node node) {
-        // Add the new Job allocation to the LinkedHashMap of allocated Jobs
-        synchronized (allocatedJobsLock) {
-            synchronized (jobQueueLock) {
-                jobQueue.remove(job);
-            }
-            allocatedJobs.add(job);
-            job.setHandlerNodeId(node.getIdNumber());
+        // Aquire the "jobQueueMutex" Mutex and remove the given Job from the "jobQueue" LinkedList
+        synchronized (jobQueueMutex) {
+            jobQueue.remove(job);
         }
         
-        System.out.printf("JobManager - INFO: Allocated Job %d to Node %d (Now at %f%% usage)\n", job.getIdNumber(), node.getIdNumber(), node.getUsage());
+        // Aquire the "jobAllocationsMutex" Mutex and add a new allocation record to the "jobAllocations" LinkedHashMap
+        synchronized (jobAllocationsMutex) {
+            jobAllocations.put(job, node);
+        }
+        
+        System.out.printf("JobManager - INFO: Allocated Job %d to Node %d (now at %f%% usage)\n", job.getIdNumber(), node.getIdNumber(), node.getCurrentUsage());
     }
     
-
     public void deallocateJob(Job job) {
-        synchronized (allocatedJobsLock) {
-            // Remove the specified Job from the allocatedJobs ArrayList
-            allocatedJobs.remove(job);
+        Node handlerNode = null;
+        
+        // Aquire the "jobAllocationsMutex" Mutex
+        synchronized (jobAllocationsMutex) {
+            // Retreive the Node value under the given Job key
+            handlerNode = jobAllocations.get(job);
+            
+            // Remove the allocation record from the "jobAllocations" LinkedHashMap
+            jobAllocations.remove(job);
         }
         
-        System.out.printf("JobManager - INFO: Deallocated Job %d from Node %d\n", job.getIdNumber(), job.getHandlerNodeId());
+        System.out.printf("JobManager - INFO: Deallocated Job %d from Node %d\n", job.getIdNumber(), handlerNode.getIdNumber());
     }
     
-    public Job getAllocatedJobById(int jobIdNumber) {
-        synchronized (allocatedJobsLock) {
-            for (Job job : allocatedJobs) {
-                if (job.getIdNumber() == jobIdNumber) {
-                    return job;
-                }
+    public Job getAllocatedJobById(int idNumber) {
+        // Aquire the "jobAllocationsMutex" Mutex
+        synchronized (jobAllocationsMutex) {
+            // Return the first Job object with a matching ID Number
+            for (Job job : jobAllocations.keySet()) {
+                if (job.getIdNumber() == idNumber) { return job; }
             }
         }
+        
         return null;
     }
     
-    public Job getNextJob() {
-        synchronized (jobQueueLock) {
-            // Fetch (don't remove) the first element of the jobQueue LinkedList
+    public Job getNextQueuedJob() {
+        // Aquire the "jobQueueMutex" Mutex
+        synchronized (jobQueueMutex) {
+            // Get/return (without removing) the first element of the "jobQueue" LinkedList
             return jobQueue.peekFirst();
         }
     }
     
-    public List<Job> getNodeJobs(Node node) {
-        synchronized (allocatedJobsLock) {
-            // Return a filtered List of Jobs containing only those allocated to the specified Node
-            return allocatedJobs
+    public LinkedList<Job> getNodeJobs(Node node) {
+        // Aquire the "jobAllocationsMutex" Mutex
+        synchronized (jobAllocationsMutex) {
+            // Return a LinkedList containing all Jobs allocated to the given Node
+            return jobAllocations.keySet()
                     .stream()
-                    .filter(allocJob -> allocJob.getHandlerNodeId() == node.getIdNumber())
-                    .collect(Collectors.toList());
+                    .filter(job -> jobAllocations.get(job) == node)
+                    .collect(Collectors.toCollection(LinkedList<Job>::new));
         }
     }
     
-    public int getNumberOfNodeJobs(Node node) {
-        // Return the number of Jobs allocated to the specified Node
-        return getNodeJobs(node).size();
-    }
-    
-    public LinkedList<Job> getQueuedJobs() {
-        synchronized (jobQueueLock) {
+    public LinkedList<Job> getJobQueue() {
+        // Aquire the "jobQueueMutex" Mutex
+        synchronized (jobQueueMutex) {
+            // Return the "jobQueue" LinkedList
             return jobQueue;
         }
     }
     
-    public ArrayList<Job> getAllocatedJobs() {
-        synchronized (allocatedJobsLock) {
-            return allocatedJobs;
+    public LinkedHashMap<Job, Node> getAllocatedJobs() {
+        // Aquire the "jobAllocationsMutex" Mutex
+        synchronized (jobAllocationsMutex) {
+            // Return the "jobAllocations" LinkedHashMap
+            return jobAllocations;
         }
     }
 }

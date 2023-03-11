@@ -20,19 +20,10 @@ public class LoadBalancer {
             System.exit(1);
         }
         
-        // Parse the second parameter "port_number" as an Integer
-        int rmiPortNumber = -1;
-        try {
-            rmiPortNumber = Integer.parseInt(args[1]);
-        } catch (NumberFormatException exception) {
-            System.err.println("LoadBalancer - ERROR: The \"rmi_port_number\" argument must be a valid Integer");
-            System.exit(1);
-        }
-        
         // Parse the thid parameter "allocation_algorithm" as an AlgorithmAlgorithm
         AllocationAlgorithm allocationAlgorithm = null;
         try {
-            allocationAlgorithm = AllocationAlgorithm.valueOf(args[2]);
+            allocationAlgorithm = AllocationAlgorithm.valueOf(args[2].toUpperCase());
         } catch (IllegalAccessError exception) {
             System.err.printf("LoadBalancer - ERROR: The \"allocation_algorithm\" argument must be either NORMAL (Round-Robin) or WEIGHTED (Weighted Round-Robin)");
             System.exit(1);
@@ -49,6 +40,5 @@ public class LoadBalancer {
         
         LoadBalancerServer loadBalancerServer = new LoadBalancerServer(ipAddress, portNumber, allocationAlgorithm);
         loadBalancerServer.start();
-        
     }
 }

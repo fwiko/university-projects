@@ -20,8 +20,8 @@ public class JobManager {
     private final Object jobQueueMutex = new Object();
     private final Object jobAllocationsMutex = new Object();
 
-    // The next Job ID to assign to a Job when one is created
-    private int nextJobId = 1;
+    // Next Job ID Number to assign to a Job when one is created
+    private int nextJobIdNumber = 1;
     
     private JobManager() {
         this.jobQueue = new LinkedList<>();
@@ -39,13 +39,13 @@ public class JobManager {
     
     public Job addNewJob(int executionTime) {
         // Create a new Job object with the next Job ID Number and given Execution Time
-        Job job = new Job(nextJobId, executionTime);
+        Job job = new Job(nextJobIdNumber, executionTime);
         
         // Add the new Job object to the Job queue
         queueJob(job);
         
         // Increment the next Job ID Number value by 1
-        nextJobId += 1;
+        nextJobIdNumber += 1;
         
         return job;
     }
@@ -55,6 +55,8 @@ public class JobManager {
         synchronized (jobQueueMutex) {
             jobQueue.add(job);
         }
+        
+        System.out.printf("JobManager - INFO: Job %d has been added to the queue\n", job.getIdNumber());
     }
     
     public void allocateJob(Job job, Node node) {

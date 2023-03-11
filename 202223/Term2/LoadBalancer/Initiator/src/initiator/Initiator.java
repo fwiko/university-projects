@@ -4,58 +4,53 @@ import java.net.InetAddress;
 import java.net.UnknownHostException;
 
 public class Initiator {
+
     public static void main(String[] args) {
         
-        // Initiator details
-        InetAddress ipAddress = null;
+        // If less than X (X) arguments have been provided - Exit
+        if (args.length < 3) {
+            System.err.println("Usage: java initiator <port_number> <lb_ip_address> <lb_port_number>");
+            System.exit(-1);
+        }
+        
+        //
         int portNumber = -1;
-        
-        // Load-Balancer details
-        InetAddress loadBalancerIpAddress = null;
-        int loadBalancerPortNumber = -1;
-
-        // If an insufficient number of arguments have been passed
-        if (args.length < 4) {
-            System.out.println("Usage: java initiator <ip_address> <port_number> <load_balancer_ip_address> <load_balancer_port_number>");
-            System.exit(0);
-        }
-        
-        // Set the Port Number that the Initiator Client will listen for Messages on
         try {
-            portNumber = Integer.parseInt(args[1]);
-        } catch (NumberFormatException e) {
-            System.err.printf("Node (Error): Invalid Initiator Port Number %s\n", args[1]);
-            System.exit(0);
+            portNumber = Integer.parseInt(args[0]);
+        } catch (NumberFormatException exception) {
+            System.err.println("Initiator - ERROR: The \"port_number\" argument must be a valid Integer");
+            System.exit(-1);
         }
-
-        // Set the IP Address that the Initiator Client will listen for Messages on
+        
+        //
+        InetAddress loadBalancerIpAddress = null;
+        try {
+            loadBalancerIpAddress = InetAddress.getByName(args[1]);
+        } catch (UnknownHostException exception) {
+            System.err.println("Initiator - ERROR: The \"lb_ip_address\" argument must be a valid IP Address");
+            System.exit(-1);
+        }
+        
+        //
+        int loadBalancerPortNumber = -1;
+        try {
+            loadBalancerPortNumber = Integer.parseInt(args[2]);
+        } catch (NumberFormatException exception) {
+            System.err.println("Initiator - ERROR: The \"lb_port_number\" argument must be a valid Integer");
+            System.exit(-1);
+        }
+        
+        //
+        InetAddress ipAddress = null;
         try {
             ipAddress = InetAddress.getLocalHost();
-        } catch (UnknownHostException e) {
-            System.err.println("Node (Error): Failed to get Local-Host Address");
-            System.exit(0);
-        }
-
-        // Set the IP Address of the Load-Balancer Server to send Messages to
-        try {
-            loadBalancerIpAddress = InetAddress.getByName(args[2]);
-        } catch (UnknownHostException e) {
-            System.err.printf("Node (Error): Invalid Load-Balancer IP Address \"%s\"\n", args[2]);
-            System.exit(0);
+        } catch (UnknownHostException exception) {
+            System.err.println("Node - ERROR: Failed to resolve the Local-Host IP Address");
+            System.exit(-1);
         }
         
-        // Set the Port Number of the Load-Balancer Server to send Messages to
-        try {
-            loadBalancerPortNumber = Integer.parseInt(args[3]);
-        } catch (NumberFormatException e) {
-            System.err.printf("Node (Error): Invalid Load-Balancer Port Number %s\n", args[3]);
-            System.exit(0);
-        }
-        
-
-        InitiatorClient initiatorClient = new InitiatorClient();
-        initiatorClient.start(ipAddress, portNumber, loadBalancerIpAddress, loadBalancerPortNumber);
-        
+        InitiatorClient initiatorClient = new InitiatorClient(ipAddress, portNumber, loadBalancerIpAddress, loadBalancerPortNumber);
+        initiatorClient.start();
     }
     
 }

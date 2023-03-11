@@ -14,6 +14,7 @@ import loadbalancer.node.Node;
 
 public class LoadBalancerServer {
     
+    // Load-Balancer server details
     private InetAddress ipAddress = null;
     private int portNumber = 0;
     private AllocationAlgorithm allocationAlgorithm = null;
@@ -31,6 +32,8 @@ public class LoadBalancerServer {
     
     public void start() {
         messageManager = MessageManager.getInstance();
+        jobManager = JobManager.getInstance();
+        nodeManager = NodeManager.getInstance();
         
         // Attempt to start the Message Manager, listening on the LoadBalancerServer socket
         try {
@@ -148,17 +151,17 @@ public class LoadBalancerServer {
                 // If an insufficient number of additional arguments have been provided (3 needed for REG_NODE), throw an IllegalArgumentException
                 if (message.getArguments().length < 3) { throw new IllegalArgumentException("Insufficient number of Message arguments"); }
                 
-                InetAddress ipAddress = parseIpAddressArgument(message.getArgument(0));
+                InetAddress nodeIpAddress = parseIpAddressArgument(message.getArgument(0));
                 
-                int portNumber = parseIntegerArgument(message.getArgument(1));
+                int nodePortNumber = parseIntegerArgument(message.getArgument(1));
                 
                 int maximumCapacity = parseIntegerArgument(message.getArgument(2));
                 
-                if (ipAddress == null || portNumber * maximumCapacity < 0) { throw new IllegalArgumentException("Illegal Message arguments provided"); }
+                if (nodeIpAddress == null || nodePortNumber * maximumCapacity < 0) { throw new IllegalArgumentException("Illegal Message arguments provided"); }
                 
-                Node node = nodeManager.registerNode(ipAddress, portNumber, maximumCapacity);
+                Node node = nodeManager.registerNode(nodeIpAddress, nodePortNumber, maximumCapacity);
                 
-                messageManager.sendMessage(new MessageOutbound(MessageOutboundType.REG_NODE_SUCCESS, String.valueOf(node.getIdNumber())), node.getIpAddress(), node.getPortNumber());
+                messageManager.sendMessage(new MessageOutbound(MessageOutboundType.REG_SUCCESS, String.valueOf(node.getIdNumber())), node.getIpAddress(), node.getPortNumber());
                 
                 break;
                 

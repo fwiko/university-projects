@@ -102,9 +102,11 @@ public class MessageManager {
                     if (messageString.isEmpty()) { continue; }
                     
                     // Create a new MessageInbound object with the contents of the received Message and add it to the Message Queue
-                    queueMessage(new MessageInbound(messageString));
+                    MessageInbound message = new MessageInbound(messageString);
                     
-                    System.out.printf("MessageManager - INFO: Received %s Message\n", "");
+                    System.out.printf("MessageManager - INFO: Received %s Message\n", message.getType());
+                    
+                    queueMessage(message);
                 }
             }
         };

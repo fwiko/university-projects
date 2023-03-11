@@ -8,7 +8,7 @@ public class MessageOutbound extends Message {
     }
     
     public MessageOutboundType getType() {
-        // Get the instruction Enum value associated with the instruction String value
+        // Map the "instruction" string of the Message super-class to a value of the MessageOutboundType enumerator
         return MessageOutboundType.valueOf(instruction);
     }   
 }

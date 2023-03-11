@@ -70,7 +70,7 @@ public class JobManager {
             jobAllocations.put(job, node);
         }
         
-        System.out.printf("JobManager - INFO: Allocated Job %d to Node %d (now at %f%% usage)\n", job.getIdNumber(), node.getIdNumber(), node.getCurrentUsage());
+        System.out.printf("JobManager - INFO: Allocated Job %d to Node %d (now at %s%% usage)\n", job.getIdNumber(), node.getIdNumber(), String.format("%.2f", node.getCurrentUsage()));
     }
     
     public void deallocateJob(Job job) {

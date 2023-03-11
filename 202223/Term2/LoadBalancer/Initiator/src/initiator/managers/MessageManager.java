@@ -60,10 +60,10 @@ public class MessageManager {
             datagramChannel.send(buffer, new InetSocketAddress(ipAddress, portNumber));
         } catch (IOException exception) { // Handle an IOException occurring if the Message fails to send
             System.err.printf("MessageManager - ERROR: Failed to send %s Message to socket %s:%d", message.getType(), ipAddress.getHostAddress(), portNumber);
-            return;
+//            return;
         }
         
-        System.out.printf("MessageManager - INFO: Sent %s Message to socket %s:%d\n", message.getType(), ipAddress.getHostAddress(), portNumber);
+//        System.out.printf("MessageManager - INFO: Sent %s Message to socket %s:%d\n", message.getType(), ipAddress.getHostAddress(), portNumber);
     }
     
     public void stop() {
@@ -81,7 +81,7 @@ public class MessageManager {
         messageReceiver = new Thread() {
             @Override
             public void run() {
-                System.out.printf("MessageManager - INFO: Listening for Messages on Socket %s:%s\n",datagramChannel.socket().getLocalAddress().getHostAddress(), datagramChannel.socket().getLocalPort());
+//                System.out.printf("MessageManager - INFO: Listening for Messages on Socket %s:%s\n",datagramChannel.socket().getLocalAddress().getHostAddress(), datagramChannel.socket().getLocalPort());
                 
                 while (!interrupted()) {
                     // Create a new ByteBuffer (similar to byte[]) and allocate 1024 Bytes
@@ -104,7 +104,7 @@ public class MessageManager {
                     // Create a new MessageInbound object with the contents of the received Message and add it to the Message Queue
                     MessageInbound message = new MessageInbound(messageString);
                     
-                    System.out.printf("MessageManager - INFO: Received %s Message\n", message.getType());
+//                    System.out.printf("MessageManager - INFO: Received %s Message\n", message.getType());
                     
                     queueMessage(message);
                 }

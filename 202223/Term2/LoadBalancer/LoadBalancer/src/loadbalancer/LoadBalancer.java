@@ -7,7 +7,7 @@ public class LoadBalancer {
     public static void main(String[] args) {
         // If less than two (2) arguments have been provided - Exit
         if (args.length < 2) {
-            System.err.println("Usage: java loadbalancer <port_number> <rmi_port_number> <allocation_algorithm>");
+            System.err.println("Usage: java loadbalancer <port_number> <allocation_algorithm>");
             System.exit(1);
         }
         
@@ -23,7 +23,7 @@ public class LoadBalancer {
         // Parse the thid parameter "allocation_algorithm" as an AlgorithmAlgorithm
         AllocationAlgorithm allocationAlgorithm = null;
         try {
-            allocationAlgorithm = AllocationAlgorithm.valueOf(args[2].toUpperCase());
+            allocationAlgorithm = AllocationAlgorithm.valueOf(args[1].toUpperCase());
         } catch (IllegalAccessError exception) {
             System.err.printf("LoadBalancer - ERROR: The \"allocation_algorithm\" argument must be either NORMAL (Round-Robin) or WEIGHTED (Weighted Round-Robin)");
             System.exit(1);

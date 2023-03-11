@@ -55,8 +55,8 @@ public class NodeClient {
         while (!messageManager.isStopped()) {
             // Send FIN_JOB Message(s) to the Load-Balancer socket for every finished Job
             for (Job job : jobManager.getAllFinishedJobs()) {
+                System.out.printf("NodeClient - INFO: Job %d with %d second Execution Time has finished\n", job.getIdNumber(), job.getExecutionTime());
                 messageManager.sendMessage(new MessageOutbound(MessageOutboundType.FIN_JOB, String.valueOf(job.getIdNumber())), loadBalancerIpAddress, loadBalancerPortNumber);
-                System.out.printf("NodeClient - INFO: Job %d with %d second Execution Time has finished", job.getIdNumber(), job.getExecutionTime());
             }
             
             // Get the next queued Message from the Message Manager (FIFO)
@@ -69,16 +69,11 @@ public class NodeClient {
             try {
                 handleMessage(message);
             } catch (IllegalArgumentException exception) { // Handle an IllegalArgumentException if insufficient or illegal arguments have been provideds
-                System.err.printf("NodeClient - ERROR: Could not handle %s Message (%s)", message.getType(), exception.getMessage());
+                System.err.printf("NodeClient - ERROR: Could not handle %s Message (%s)\n", message.getType(), exception.getMessage());
             }
         }
         
         System.out.println("NodeClient - INFO: Stopped...");
-    }
-    
-    private void register() {
-        // Create a new MessageOutbound object with the REG_NODE Type and send to the Load-Balancer socket
-        messageManager.sendMessage(new MessageOutbound(MessageOutboundType.REG_NODE, ipAddress.getHostAddress(), String.valueOf(portNumber), String.valueOf(maximumCapacity)), loadBalancerIpAddress, loadBalancerPortNumber);
     }
     
     private void handleMessage(MessageInbound message) throws IllegalArgumentException {
@@ -151,6 +146,11 @@ public class NodeClient {
                 throw new IllegalArgumentException("Unknown Message type");
             }
         }
+    }
+    
+    private void register() {
+        // Create a new MessageOutbound object with the REG_NODE Type and send to the Load-Balancer socket
+        messageManager.sendMessage(new MessageOutbound(MessageOutboundType.REG_NODE, ipAddress.getHostAddress(), String.valueOf(portNumber), String.valueOf(maximumCapacity)), loadBalancerIpAddress, loadBalancerPortNumber);
     }
     
     private int parseIntegerArgument(String value) {

@@ -19,6 +19,12 @@ public class LoadBalancerServer {
     private int portNumber = 0;
     private AllocationAlgorithm allocationAlgorithm = null;
     
+    // Initiator socket details
+    private InetAddress initiatorIpAddress = null;
+    private int initiatorPortNumber = -1;
+    
+    private boolean initiatorRegistered = false;
+    
     // Message, Job, and Node Manager class singletons
     private MessageManager messageManager = null;
     private JobManager jobManager = null;
@@ -111,6 +117,8 @@ public class LoadBalancerServer {
                 
                 jobManager.deallocateJob(job);
                 
+                if (initiatorRegistered) { messageManager.sendMessage(new MessageOutbound(MessageOutboundType.FIN_JOB, String.valueOf(job.getIdNumber())), initiatorIpAddress, initiatorPortNumber); }
+                
                 System.out.printf("LoadBalancerServer - INFO: Job %d has finished\n", jobIdNumber);
                 
                 break;
@@ -162,6 +170,89 @@ public class LoadBalancerServer {
                 Node node = nodeManager.registerNode(nodeIpAddress, nodePortNumber, maximumCapacity);
                 
                 messageManager.sendMessage(new MessageOutbound(MessageOutboundType.REG_SUCCESS, String.valueOf(node.getIdNumber())), node.getIpAddress(), node.getPortNumber());
+                
+                break;
+                
+            }
+            case REG_INITIATOR -> {
+            
+                // If an insufficient number of additional arguments have been provided (2 needed for REG_INITIATOR), throw an IllegalArgumentException
+                if (message.getArguments().length < 2) { throw new IllegalArgumentException("Insufficient number of Message arguments"); }
+                
+                InetAddress tempInitiatorIpAddress = parseIpAddressArgument(message.getArgument(0));
+                
+                int tempInitiatorPortNumber = parseIntegerArgument(message.getArgument(1));
+                
+                if (tempInitiatorIpAddress == null || (tempInitiatorPortNumber < 1 || tempInitiatorPortNumber > 65534)) { throw new IllegalArgumentException("Illegal Message arguments provided"); }
+                
+                if (initiatorRegistered) {
+                    //
+                    messageManager.sendMessage(new MessageOutbound(MessageOutboundType.REG_FAILURE), tempInitiatorIpAddress, tempInitiatorPortNumber);
+                    
+                    System.out.printf("LoadBalancerServer - INFO: An Initiator tried to register on socket %s:%d but an Initiator is already registered\n", tempInitiatorIpAddress.getHostAddress(), tempInitiatorPortNumber);
+                    break;
+                }
+                
+                //
+                initiatorIpAddress = tempInitiatorIpAddress;
+                initiatorPortNumber = tempInitiatorPortNumber;
+                
+                //
+                initiatorRegistered = true;
+                
+                //
+                messageManager.sendMessage(new MessageOutbound(MessageOutboundType.REG_SUCCESS), initiatorIpAddress, initiatorPortNumber);
+                
+                //
+                System.out.printf("LoadBalancerServer - INFO: An Initiator has registered on socket %s:%d\n", initiatorIpAddress.getHostAddress(), initiatorPortNumber);
+                
+                break;
+            
+            }
+            case NEW_JOB -> {
+                
+                // If an insufficient number of additional arguments have been provided (1 needed for NEW_JOB), throw an IllegalArgumentException
+                if (message.getArguments().length < 1) { throw new IllegalArgumentException("Insufficient number of Message arguments"); }
+                
+                int executionTime = parseIntegerArgument(message.getArgument(0));
+                
+                if (executionTime < 1) {
+                    messageManager.sendMessage(new MessageOutbound(MessageOutboundType.NEW_JOB_FAILURE), initiatorIpAddress, initiatorPortNumber);
+                    throw new IllegalArgumentException("Illegal Message arguments provided");
+                }
+                
+                Job job = jobManager.addNewJob(executionTime);
+                
+                messageManager.sendMessage(new MessageOutbound(MessageOutboundType.NEW_JOB_SUCCESS, String.valueOf(job.getIdNumber())), initiatorIpAddress, initiatorPortNumber);
+                
+                break;
+                
+            }
+            case GET_INFO -> {
+                
+                // FORMAT: registered_nodes, queued_jobs, allocated_jobs, node_summaries[node_id_number, node_allocated_jobs, node_current_usage] ...
+                
+                String[] nodeSummaries = nodeManager.getNodeSummaries();
+                
+                String informationString = String.format("%d,%d,%d", nodeSummaries.length, jobManager.getJobQueue().size(), jobManager.getAllocatedJobs().size());
+                
+                if (nodeSummaries.length > 0) { informationString += String.format(",%s", String.join(",", nodeSummaries)); }
+                
+                messageManager.sendMessage(new MessageOutbound(MessageOutboundType.INFO, informationString), initiatorIpAddress, initiatorPortNumber);
+                
+                break;
+                
+            }
+            case STOP_SYSTEM -> {
+                
+                messageManager.stop();
+                
+                MessageOutbound stopNodeMessage = new MessageOutbound(MessageOutboundType.STOP_NODE);
+                for (Node node : nodeManager.getNodes()) {
+                    node.stopKeepAlive();
+                    nodeManager.unregisterNode(node);
+                    messageManager.sendMessage(stopNodeMessage, node.getIpAddress(), node.getPortNumber());
+                }
                 
                 break;
                 

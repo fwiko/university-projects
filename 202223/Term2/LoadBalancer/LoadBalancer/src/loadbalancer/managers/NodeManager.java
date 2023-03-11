@@ -9,7 +9,7 @@ import loadbalancer.node.Node;
 
 public class NodeManager {
     // Value holding the singleton instacne of the Node Manager
-    private static NodeManager instance;
+    private static NodeManager instance = null;
     
     // LinkedList storing all Nodes that are registered with the Load-Balancer
     private LinkedList<Node> registeredNodes = null;
@@ -32,11 +32,11 @@ public class NodeManager {
     }
     
     public static NodeManager getInstance() {
-        // If there is no current instance of the Job Manager, create a new Instance
+        // If there is no current instance of the Node Manager, create a new Instance
         if (instance == null) {
-            return instance;
+            instance = new NodeManager();
         }
-        instance = new NodeManager();
+        
         return instance;
     }
     
@@ -156,6 +156,21 @@ public class NodeManager {
     
     public LinkedList<Node> getNodes() {
         return registeredNodes;
+    }
+    
+    public String[] getNodeSummaries() {
+        String[] nodeSummaries = new String[registeredNodes.size()];
+        
+        for (int i = 0; i < registeredNodes.size(); i++) {
+            Node node = registeredNodes.get(i);
+            nodeSummaries[i] = String.format(
+                    "%d,%d,%f", 
+                    node.getIdNumber(), 
+                    jobManager.getNodeJobs(node).size(),
+                    node.getCurrentUsage());
+        }
+        
+        return nodeSummaries;
     }
     
     private void sortNodes() {

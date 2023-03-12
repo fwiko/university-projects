@@ -159,8 +159,10 @@ public class NodeManager {
     }
     
     public String[] getNodeSummaries() {
+        // Create a String-array with the same length of the list of registered Nodes
         String[] nodeSummaries = new String[registeredNodes.size()];
         
+        // Add a string detailing the ID Number, Allocated Jobs, and Usage of each Node to the above array
         for (int i = 0; i < registeredNodes.size(); i++) {
             Node node = registeredNodes.get(i);
             nodeSummaries[i] = String.format(

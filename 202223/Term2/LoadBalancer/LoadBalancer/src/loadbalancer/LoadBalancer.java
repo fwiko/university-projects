@@ -38,6 +38,7 @@ public class LoadBalancer {
             System.exit(1);
         }
         
+        // Create and start the Load-Balancer server
         LoadBalancerServer loadBalancerServer = new LoadBalancerServer(ipAddress, portNumber, allocationAlgorithm);
         loadBalancerServer.start();
     }

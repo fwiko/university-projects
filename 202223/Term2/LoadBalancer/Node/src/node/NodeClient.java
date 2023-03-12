@@ -107,14 +107,6 @@ public class NodeClient {
                 break;
                 
             }
-            case REG_FAILURE -> {
-                
-                // Stop the Message Manager (stops the Message receiving Thread that the system relies upon)
-                messageManager.stop();
-                
-                break;
-                
-            }
             case REG_SUCCESS -> {
                 
                 // If an insufficient number of additional arguments have been provided (1 needed for REG_SUCCESS), throw an IllegalArgumentException

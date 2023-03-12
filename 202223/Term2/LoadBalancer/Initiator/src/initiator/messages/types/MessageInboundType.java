@@ -5,6 +5,6 @@ public enum MessageInboundType {
     NEW_JOB_SUCCESS,
     NEW_JOB_FAILURE,
     REG_SUCCESS,
-    REG_FAILURE,
-    INFO
+    INFO,
+    STOP_INITIATOR
 }

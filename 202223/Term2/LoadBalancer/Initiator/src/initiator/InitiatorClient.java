@@ -54,13 +54,13 @@ public class InitiatorClient {
             @Override
             public void run() {
                 while (!interrupted() && !messageManager.isStopped()) {
-                    //
+                    // Get the next queued Message from the Message Manager (FIFO)
                     MessageInbound message = messageManager.getNextQueuedMessage();
                     
-                    //
+                    // If there is no Message in the queue, jump to the top of the loop
                     if (message == null) { continue; }
                     
-                    //
+                    // Attempt to handle the Message using the Message handler switch statement
                     try {
                         handleMessage(message);
                     } catch (IllegalArgumentException exception) {
@@ -70,39 +70,39 @@ public class InitiatorClient {
             }
         };
         
-        //
+        // Start the above Message Handler loop in a separate Thread
         messageHandler.start();
         
-        //
+        // Send a registration Message to the Load-Balancer
         register();
         
-        System.out.println("### STARTED INITIATOR CLIENT ###");
+        System.out.print("### STARTED INITIATOR CLIENT ###");
         
-        //
+        // Display the list of command-line input options for the User
         showOptions();
         
-        //
+        // Initialise the BufferedReader used to get User-input
         inputReader = new BufferedReader(new InputStreamReader(System.in));
         
-        //
+        // While the Message Manager's Message receiving Thread has not stopped
         while (!messageManager.isStopped()) {
             String commandString = "";
             while (commandString.length() < 1) {
-                System.out.print("Initiator> ");
+                System.out.print("> ");
                 
-                //
+                // Accept command-line User-input
                 try {
                     commandString = inputReader.readLine();
                 } catch (IOException exception) {
-                    System.err.printf("InitiatorClient - ERROR: Failed to get user-input (%s)\n", exception.getMessage());
+                    System.err.printf("InitiatorClient - ERROR: Failed to get User-input (%s)\n", exception.getMessage());
                 }
             }
             
-            //
+            // Send the User-input to the "handleCommand" method
             try {
                 handleCommand(commandString);
             } catch (IllegalArgumentException exception) {
-                
+                System.err.printf("InitiatorClient - ERROR: Failed to handle \"%s\" (%s)", commandString, exception.getMessage());
             }
         }
         
@@ -120,7 +120,6 @@ public class InitiatorClient {
                 // Check if registered
                 if (!registered) {
                     System.out.println("InitiatorClient - INFO: Unable to create a new Job (not registered)");
-                    register();
                 }
                 
                 // If an insufficient number of additional arguments have been provided (1 needed for JOB command), throw an IllegalArgumentException
@@ -143,7 +142,6 @@ public class InitiatorClient {
                 // Check if registered
                 if (!registered) {
                     System.out.println("InitiatorClient - INFO: Unable to stop the Load-Balancer (not registered)");
-                    register();
                 }
                 
                 // Stop the Message Manager's Message receiver Thread
@@ -202,16 +200,10 @@ public class InitiatorClient {
             }
             case REG_SUCCESS -> {
                 
+                // Set the "registered" flag to TRUE (instructions can now be sent to the Load-Balancer)
                 registered = true;
                 
                 System.out.printf("\rInitiatorClient - INFO: Successfully registered with the Load-Balancer on socket %s:%d\n", loadBalancerIpAddress.getHostAddress(), loadBalancerPortNumber);
-                
-                break;
-                
-            }
-            case REG_FAILURE -> {
-                
-                System.err.printf("\rInitiatorClient - ERROR: Failed to register with the Load-Balancer on socket %s:%d\n", loadBalancerIpAddress.getHostAddress(), loadBalancerPortNumber);
                 
                 break;
                 
@@ -231,21 +223,34 @@ public class InitiatorClient {
                 // If an insufficient number of additional arguments have been provided (minimum 3 needed for INFO), throw an IllegalArgumentException
                 if (message.getArguments().length < 1) { throw new IllegalArgumentException("Insufficient number of Message arguments"); } 
                 
+                // Create a string detailing the Registered Nodes, Queued Jobs, and Allocated Jobs - using the first three (3) Message arguments
                 String informationString = String.format("""
                                                          Registered Nodes: %s
                                                          Queued Jobs: %s
                                                          Allocated Jobs: %s
                                                          """, message.getArgument(0), message.getArgument(1), message.getArgument(2));
                 
+                // If the number of connected Nodes is creater than zero (0)
                 if (message.getArguments().length > 3) {
+                    // A "sliding window" in the form of a for-loop jumping three (3) spaces each iteration
                     for (int i = 5; i < message.getArguments().length; i+=3) {
-                        informationString += String.format("\nNode #%s [%s Jobs, %s Usage]", message.getArgument(i-2), message.getArgument(i-1), message.getArgument(i));
+                        // Add a line to the above "informationString" detailing the Node's ID Number, Designated Jobs, and Usage (percentage to 2dp)
+                        informationString += String.format("\nNode #%s [%s Jobs, %s%% Usage]", message.getArgument(i-2), message.getArgument(i-1), String.format("%.2f", parseFloatArgument(message.getArgument(i))));
                     }
                 }
                 
                 System.out.printf("\rInitiatorClient - INFO: Received information from the Load-Balancer \n\n%s\n", informationString);
                 
                 break;
+                
+            }
+            case STOP_INITIATOR -> {
+                
+                // Set the "registered" flag to FALSE to stop race-condition (?) if even possible in that timeframe
+                registered = false;
+                
+                // Stop the Message Manager's Message receiver Thread
+                messageManager.stop();
                 
             }
             default -> {
@@ -277,9 +282,17 @@ public class InitiatorClient {
         // Attempt to parse the provided "value" String to an Integer
         try {
             return Integer.parseInt(value);
-        } catch (NumberFormatException exception) { // Handle a NumberFormatException and return -1 (invalid integer)
+        } catch (NumberFormatException exception) { // Handle a NumberFormatException and return -1 (invalid Integer)
             return -1;
         }
     }
     
+    private float parseFloatArgument(String value) {
+        // Attempt tp parase the provided "value" String to a Float
+        try {
+            return Float.parseFloat(value);
+        } catch (NumberFormatException exception) { // Handle a NumberFormatException and return -1 (invalid Float)
+            return -1;
+        }
+    }
 }

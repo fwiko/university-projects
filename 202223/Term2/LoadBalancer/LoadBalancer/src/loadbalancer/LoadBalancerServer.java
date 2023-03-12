@@ -186,10 +186,14 @@ public class LoadBalancerServer {
                 if (tempInitiatorIpAddress == null || (tempInitiatorPortNumber < 1 || tempInitiatorPortNumber > 65534)) { throw new IllegalArgumentException("Illegal Message arguments provided"); }
                 
                 if (initiatorRegistered) {
-                    //
-                    messageManager.sendMessage(new MessageOutbound(MessageOutboundType.REG_FAILURE), tempInitiatorIpAddress, tempInitiatorPortNumber);
                     
-                    System.out.printf("LoadBalancerServer - INFO: An Initiator tried to register on socket %s:%d but an Initiator is already registered\n", tempInitiatorIpAddress.getHostAddress(), tempInitiatorPortNumber);
+                    initiatorRegistered = false;
+                    
+                    //
+                    messageManager.sendMessage(new MessageOutbound(MessageOutboundType.STOP_INITIATOR), initiatorIpAddress, initiatorPortNumber);
+                    
+                    System.out.printf("LoadBalancerServer - INFO: A new Initiator has requested to register, the old Initiator has been stopped\n", tempInitiatorIpAddress.getHostAddress(), tempInitiatorPortNumber);
+                    
                     break;
                 }
                 
@@ -204,7 +208,7 @@ public class LoadBalancerServer {
                 messageManager.sendMessage(new MessageOutbound(MessageOutboundType.REG_SUCCESS), initiatorIpAddress, initiatorPortNumber);
                 
                 //
-                System.out.printf("LoadBalancerServer - INFO: An Initiator has registered on socket %s:%d\n", initiatorIpAddress.getHostAddress(), initiatorPortNumber);
+                System.out.printf("LoadBalancerServer - INFO: Initiator registered on socket %s:%d\n", initiatorIpAddress.getHostAddress(), initiatorPortNumber);
                 
                 break;
             

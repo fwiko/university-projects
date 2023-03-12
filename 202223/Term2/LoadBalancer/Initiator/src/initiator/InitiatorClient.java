@@ -10,265 +10,289 @@ import java.io.InputStreamReader;
 import java.net.InetAddress;
 
 public class InitiatorClient {
-    // Singleton instance of InitiatorClient
-    private static InitiatorClient instance = null;
-    
-    // Flag used to track whether Initiator is running
-    private boolean running = true;
     
     // Initiator socket details
-    private InetAddress initiatorIpAddress = null;
-    private int initiatorPortNumber = -1;
+    InetAddress ipAddress = null;
+    int portNumber = -1;
     
-    // LoadBalancerServer socket details
-    private InetAddress loadBalancerIpAddress = null;
-    private int loadBalancerPortNumber = -1;
+    // Load-Balancer socket details
+    InetAddress loadBalancerIpAddress = null;
+    int loadBalancerPortNumber = -1;
     
-    // Singleton MessageManager instance
-    private MessageManager messageManager = null;
+    boolean registered = false;
     
-    // Thread for handling Messages in the background
-    private Thread messageHandler = null;
+    // Thread for handling incoming Messages without blocking terminal User-input
+    Thread messageHandler = null;
     
-    // Input reader for user Terminal input
-    private BufferedReader inputReader = null;
+    // BufferedReader used in conjunction with an InputStreamReader to accept terminal User-input
+    BufferedReader inputReader = null;
     
-    public static InitiatorClient getInstance() {
-        // If an instance of the NodeClient already exists
-        if (instance != null) {
-            return instance;
-        }
-        // Create a new instance of the NodeClient
-        instance = new InitiatorClient();
-        return instance;
-    }
+    // Message and Job Manager class singletons
+    MessageManager messageManager = null;
     
-    public void start(InetAddress initiatorIpAddress, int initiatorPortNumber, InetAddress loadBalancerIpAddress, int loadBalancerPortNumber) {
-        // Set the IP Address and Port Number of the Initiator client
-        this.initiatorIpAddress = initiatorIpAddress;
-        this.initiatorPortNumber = initiatorPortNumber;
+    public InitiatorClient(InetAddress ipAddress, int portNumber, InetAddress loadBalancerIpAddress, int loadBalancerPortNumber) {
+        this.ipAddress = ipAddress;
+        this.portNumber = portNumber;
         
-        // Set the IP Address and Port Number of the LoadBalancer Server
         this.loadBalancerIpAddress = loadBalancerIpAddress;
         this.loadBalancerPortNumber = loadBalancerPortNumber;
-        
-        // Fetch the singleton MessageManager instance
+    }
+    
+    public void start() {
         messageManager = MessageManager.getInstance();
         
-        // Start the MessageManager to listen for Messages from the LoadBalancer
+        // Attempt to start the Message Manager, listening on the Initiator socket
         try {
-            messageManager.start(initiatorIpAddress, initiatorPortNumber);
-        } catch (IOException e) {
-            System.out.println(e);
+            messageManager.start(ipAddress, portNumber);
+        } catch (IOException exception) {
+            System.err.printf("InitiatorClient - ERROR: IOException when opening Datagram Channel on %s:%d\n", ipAddress.getHostAddress(), portNumber);
+            System.exit(-1);
         }
         
-        // Send a REG_INITIATOR Message to the LoadBalancer
-        register();
-        
-        // Start a new Thread to handle incoming Messages after fetching them from the MessageManager
+        // Handle incoming Messages on a different Thread to prevent blocking user-input
         messageHandler = new Thread() {
             @Override
             public void run() {
-                // While the messageHandler thread has not been interrupted (system stopping)
-                while (!interrupted()) {
-                    // If the messageManager has stopped - break.
-                    if (messageManager.isStopped()) {
-                        running = false;
-                        break;
-                    }
-
-                    // Fetch the next queued Message from the Message Manager
-                    MessageInbound nextMessage = messageManager.getNextMessage();
-
-                    // If the next Message exists - handle it
-                    if (nextMessage != null) {
-                        try {
-                            handleMessage(nextMessage);
-                        } catch (IllegalArgumentException e) {
-                            System.out.printf("InitiatorClient - ERROR: Failed to handle %s Message (%s)\n", nextMessage.getType().toString(), e.getMessage());
-                        }
+                while (!interrupted() && !messageManager.isStopped()) {
+                    // Get the next queued Message from the Message Manager (FIFO)
+                    MessageInbound message = messageManager.getNextQueuedMessage();
+                    
+                    // If there is no Message in the queue, jump to the top of the loop
+                    if (message == null) { continue; }
+                    
+                    // Attempt to handle the Message using the Message handler switch statement
+                    try {
+                        handleMessage(message);
+                    } catch (IllegalArgumentException exception) {
+                        System.err.printf("InitiatorClient - ERROR: Could not handle %s Message (%s)", message.getType(), exception.getMessage());
                     }
                 }
             }
         };
         
-        // Start the message handler on a different Thread so not to block User-Input
+        // Start the above Message Handler loop in a separate Thread
         messageHandler.start();
         
-        System.out.println("### STARTED INITIATOR CLIENT ###");
+        // Send a registration Message to the Load-Balancer
+        register();
         
-        // Output the Terminal input options to the InitiatorClient user
-        options();
+        System.out.print("### STARTED INITIATOR CLIENT ###");
         
-        // Initialise the BufferedReader to get Terminal input
+        // Display the list of command-line input options for the User
+        showOptions();
+        
+        // Initialise the BufferedReader used to get User-input
         inputReader = new BufferedReader(new InputStreamReader(System.in));
-        while (running) {
-            // Get the next line input to the Terminal until a non-empty string is fetched
-            String userInputString = "";
-            while (userInputString.length() < 1) {
+        
+        // While the Message Manager's Message receiving Thread has not stopped
+        while (!messageManager.isStopped()) {
+            String commandString = "";
+            while (commandString.length() < 1) {
+                System.out.print("> ");
+                
+                // Accept command-line User-input
                 try {
-                    System.out.print("Initiator> ");
-                    userInputString = inputReader.readLine();
-                } catch (IOException e) { 
-                    System.err.printf("InitiatorClient - ERROR: Failed to read User-Input (%s)\n", e.getMessage());
+                    commandString = inputReader.readLine();
+                } catch (IOException exception) {
+                    System.err.printf("InitiatorClient - ERROR: Failed to get User-input (%s)\n", exception.getMessage());
                 }
             }
             
-            // Handle the user's Terminal input
+            // Send the User-input to the "handleCommand" method
             try {
-                handleInput(userInputString);
-            } catch (IllegalArgumentException e) {
-                System.err.printf("InitiatorClient - ERROR: Failed to handle User-Input (%s)\n", e.getMessage());
+                handleCommand(commandString);
+            } catch (IllegalArgumentException exception) {
+                System.err.printf("InitiatorClient - ERROR: Failed to handle \"%s\" (%s)", commandString, exception.getMessage());
             }
         }
         
-        System.out.println("InitiatorClient - INFO: Stopped");
+        System.out.println("InitiatorClient - INFO: Stopped...");
+    }
+    
+    private void handleCommand(String commandString) throws IllegalArgumentException {
+        
+        // Split given input String into separate arguments
+        String[] args = commandString.split(" ");
+        
+        switch(args[0].toUpperCase()) {
+            case "JOB" -> {
+
+                // Check if registered
+                if (!registered) {
+                    System.out.println("InitiatorClient - INFO: Unable to create a new Job (not registered)");
+                }
+                
+                // If an insufficient number of additional arguments have been provided (1 needed for JOB command), throw an IllegalArgumentException
+                if (args.length - 1 < 1) { throw new IllegalArgumentException("Usage: JOB <execution_time>"); } 
+                
+                //
+                int executionTime = parseIntegerArgument(args[1]);
+                
+                // If the input Exeuction Time value is not an Integer or is negative, throw an IllegalArgumentException
+                if (executionTime < 1) { throw new IllegalArgumentException("Illegal command arguments provided"); }
+                
+                // Send a NEW_JOB Message to the Load-Balancer socket with the given Execution Time value as an additional argument
+                messageManager.sendMessage(new MessageOutbound(MessageOutboundType.NEW_JOB, String.valueOf(executionTime)), loadBalancerIpAddress, loadBalancerPortNumber);
+                
+                break;
+                
+            }
+            case "STOP" -> {
+                
+                // Check if registered
+                if (!registered) {
+                    System.out.println("InitiatorClient - INFO: Unable to stop the Load-Balancer (not registered)");
+                }
+                
+                // Stop the Message Manager's Message receiver Thread
+                messageManager.stop();
+                
+                // Send a STOP_SYSTEM Message to the Load-Balancer socket
+                messageManager.sendMessage(new MessageOutbound(MessageOutboundType.STOP_SYSTEM), loadBalancerIpAddress, loadBalancerPortNumber);
+                
+                break;
+                
+            }
+            case "INFO" -> {
+                
+                // Send a GET_INFO Message to the Load-Balancer socket
+                messageManager.sendMessage(new MessageOutbound(MessageOutboundType.GET_INFO), loadBalancerIpAddress, loadBalancerPortNumber);
+                
+                break;
+                
+            }
+            case "HELP" -> {
+                
+                // Display a list of command options for the User
+                showOptions();
+                
+                break;
+                
+            }
+            default -> {
+                throw new IllegalArgumentException("Unknown Command");
+            }
+        }
+        
     }
     
     private void handleMessage(MessageInbound message) throws IllegalArgumentException {
         switch (message.getType()) {
-            case REG_INITIATOR_SUCCESS -> { // ----------------------------------------------------------------------------------------------------------------------------------------------------- REG_INITIATOR_SUCCESS
+            case NEW_JOB_SUCCESS -> {
                 
-                System.out.println("InitiatorClient - INFO: Successfully registered with LoadBalancer");
+                // If an insufficient number of additional arguments have been provided (1 needed for NEW_JOB_SUCCESS), throw an IllegalArgumentException
+                if (message.getArguments().length < 1) { throw new IllegalArgumentException("Insufficient number of Message arguments"); } 
                 
-                break;
-            }
-            case REG_INITIATOR_FAILURE -> {
-
-                // Set the running flag to false
-                running = false;
-                
-                // Stop the MessageManager (messageReceiver Thread)
-                messageManager.stop();
-                
-                System.err.println("InitiatorClient - ERROR: Failed to register with LoadBalancer");
+                System.out.printf("\rInitiatorClient - INFO: The Load-Balancer has successfully queued Job %s\n", message.getArgument(0));
                 
                 break;
+                
             }
-            case NEW_JOB_SUCCESS -> { // ----------------------------------------------------------------------------------------------------------------------------------------------------------- NEW_JOB_SUCCESS
+            case NEW_JOB_FAILURE -> {
                 
-                // The NEW_JOB_SUCCESS Message must have at least 1 additional parameter
-                if (message.getParameters().length < 1) { throw new IllegalArgumentException("Insufficient Message parameters"); }
+                // If an insufficient number of additional arguments have been provided (1 needed for NEW_JOB_FAILURE), throw an IllegalArgumentException
+                if (message.getArguments().length < 1) { throw new IllegalArgumentException("Insufficient number of Message arguments"); } 
                 
-                // Set the Job ID value from the first NEW_JOB_SUCCESS Message parameter
-                int jobId = -1;
-                try {
-                    jobId = Integer.parseInt(message.getParameter(0));
-                } catch (NumberFormatException e) {
-                    throw new IllegalArgumentException("Job ID must be an Integer");
-                }
-                
-                // Output text indicating that a Job was queued successfully
-                System.out.printf("InitiatorClient - INFO: Job %d queued successfully\n", jobId);
+                System.err.printf("\rInitiatorClient - ERROR: The Load-Balancer failed to queue Job %s\n", message.getArgument(0));
                 
                 break;
+                
             }
-            case NEW_JOB_FAILURE -> { // ----------------------------------------------------------------------------------------------------------------------------------------------------------- NEW_JOB_FAILURE
+            case REG_SUCCESS -> {
                 
-                // The NEW_JOB_FAILURE Message must have at least 1 additional parameter
-                if (message.getParameters().length < 1) { throw new IllegalArgumentException("Insufficient Message parameters"); }
+                // Set the "registered" flag to TRUE (instructions can now be sent to the Load-Balancer)
+                registered = true;
                 
-                // Output text indicating that the LoadBalancer failed to queue a Job
-                System.err.printf("InitiatorClient - ERROR: Failed to queue Job %s\n", message.getParameter(0));
+                System.out.printf("\rInitiatorClient - INFO: Successfully registered with the Load-Balancer on socket %s:%d\n", loadBalancerIpAddress.getHostAddress(), loadBalancerPortNumber);
                 
                 break;
+                
             }
-            case FIN_JOB -> { // ------------------------------------------------------------------------------------------------------------------------------------------------------------------- FIN_JOB
+            case FIN_JOB -> {
                 
-                // The FIN_JOB Message must have at least 1 additional parameter
-                if (message.getParameters().length < 1) { throw new IllegalArgumentException("Insufficient Message parameters"); }
+                // If an insufficient number of additional arguments have been provided (1 needed for FIN_JOB), throw an IllegalArgumentException
+                if (message.getArguments().length < 1) { throw new IllegalArgumentException("Insufficient number of Message arguments"); } 
                 
-                // Output a Message indicating that a Job has finished
-                System.err.printf("InitiatorClient - INFO: Job %s has finished\n", message.getParameter(0));
+                System.out.printf("\rInitiatorClient - INFO: The execution of Job %s has finished\n", message.getArgument(0));
                 
                 break;
-            }
-            case INFORMATION -> {
                 
-                // The INFORMATION Message must have at least 1 additional parameter
-                if (message.getParameters().length < 1) { throw new IllegalArgumentException("Insufficient Message parameters"); }
-                
-                // Output the received LoadBalancer System information to the terminal
-                System.out.println("\n\n" + message.getParameter(0));
-                
-                break;
-            }
-            default -> {
-                throw new IllegalArgumentException("Unknown instruction");
-            }
-        }
-    }
-    
-    private void handleInput(String inputString) throws IllegalArgumentException {
-        
-        // Split given input String into separate arguments
-        String[] inputArguments = inputString.split(" ");
-        
-        switch (InputOptionTypes.valueOf(inputArguments[0].toUpperCase())) {
-            case JOB -> { // --------------------------------------------------------------------------------------------------------------------------------------------------------------------- JOB
-                
-                // The JOB command requires one additional parameter (total length 2)
-                if (inputArguments.length < 2) { throw new IllegalArgumentException("Usage: JOB <execution_time>"); } 
-                
-                // Set the Job Execution Time value to the parameter after the command
-                int jobExecutionTime = -1;
-                try {
-                    jobExecutionTime = Integer.parseInt(inputArguments[1]);
-                    if (jobExecutionTime < 1) {
-                        throw new IllegalArgumentException("Execution time must be greater than one");
-                    }
-                } catch (NumberFormatException e) {
-                    throw new IllegalArgumentException("Execution time must be an Integer");
-                }
-                
-                // Send a NEW_JOB Message to the LoadBalancer to start a new Job for jobExecutionTime Seconds
-                MessageOutbound newJobMessage = new MessageOutbound(MessageOutboundType.NEW_JOB, String.valueOf(jobExecutionTime));
-                messageManager.sendMessage(newJobMessage,  loadBalancerIpAddress, loadBalancerPortNumber);
-                
-                break;
-            }
-            case STOP -> { // -------------------------------------------------------------------------------------------------------------------------------------------------------------------- STOP
-                // Stop the MessageManager Thread
-                messageManager.stop();
-
-                // Send a STOP_SYSTEM Message to the LoadBalancer
-                MessageOutbound loadBalancerStopMessage = new MessageOutbound(MessageOutboundType.STOP_SYSTEM);
-                messageManager.sendMessage(loadBalancerStopMessage, loadBalancerIpAddress, loadBalancerPortNumber);
-                
-                // Set the running flag to false to stop the User-Input loop
-                running = false;
-                
-                break;
-            }
-            case HELP -> {
-                // Output the Terminal input options to the InitiatorClient user
-                options();
-                
-                break;
             }
             case INFO -> {
                 
-                MessageOutbound infoRequestMessage = new MessageOutbound(MessageOutboundType.GET_INFORMATION);
-                messageManager.sendMessage(infoRequestMessage, loadBalancerIpAddress, loadBalancerPortNumber);
+                // If an insufficient number of additional arguments have been provided (minimum 3 needed for INFO), throw an IllegalArgumentException
+                if (message.getArguments().length < 1) { throw new IllegalArgumentException("Insufficient number of Message arguments"); } 
+                
+                // Create a string detailing the Registered Nodes, Queued Jobs, and Allocated Jobs - using the first three (3) Message arguments
+                String informationString = String.format("""
+                                                         Registered Nodes: %s
+                                                         Queued Jobs: %s
+                                                         Allocated Jobs: %s
+                                                         """, message.getArgument(0), message.getArgument(1), message.getArgument(2));
+                
+                // If the number of connected Nodes is creater than zero (0)
+                if (message.getArguments().length > 3) {
+                    // A "sliding window" in the form of a for-loop jumping three (3) spaces each iteration
+                    for (int i = 5; i < message.getArguments().length; i+=3) {
+                        // Add a line to the above "informationString" detailing the Node's ID Number, Designated Jobs, and Usage (percentage to 2dp)
+                        informationString += String.format("\nNode #%s [%s Jobs, %s%% Usage]", message.getArgument(i-2), message.getArgument(i-1), String.format("%.2f", parseFloatArgument(message.getArgument(i))));
+                    }
+                }
+                
+                System.out.printf("\rInitiatorClient - INFO: Received information from the Load-Balancer \n\n%s\n", informationString);
                 
                 break;
+                
+            }
+            case STOP_INITIATOR -> {
+                
+                // Set the "registered" flag to FALSE to stop race-condition (?) if even possible in that timeframe
+                registered = false;
+                
+                // Stop the Message Manager's Message receiver Thread
+                messageManager.stop();
+                
             }
             default -> {
-                throw new IllegalArgumentException("Unknown command");
+                
+                throw new IllegalArgumentException("Unknown Message type");
+                
             }
         }
     }
     
-    private void register() {
-        // Send a registration (REG_INITIATOR) Message to the LoadBalancer
-        MessageOutbound registrationMessage = new MessageOutbound(MessageOutboundType.REG_INITIATOR, initiatorIpAddress.getHostAddress(), String.valueOf(initiatorPortNumber));
-        messageManager.sendMessage(registrationMessage, loadBalancerIpAddress, loadBalancerPortNumber);
+    private void showOptions() {
+        System.out.println(
+                """
+                \n
+                JOB <execution_time>    Add a new Job to the LoadBalancer Queue
+                INFO                    Get information about the status of the Load-Balancer System
+                HELP                    Output the list (this) of available commands
+                STOP                    Shutdown the LoadBalnacer System, all Nodes, and the Initiator
+                """
+        );
     }
     
-    private void options() {
-        System.out.println("\nJOB <time>      Add a new Job to the LoadBalancer Queue");
-        System.out.println("INFO            Get information about the status of the LoadBalancer System");
-        System.out.println("HELP            Get information about the status of the LoadBalancer System");
-        System.out.println("STOP            Shutdown the LoadBalnacer System, all Nodes, and the Initiator\n");
+    private void register() {
+        // Create a new MessageOutbound object with the REG_INITIATOR Type and send to the Load-Balancer socket
+        messageManager.sendMessage(new MessageOutbound(MessageOutboundType.REG_INITIATOR, ipAddress.getHostAddress(), String.valueOf(portNumber)), loadBalancerIpAddress, loadBalancerPortNumber);
+    }
+    
+    private int parseIntegerArgument(String value) {
+        // Attempt to parse the provided "value" String to an Integer
+        try {
+            return Integer.parseInt(value);
+        } catch (NumberFormatException exception) { // Handle a NumberFormatException and return -1 (invalid Integer)
+            return -1;
+        }
+    }
+    
+    private float parseFloatArgument(String value) {
+        // Attempt tp parase the provided "value" String to a Float
+        try {
+            return Float.parseFloat(value);
+        } catch (NumberFormatException exception) { // Handle a NumberFormatException and return -1 (invalid Float)
+            return -1;
+        }
     }
 }

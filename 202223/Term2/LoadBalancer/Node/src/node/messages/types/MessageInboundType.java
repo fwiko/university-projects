@@ -1,9 +1,8 @@
 package node.messages.types;
 
 public enum MessageInboundType {
-    REG_NODE_FAILURE,
-    REG_NODE_SUCCESS,
-    NEW_JOB,
     IS_ALIVE,
+    NEW_JOB,
+    REG_SUCCESS,
     STOP_NODE
 }

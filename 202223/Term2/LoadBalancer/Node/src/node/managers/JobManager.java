@@ -1,77 +1,74 @@
 package node.managers;
 
 import java.util.LinkedList;
-import java.util.List;
 import java.util.stream.Collectors;
 import node.job.Job;
 import node.job.JobStatus;
 
 public class JobManager {
-    // Singleton instance of JobManager
-    private static JobManager instance;
+    // Value holding the singleton instance of the Job Manager
+    private static JobManager instance = null; 
     
-    // LinkedLink of all Job objects being executed or yet to be returned
-    private final LinkedList<Job> jobs;
+    // LinkedList holding *all* Jobs (running or finished and yet to be cleaned up)
+    private LinkedList<Job> jobs = null;
     
-    // Mutex object used for exclusive access to jobs LinkedList
-    private final Object jobsLock = new Object();
+    // Mutex object to allow exclusive access to the "jobs" LinkedList
+    private final Object jobsMutex = new Object();
     
     private JobManager() {
         this.jobs = new LinkedList<>();
     }
-
+    
     public static JobManager getInstance() {
-        // If an instance of the JobManager already exists
+        // If there is no current instance of the Job Manager, create a new Instance
         if (instance != null) {
             return instance;
         }
-        // Create a new instance of the JobManager
+        
+        // Create a new instance of the Job Manager and store under "instance"
         instance = new JobManager();
         return instance;
     }
     
-    public void startJob(int jobIdNumber, int jobExectutionTime) {
-        // Create a new Job object with the specified ID Number and Execution Time
-        Job newJob = new Job(jobIdNumber, jobExectutionTime);
+    public void startJob(int idNumber, int executionTime) {
+        // Create a new Job object with the given Job ID Number and Execution Time
+        Job job = new Job(idNumber, executionTime);
         
-        // Activate (Lock) the jobs LinkedList Mutex object
-        synchronized (jobsLock) {
-            // Add the new Job object to the jobs LinkedList
-            jobs.add(newJob);
-        }
+        // Acquire the "jobsMutex" Mutex and add the Job to the "jobs" LinkedList
+        synchronized (jobsMutex) { jobs.add(job); }
         
-        // Start the new Job's "workload" execution
-        newJob.start();
-        System.out.printf("JobManager - INFO: Started Job %d with Execution Time of %d seconds\n", jobIdNumber, jobExectutionTime);
+        // Start the new Job's execution on a separate Thread
+        job.start();
+        System.out.printf("JobManager - INFO: Started Job %d with a %d second Execution Time\n", job.getIdNumber(), job.getExecutionTime());
     }
     
-    public List<Job> getFinishedJobs() {
-        List<Job> finishedJobs = null;
+    public LinkedList<Job> getAllFinishedJobs() {
+        // Create a new LinkedList to hold any finished Jobs
+        LinkedList<Job> finishedJobs = null;
         
-        // Activate (Lock) the jobs LinkedList Mutex object
-        synchronized (jobsLock) {
-            // Use a collector to get all Job objects with a status FINISHED
-            finishedJobs = jobs
-                    .stream()
+        // Acquire the "jobsMutex" Mutex and filter the LinkedList of jobs to find all Jobs with status == JobStatus.FINISHED
+        synchronized(jobsMutex) {
+            finishedJobs = jobs.stream()
                     .filter(job -> job.getStatus() == JobStatus.FINISHED)
-                    .collect(Collectors.toList());
+                    .collect(Collectors.toCollection(LinkedList::new));
             
-            // Remove all finished Job objects from the jobs LinkedList
+            // Remove all finished Jobs from the LinkedList of Jobs
             jobs.removeAll(finishedJobs);
         }
         
+        // Return the LinkedList of all finished Jobs
         return finishedJobs;
     }
     
-    public void stopAllJobs() {
-        // Iterate through the LinkedList of Job objects
-        for (Job job : jobs) {
-            // If the current Job's status is RUNNING
-            if (job.getStatus() == JobStatus.RUNNING) {
-                // Stop the Job (sets the Job's status to INTERRUPTED)
-                job.stop();
-                
-                System.out.printf("JobManager - INFO: Cancelled Job %d\n", job.getIdNumber());
+    public void stopAllRunningJobs() {
+        // Aquire the "jobsMutex" Mutex
+        synchronized(jobsMutex) {
+            // Iterate through the jobs LinkedList and call the "stop" method if the Job's status == JobStatus.RUNNING
+            for (Job job: jobs) {
+                if (job.getStatus() == JobStatus.RUNNING) {
+                    job.stop();
+                    System.out.printf("JobManager - INFO: Stopped Job %d\n", 0);
+                }
             }
         }
     }

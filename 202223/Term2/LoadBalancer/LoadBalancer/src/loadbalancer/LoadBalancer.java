@@ -5,46 +5,41 @@ import java.net.UnknownHostException;
 
 public class LoadBalancer {
     public static void main(String[] args) {
-        int portNumber = -1;
-        InetAddress ipAddress = null;
-        AllocationMethod allocationMethod = null;
-
-        // If an insufficient number of arguments have been passed
+        // If less than two (2) arguments have been provided - Exit
         if (args.length < 2) {
-            System.out.println("Usage: java loadbalancer <port> <allocation_method>");
-            System.exit(0);
+            System.err.println("Usage: java loadbalancer <port_number> <allocation_algorithm>");
+            System.exit(1);
         }
-
-        // Set the input Port Number that the Load-Balancer Server will listen for Messages on
+        
+        // Parse the first parameter "port_number" as an Integer
+        int portNumber = -1;
         try {
             portNumber = Integer.parseInt(args[0]);
-        } catch (NumberFormatException e) {
-            System.err.println("LoadBalancer - ERROR: Port must be an Integer");
-            System.exit(0);
+        } catch (NumberFormatException exception) {
+            System.err.println("LoadBalancer - ERROR: The \"port_number\" argument must be a valid Integer");
+            System.exit(1);
         }
-
-        // Set the IP Address that the Load-Balancer Server will listen for Messages on
+        
+        // Parse the thid parameter "allocation_algorithm" as an AlgorithmAlgorithm
+        AllocationAlgorithm allocationAlgorithm = null;
+        try {
+            allocationAlgorithm = AllocationAlgorithm.valueOf(args[1].toUpperCase());
+        } catch (IllegalAccessError exception) {
+            System.err.printf("LoadBalancer - ERROR: The \"allocation_algorithm\" argument must be either NORMAL (Round-Robin) or WEIGHTED (Weighted Round-Robin)");
+            System.exit(1);
+        }
+        
+        // Get the IP Address of the LoadBalancer as an InetAddress object
+        InetAddress ipAddress = null;
         try {
             ipAddress = InetAddress.getLocalHost();
-        } catch (UnknownHostException e) {
-            System.err.println("LoadBalancer - ERROR: Failed to fetch Local Host Address");
-            System.exit(0);
+        } catch (UnknownHostException exception) {
+            System.err.println("LoadBalancer - ERROR: Could not to resolve the LocalHost IP Address");
+            System.exit(1);
         }
         
-        // Set the allocation algorithm (Weighted Round-Robin / Round-Robin) Based on input parameters ( RR / WRR )
-        try {
-            allocationMethod = AllocationMethod.valueOf(args[1].toUpperCase());
-        } catch (IllegalArgumentException e) {
-            System.err.printf("LoadBalancer - ERROR: Allocation Method must be either NORMAL (Round-Robin) or WEIGHTED (Weighted Round-Robin)\n");
-            System.exit(0);
-        }
-        
-        // Create a new LoadBalancerServer instance used to process incoming Messages and allocate Jobs
-        LoadBalancerServer loadBalancerServer = LoadBalancerServer.getInstance();
-        try {
-            loadBalancerServer.start(ipAddress, portNumber, allocationMethod);
-        } catch (IllegalArgumentException e) {
-            System.err.printf("LoadBalancer - ERROR: Failed to start Load-Balancer Server (%s)\n", e.getMessage());
-        }
+        // Create and start the Load-Balancer server
+        LoadBalancerServer loadBalancerServer = new LoadBalancerServer(ipAddress, portNumber, allocationAlgorithm);
+        loadBalancerServer.start();
     }
 }

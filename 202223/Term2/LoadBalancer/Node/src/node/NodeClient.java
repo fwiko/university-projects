@@ -2,7 +2,6 @@ package node;
 
 import java.io.IOException;
 import java.net.InetAddress;
-import java.util.List;
 import node.job.Job;
 import node.managers.JobManager;
 import node.managers.MessageManager;
@@ -10,197 +9,149 @@ import node.messages.MessageInbound;
 import node.messages.MessageOutbound;
 import node.messages.types.MessageOutboundType;
 
-
 public class NodeClient {
-    // Singleton instance of NodeClient
-    private static NodeClient instance = null;
+    // Maximum capacity of the Node - communicated with Load-Balancer
+    int maximumCapacity = -1;
     
-    // Flag used to track whether Node is running
-    private boolean running = true;
+    // Node socket details
+    InetAddress ipAddress = null;
+    int portNumber = -1;
     
-    // Node socket and capacity details
-    private int nodeIdNumber = -1;
-    private int nodePortNumber = -1;
-    private int nodeCapacity = -1;
-    private InetAddress nodeIpAddress = null;
+    // Load-Balancer socket details
+    InetAddress loadBalancerIpAddress = null;
+    int loadBalancerPortNumber = -1;
     
-    // LoadBalancerServer socket details
-    private InetAddress loadBalancerIpAddress = null;
-    private int loadBalancerPortNumber = -1;
+    // ID number of Node - received upon successful registration
+    int nodeIdNumber = -1;
     
-    // Singleton MessageManager and JobManager instances
+    // Message and Job Manager class singletons
     MessageManager messageManager = null;
     JobManager jobManager = null;
     
-    
-    public static NodeClient getInstance() {
-        // If an instance of the NodeClient already exists
-        if (instance != null) {
-            return instance;
-        }
-        // Create a new instance of the NodeClient
-        instance = new NodeClient();
-        return instance;
-    }
-    
-    public void start(int capacity, InetAddress nodeIpAddress, int nodePortNumber, InetAddress loadBalancerIpAddress, int loadBalancerPortNumber) throws IllegalArgumentException {
-        // Set the Node socket and capacity details
-        this.nodeIpAddress = nodeIpAddress;
-        this.nodePortNumber = nodePortNumber;
-        this.nodeCapacity = capacity;
-        
-        // Set the LoadBalancerServer socket details
+    public NodeClient(int maximumCapacity, InetAddress ipAddress, int portNumber, InetAddress loadBalancerIpAddress, int loadBalancerPortNumber) {
+        this.maximumCapacity = maximumCapacity;
+        this.ipAddress = ipAddress;
+        this.portNumber = portNumber;
         this.loadBalancerIpAddress = loadBalancerIpAddress;
         this.loadBalancerPortNumber = loadBalancerPortNumber;
-        
-        // Fetch the singleton MessageManager and JobManager instances
+    }
+    
+    public void start() {
+        // Get the Message and Job Manager singleton instances
         messageManager = MessageManager.getInstance();
         jobManager = JobManager.getInstance();
         
-        // Attempt to start the MessageManager
+        // Attempt to start the Message Manager, listening on the Node socket
         try {
-            messageManager.start(nodeIpAddress, nodePortNumber);
-        } catch (IOException e) {
-            System.out.println(e);
+            messageManager.start(ipAddress, portNumber);
+        } catch (IOException exception) { // Handle an IOException if the Datagram Channel failed to bind to the Node socket details
+            System.err.printf("NodeClient - ERROR: IOException when opening Datagram Channel on %s:%d\n", ipAddress.getHostAddress(), portNumber);
+            System.exit(1);
         }
         
-        // Send a registration (REG_NODE) Message to the LoadBalancer
+        // Send a REG_NODE (registration) Message to the Load-Balancer socket
         register();
         
-        // While the Node is running
-        while (running) {
-            // If the MessageManager has stopped - exit
-            if (messageManager.isStopped()) {
-                break;
+        while (!messageManager.isStopped()) {
+            // Send FIN_JOB Message(s) to the Load-Balancer socket for every finished Job
+            for (Job job : jobManager.getAllFinishedJobs()) {
+                System.out.printf("NodeClient - INFO: Job %d with %d second Execution Time has finished\n", job.getIdNumber(), job.getExecutionTime());
+                messageManager.sendMessage(new MessageOutbound(MessageOutboundType.FIN_JOB, String.valueOf(job.getIdNumber())), loadBalancerIpAddress, loadBalancerPortNumber);
             }
             
-            // Fetch the next queued Message from the Message Manager
-            MessageInbound nextMessage = messageManager.getNextMessage();
+            // Get the next queued Message from the Message Manager (FIFO)
+            MessageInbound message = messageManager.getNextQueuedMessage();
             
-            // If there is a queued Message available
-            if (nextMessage != null) {
-                
-                // Attempt to handle the retreived Message
-                try {
-                    handleMessage(nextMessage);
-                } catch (IllegalArgumentException e) {
-                    System.out.printf("NodeClient - ERROR: Failed to handle %s Message (%s)\n", nextMessage.getType().toString(), e.getMessage());
-                }
-            }
+            // If there is no Message in the queue, jump to the top of the loop
+            if (message == null) { continue; }
             
-            // Retreive a list of completed Jobs (if any)
-            List<Job> finishedJobs = jobManager.getFinishedJobs();
-            if (!finishedJobs.isEmpty()) {
-                // Iterate through the list of completed Jobs
-                for(Job job : finishedJobs) {
-                    System.out.printf("NodeClient - INFO: Job %d with Execution Time %d has finished\n", job.getIdNumber(), job.getExecutionTime());
-                    
-                    // Send a finished Job (FIN_JOB) Message to the LoadBalancer for the current Job - specifying the ID
-                    MessageOutbound finishedJobMessage = new MessageOutbound(MessageOutboundType.FIN_JOB, String.valueOf(job.getIdNumber()));
-                    messageManager.sendMessage(finishedJobMessage, loadBalancerIpAddress, this.loadBalancerPortNumber);
-                }
+            // Attempt to handle the Message using the Message handler switch statement
+            try {
+                handleMessage(message);
+            } catch (IllegalArgumentException exception) { // Handle an IllegalArgumentException if insufficient or illegal arguments have been provideds
+                System.err.printf("NodeClient - ERROR: Could not handle %s Message (%s)\n", message.getType(), exception.getMessage());
             }
         }
-
-        // If the MessageManager has not stopped but the NodeClient has
-        if (!messageManager.isStopped()) {
-            // Stop the MessageManager (messageReceiver Thread)
-            messageManager.stop();
-        }
-
-        System.out.println("NodeClient - INFO: Stopped");
+        
+        System.out.println("NodeClient - INFO: Stopped...");
     }
     
     private void handleMessage(MessageInbound message) throws IllegalArgumentException {
         switch (message.getType()) {
-            case NEW_JOB -> { // ------------------------------------------------------------------------------------------------------------------------------------------------------------------- NEW_JOB
-                if (message.getParameters().length < 2) { throw new IllegalArgumentException("Insufficient Message parameters"); }
+            case IS_ALIVE -> {
                 
-                // Attempt to parse the Job ID Number parameter from the NEW_JOB Message
-                int jobIdNumber = -1;
-                try {
-                    jobIdNumber = Integer.parseInt(message.getParameter(0));
-                } catch (NumberFormatException e) {
-                    //
-                    MessageOutbound newJobFailureMessage = new MessageOutbound(MessageOutboundType.NEW_JOB_FAILURE, "Job ID Number is not an Integer");
-                    messageManager.sendMessage(newJobFailureMessage, loadBalancerIpAddress, loadBalancerPortNumber);
-                    
-                    throw new IllegalArgumentException("Job ID Number is not an Integer");
-                }
-                
-                // Attempt to parse the Job Execution Time parameter from the NEW_JOB Message
-                int jobExecutionTime = -1;
-                try {
-                    jobExecutionTime = Integer.parseInt(message.getParameter(1));
-                } catch (NumberFormatException e) {
-                    //
-                    MessageOutbound newJobFailureMessage = new MessageOutbound(MessageOutboundType.NEW_JOB_FAILURE, "Job Execution Time is not an Integer");
-                    messageManager.sendMessage(newJobFailureMessage, loadBalancerIpAddress, loadBalancerPortNumber);
-                    
-                    throw new IllegalArgumentException("Job Execution Time is not an Integer");
-                }
-                
-                // Tell the JobManager to start a new Job with the specified ID Number for the specified time
-                jobManager.startJob(jobIdNumber, jobExecutionTime);
-                
-                // Send a new job received success (NEW_JOB_SUCCESS) Message to the LoadBalancer
-                MessageOutbound newJobSuccessMessage = new MessageOutbound(MessageOutboundType.NEW_JOB_SUCCESS, String.valueOf(jobIdNumber));
-                messageManager.sendMessage(newJobSuccessMessage, loadBalancerIpAddress, loadBalancerPortNumber);
+                // Create a new MessageOutbound object with the ACK_IS_ALIVE Type and send to the Load-Balancer socket with the Node ID Number as an additional argument
+                messageManager.sendMessage(new MessageOutbound(MessageOutboundType.ACK_IS_ALIVE, String.valueOf(nodeIdNumber)), loadBalancerIpAddress, loadBalancerPortNumber);
                 
                 break;
+                
             }
-            case REG_NODE_SUCCESS -> { // ---------------------------------------------------------------------------------------------------------------------------------------------------------- REG_NODE_SUCCESS
-                if (message.getParameters().length < 1) { throw new IllegalArgumentException("Insufficient Message parameters"); }
+            case NEW_JOB -> {
                 
-                // Attempt to parse the Node ID Number parameter of the REG_NODE_SUCCESS Message
-                try {
-                    nodeIdNumber = Integer.parseInt(message.getParameter(0));
-                } catch (NumberFormatException e) {
-                    throw new IllegalArgumentException("Node ID Number is not an Integer");
-                }
+                // If an insufficient number of additional arguments have been provided (2 needed for NEW_JOB), throw an IllegalArgumentException
+                if (message.getArguments().length < 2) { throw new IllegalArgumentException("Insufficient number of Message arguments"); }
                 
-                System.out.printf("NodeClient - INFO: Node ID Number set to %d\n", nodeIdNumber);
+                // Parse the two additional arguments (ID Number and Execution Time) as Integers
+                int idNumber = parseIntegerArgument(message.getArgument(0));
+                int executionTime = parseIntegerArgument(message.getArgument(1));
+                
+                // If either value is an invalid Integer or is negative, throw an IllegalArgumentException
+                if (idNumber * executionTime < 0) { throw new IllegalArgumentException("Illegal Message arguments provided"); }
+                
+                // Start executing the new Job by sending the Job ID and Execution Time to the Job Manager
+                jobManager.startJob(idNumber, executionTime);
+                
+                // Create a new MessageOutbound object with the NEW_JOB_SUCCESS Type and send to the Load-Balancer socket with the Job ID as an additional argument
+                messageManager.sendMessage(new MessageOutbound(MessageOutboundType.NEW_JOB_SUCCESS, String.valueOf(idNumber)), loadBalancerIpAddress, loadBalancerPortNumber);
                 
                 break;
-            }
-            case REG_NODE_FAILURE -> { // ---------------------------------------------------------------------------------------------------------------------------------------------------------- REG_NODE_FAILURE
-                // Set the running flag to false
-                running = false;
                 
-                // Stop the MessageManager (messageReceiver Thread)
+            }
+            case REG_SUCCESS -> {
+                
+                // If an insufficient number of additional arguments have been provided (1 needed for REG_SUCCESS), throw an IllegalArgumentException
+                if (message.getArguments().length < 1) { throw new IllegalArgumentException("Insufficient number of Message arguments"); }
+                
+                // Parse the additional argument (ID Number) as an Integer
+                int idNumber = parseIntegerArgument(message.getArgument(0));
+                
+                // If the provided ID Number argument is invalid or negative, throw an IllegalArgumentException
+                if (idNumber < 1) { throw new IllegalArgumentException("Illegal Message arguments provided"); }
+                
+                // Set the class "nodeIDNumber" value to the given argument
+                nodeIdNumber = idNumber;
+                
+                break;
+                
+            }
+            case STOP_NODE -> {
+                
+                // Stop the Message Manager (stops the Message receiving Thread that the system relies upon)
                 messageManager.stop();
                 
-                System.err.println("NodeClient - ERROR: Failed to register with Load-Balancer");
+                // Tell the Job Manager to stop any running Job Threads (Jobs with status == JobStatus.RUNNING)
+                jobManager.stopAllRunningJobs();
                 
                 break;
+                
+            } default -> {
+                throw new IllegalArgumentException("Unknown Message type");
             }
-            case IS_ALIVE -> { // ------------------------------------------------------------------------------------------------------------------------------------------------------------------ IS_ALIVE
-                // Send a alive acknowledgement (ACK_IS_ALIVE) Message to the LoadBalancer
-                MessageOutbound isAliveConfirmationMessage = new MessageOutbound(MessageOutboundType.ACK_IS_ALIVE, String.valueOf(nodeIdNumber));
-                messageManager.sendMessage(isAliveConfirmationMessage, loadBalancerIpAddress, loadBalancerPortNumber);
-                
-                break;
-            }
-            case STOP_NODE -> { // ----------------------------------------------------------------------------------------------------------------------------------------------------------------- STOP_NODE
-                
-                // Set the running flag to false
-                running = false;
-                
-                // Stop the MessageManager (messageReceiver Thread)
-                messageManager.stop();
-                
-                // Tell the JobManager to stop all running Jobs
-                jobManager.stopAllJobs();
-                
-                break;
-            }
-            default -> throw new IllegalArgumentException(String.format("Unknown instruction"));
         }
     }
     
     private void register() {
-        // Send a registration (REG_NODE) Message to the LoadBalancer
-        MessageOutbound registrationMessage = new MessageOutbound(MessageOutboundType.REG_NODE, nodeIpAddress.getHostAddress(), String.valueOf(nodePortNumber), String.valueOf(nodeCapacity));
-        messageManager.sendMessage(registrationMessage, loadBalancerIpAddress, loadBalancerPortNumber);
+        // Create a new MessageOutbound object with the REG_NODE Type and send to the Load-Balancer socket
+        messageManager.sendMessage(new MessageOutbound(MessageOutboundType.REG_NODE, ipAddress.getHostAddress(), String.valueOf(portNumber), String.valueOf(maximumCapacity)), loadBalancerIpAddress, loadBalancerPortNumber);
     }
+    
+    private int parseIntegerArgument(String value) {
+        // Attempt to parse the provided "value" String to an Integer
+        try {
+            return Integer.parseInt(value);
+        } catch (NumberFormatException exception) { // Handle a NumberFormatException and return -1 (invalid integer)
+            return -1;
+        }
+    }
+    
 }

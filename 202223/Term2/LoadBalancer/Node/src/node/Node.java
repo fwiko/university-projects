@@ -4,69 +4,64 @@ import java.net.InetAddress;
 import java.net.UnknownHostException;
 
 public class Node {
+    
     public static void main(String[] args) {
         
-        // Node details
-        int portNumber = -1;
-        InetAddress ipAddress = null;
-        int capacity = -1;
-        
-        // Load-Balancer details
-        int loadBalancerPortNumber = -1;
-        InetAddress loadBalancerIpAddress = null;
-
-        // If an insufficient number of arguments have been passed
+        // If less than four (4) arguments have been provided - Exit
         if (args.length < 4) {
-            System.err.println("Usage: java node <capacity> <port> <load_balancer_address> <load_balancer_port>");
-            System.exit(0);
+            System.err.println("Usage: java node <maximum_capacity> <port_number> <lb_ip_address> <lb_port_number>");
+            System.exit(1);
         }
         
-        // Set the input Capacity of the Node
+        // Parse the first parameter "maximum_capacity" as an Integer
+        int maximumCapacity = -1;
         try {
-            capacity = Integer.parseInt(args[0]);
-        } catch (NumberFormatException e) { 
-            System.err.printf("Node - ERROR: Invalid Node Capacity %s\n", args[0]);
-            System.exit(0);
+            maximumCapacity = Integer.parseInt(args[0]);
+        } catch (NumberFormatException exception) {
+            System.err.println("Node - ERROR: The \"maximum_capacity\" argument must be a valid Integer");
+            System.exit(1);
         }
         
-        // Set the Port Number that the Node Client will listen for Messages on
+        // Parse the second parameter "port_number" as an Integer
+        int portNumber = -1;
         try {
             portNumber = Integer.parseInt(args[1]);
-        } catch (NumberFormatException e) {
-            System.err.printf("Node - ERROR: Invalid Node Port Number %s\n", args[1]);
-            System.exit(0);
+        } catch (NumberFormatException exception) {
+            System.err.println("Node - ERROR: The \"port_number\" argument must be a valid Integer");
+            System.exit(1);
         }
-
-        // Set the IP Address that the Node Client will listen for Messages on
-        try {
-            ipAddress = InetAddress.getLocalHost();
-        } catch (UnknownHostException e) {
-            System.err.println("Node - ERROR: Failed to get Local-Host Address");
-            System.exit(0);
-        }
-
-        // Set the IP Address of the Load-Balancer Server to send Messages to
+        
+        // Parse the third parameter "lb_ip_address" as an InetAddress
+        InetAddress loadBalancerIpAddress = null;
         try {
             loadBalancerIpAddress = InetAddress.getByName(args[2]);
-        } catch (UnknownHostException e) {
-            System.err.printf("Node - ERROR: Invalid Load-Balancer IP Address \"%s\"\n", args[2]);
-            System.exit(0);
+        } catch (UnknownHostException exception) {
+            System.err.println("Node - ERROR: The \"lb_ip_address\" argument must be a valid IP Address");
+            System.exit(1);
         }
         
-        // Set the Port Number of the Load-Balancer Server to send Messages to
+        // Parse the fourth parameter "lb_port_number" as an Integer
+        int loadBalancerPortNumber = -1;
         try {
             loadBalancerPortNumber = Integer.parseInt(args[3]);
-        } catch (NumberFormatException e) {
-            System.err.printf("Node - ERROR: Invalid Load-Balancer Port Number %s\n", args[3]);
-            System.exit(0);
+        } catch (NumberFormatException exception) {
+            System.err.println("Node - ERROR: The \"lb_port_number\" argument must be a valid Integer");
+            System.exit(1);
         }
         
-        // Start the Node Client to register with the Load-Balancer and exchange Messages
-        NodeClient nodeClient = NodeClient.getInstance();
+        // Get the IP Address of the Node as an InetAddress object
+        InetAddress ipAddress = null;
         try {
-            nodeClient.start(capacity, ipAddress, portNumber, loadBalancerIpAddress, loadBalancerPortNumber);
-        } catch (IllegalArgumentException e) {
-            System.err.printf("Node - ERROR: Failed to start Node Client (%s)\n", e.getMessage());
+            ipAddress = InetAddress.getLocalHost();
+        } catch (UnknownHostException exception) {
+            System.err.println("Node - ERROR: Could not to resolve the LocalHost IP Address");
+            System.exit(1);
         }
+        
+        // Create and Start the Node Client
+        NodeClient nodeClient = new NodeClient(maximumCapacity, ipAddress, portNumber, loadBalancerIpAddress, loadBalancerPortNumber);
+        nodeClient.start();
+        
     }
+    
 }

@@ -1,6 +1,6 @@
 package loadbalancer;
 
-public enum AllocationMethod {
+public enum AllocationAlgorithm {
     NORMAL,
     WEIGHTED
 }

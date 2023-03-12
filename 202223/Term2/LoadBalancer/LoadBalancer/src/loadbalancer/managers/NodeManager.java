@@ -1,152 +1,193 @@
 package loadbalancer.managers;
 
 import java.net.InetAddress;
-import java.util.ArrayList;
 import java.util.Collections;
-import loadbalancer.AllocationMethod;
+import java.util.LinkedList;
+import loadbalancer.AllocationAlgorithm;
+import loadbalancer.job.Job;
 import loadbalancer.node.Node;
 
 public class NodeManager {
-    private static NodeManager instance;
+    // Value holding the singleton instacne of the Node Manager
+    private static NodeManager instance = null;
     
-    private final ArrayList<Node> registeredNodes;
+    // LinkedList storing all Nodes that are registered with the Load-Balancer
+    private LinkedList<Node> registeredNodes = null;
     
-    private final Object registeredNodesLock = new Object();
+    // Next Job ID Number to assign to a Job when one is registered
+    private int nextNodeIdNumber = 1;
     
-    private int nextNodeId = 1;
+    // Pointer value used for the Round-Robin allocation algorithm
+    private int nextNodePointer = 0;
     
-    // Pointer used for Round-Robin AllocationMethod
-    private int roundRobinPointer = 0;
+    // Mutex object to allow exclusive access to the "registeredNodes" LinkedList
+    private static final Object registeredNodesMutex = new Object();
+    
+    // 
+    private JobManager jobManager = null;
     
     private NodeManager() {
-        this.registeredNodes = new ArrayList<>();
+        this.registeredNodes = new LinkedList<>();
+        this.jobManager = JobManager.getInstance();
     }
     
     public static NodeManager getInstance() {
-        if (instance != null) {
-            return instance;
+        // If there is no current instance of the Node Manager, create a new Instance
+        if (instance == null) {
+            instance = new NodeManager();
         }
-        instance = new NodeManager();
+        
         return instance;
     }
     
-    public Node registerNode(InetAddress ipAddress, int portNumber, int maxCapacity) {
-        // Create a new Node object with the given IP Address, Port Number, and Maximum Capacity
-        Node newNode = new Node(nextNodeId, ipAddress, portNumber, maxCapacity);
-        // Add the new Node to the list of registered Nodes
-        registeredNodes.add(newNode);
-        // Increment the nextNodeID value preparing for the next Node registration
-        nextNodeId += 1;
-        // Start the keep alive Timer loop for the new Node to send IS_ALIVE Messages
-        newNode.keepAlive();
+    public Node registerNode(InetAddress ipAddress, int portNumber, int maximumCapacity) {
+        // Create a new Node object with the given details and next ID Number
+        Node node = new Node(nextNodeIdNumber, ipAddress, portNumber, maximumCapacity);
         
-        System.out.printf("NodeManager - INFO: Registered Node %d on socket %s:%d\n", newNode.getIdNumber(), newNode.getIpAddr().getHostAddress(), newNode.getPortNum());
-        return newNode;
+        // Add the new Node object to the "registeredNodes" LinkedList
+        registeredNodes.add(node);
+        
+        // Start the "Keep Alive" Timer/loop for the new Node
+        node.startKeepAlive();
+        
+        System.out.printf("NodeManager - INFO: Registered Node %d with a maximum capacity of %d on socket %s:%d\n", node.getIdNumber(), node.getMaximumCapacity(), node.getIpAddress().getHostAddress(), node.getPortNumber());
+        
+        // Increment the next Node ID Number value by 1
+        nextNodeIdNumber += 1;
+        
+        return node;
     }
     
     public void unregisterNode(Node node) {
-        synchronized (registeredNodesLock) {
-            // Remove the specified Node object from the list of registered Nodes
+        // Aquire the "registeredNodesMutex" Mutex
+        synchronized (registeredNodesMutex) {
+            // Remove the given Node from the "registeredNodes" LinkedList
             registeredNodes.remove(node);
         }
+        
+        System.out.printf("NodeManager - INFO: Un-registered Node %d\n", node.getIdNumber());
+        
+        // Get all Jobs allocated to the given Node
+        LinkedList<Job> allocatedJobs = jobManager.getNodeJobs(node);
+        
+        // De-allocate and requeue all Jobs allocated to the given Node
+        for (Job job : allocatedJobs) {
+            jobManager.deallocateJob(job);
+            jobManager.queueJob(job);
+        }
+        
     }
     
-    public Node getNextNode(AllocationMethod allocationMethod) {
-        // If the list of registered Nodes is not empty
-        if (!registeredNodes.isEmpty()) {
-            synchronized (registeredNodesLock) {
-                Node node = null;
-                switch (allocationMethod) {
-                    case NORMAL -> {
-                        // If the node at the last point of reference is available - return it
-                        if (registeredNodes.get(roundRobinPointer).getUsage() < (float) 100) {
-                            node = registeredNodes.get(roundRobinPointer);
+    public Node getNextQualifyingNode(AllocationAlgorithm allocationAlgorithm) {
+        // Return null if the "registeredNodes" LinkedList is empty
+        if (registeredNodes.isEmpty()) { return null; }
+        
+        Node node = null;
+        
+        // Aquire the "registeredNodesMutex" Mutex
+        synchronized (registeredNodesMutex) {
+            switch (allocationAlgorithm) {
+                case NORMAL -> { // If the specified Allocation Algorithm is NORMAL
+                    
+//                    if (registeredNodes.get(nextNodePointer).getCurrentUsage() < 100) {
+//                        node = registeredNodes.get(nextNodePointer);
+//                        nextNodePointer = (nextNodePointer + 1) % registeredNodes.size();
+//                        break;
+//                    }
+                    
+                    // Loop registeredNodes length times
+                    for (int i = 0; i < registeredNodes.size(); i++) {
+                        
+                        // If the Node at position "nextNodePointer" has a usage below 100%
+                        if (registeredNodes.get(nextNodePointer).getCurrentUsage() < 100) {
+                            // Set the "node" value to the Node object at the current position
+                            node = registeredNodes.get(nextNodePointer);
                             
-                            // Set roundRobinPointer to next position if circular loop
-                            roundRobinPointer = (roundRobinPointer + 1) % registeredNodes.size();
+                            // Increment the "nextNodePointer" value using modulo to reset to zero in "cyclic" fashion
+                            nextNodePointer = (nextNodePointer + 1) % registeredNodes.size();
                             break;
                         }
                         
-                        // Do a full "circular" iteration of the registeredNodes list from the last point of reference
-                        for (int i = 0; i < registeredNodes.size(); i++) {
-                            // Use modulo to normalise the roundRobinPointer value (reset to 0 if hits list length) to get next roundRobinPointer position
-                            roundRobinPointer = roundRobinPointer++ % registeredNodes.size();
-                            
-                            // If the current node is under 100% usage - return it
-                            if (registeredNodes.get(roundRobinPointer).getUsage() < (float) 100) {
-                                node = registeredNodes.get(roundRobinPointer);
-                                
-                                // Set roundRobinPointer to next position if circular loop
-                                roundRobinPointer = (roundRobinPointer + 1) % registeredNodes.size();
-                                break;
-                            }
-                        }
-                        
-                        break;
+                        // Increment the "nextNodePointer" value using modulo to reset to zero in "cyclic" fashion
+                        nextNodePointer = (nextNodePointer + 1) % registeredNodes.size();
                     }
-                    case WEIGHTED -> {
-                        // Sort the list of nodes by usage in ascending order
-                        sortNodes();
-                        
-                        // If the first element in the sorted list is at under 100% usage - return it
-                        if (registeredNodes.get(0).getUsage() < 100) {
-                            node = registeredNodes.get(0);
-                        }
-                        
-                        break;
-                    }
+                    
+                    break;
+                    
                 }
-                return node;
+                case WEIGHTED -> { // If the specified Allocation Algorithm is WEIGHTED
+                    
+                    // Sort the "registeredNodes" LinkedList in ascending order based on current usage
+                    sortNodes();
+                    
+                    // If the Node object at position zero has a usage below 100%
+                    if (registeredNodes.get(0).getCurrentUsage() < 100) {
+                        // set the "node" value to the Node object at position zero
+                        node = registeredNodes.get(0);
+                    }
+                    
+                    break;
+                    
+                }
+                default -> { // If an "illegal" or invalid Allocation Algorithm has been specified
+                    throw new IllegalArgumentException("Unknown Allocation Algorithm type");
+                }
             }
         }
-        // If all Nodes are at 100% usage - return null
-        return null;
+        
+        return node;
     }
     
     public Node getNodeById(int idNumber) {
-        synchronized (registeredNodesLock) {
-            // Iterate through the list of registered Nodes
+        // Aquire the "registeredNodesMutex" Mutex
+        synchronized (registeredNodesMutex) {
+            // Iterate through the "registeredNodes" LinkedList
             for (Node node : registeredNodes) {
-                // if the Node object's ID matches the specified idNum - return the Node
+                // If the current Node object's ID Number equals the one specified, return the Node object
                 if (node.getIdNumber() == idNumber) {
                     return node;
                 }
             }
         }
-        // If no node has the specified ID - return null
+        
+        // Return null if no match was found
         return null;
     }
     
-    private void sortNodes() {
-        // Sort the list of registered Nodes based on the usage metric
-        Collections.sort(registeredNodes, (Node n1, Node n2) -> {
-            if (n1.getUsage() != n2.getUsage()) {
-                // Usage metrics are Floats and cannot be returned from Collections.sort - must return 1 or -1 flag instead
-                return n1.getUsage() > n2.getUsage() ? 1 : -1; 
-            }
-            // If the usage is identical - sort based on Maximum Capacity of the Nodes
-            return n2.getMaxCapacity() - n1.getMaxCapacity();
-        });
-    }
-    
-    public void resetNodeWarnings(Node node) {
-        // Reset a Node's warnings to zero (0)
-        node.resetWarnings();
-    }
-    
-    public ArrayList<Node> getNodes() {
+    public LinkedList<Node> getNodes() {
         return registeredNodes;
     }
     
-    public String getNodeSummary() {
-        String summaryString = "";
+    public String[] getNodeSummaries() {
+        // Create a String-array with the same length of the list of registered Nodes
+        String[] nodeSummaries = new String[registeredNodes.size()];
         
-        synchronized (registeredNodes) {
-            for ( Node node : registeredNodes ) {
-                summaryString += String.format("Node %d: %f%% Usage\n", node.getIdNumber(), node.getUsage());
-            }
+        // Add a string detailing the ID Number, Allocated Jobs, and Usage of each Node to the above array
+        for (int i = 0; i < registeredNodes.size(); i++) {
+            Node node = registeredNodes.get(i);
+            nodeSummaries[i] = String.format(
+                    "%d,%d,%f", 
+                    node.getIdNumber(), 
+                    jobManager.getNodeJobs(node).size(),
+                    node.getCurrentUsage());
         }
         
-        return summaryString;
+        return nodeSummaries;
     }
+    
+    private void sortNodes() {
+        // Use Collections to compare each Node object in the "registeredNodes" LinkedList
+        Collections.sort(registeredNodes, (Node n1, Node n2) -> {
+            // If "Node A" has a different usage to "Node B"
+            if (n1.getCurrentUsage() != n2.getCurrentUsage()) {
+                // Return 1 if "Node A" has a usage greater than "Node B" else return -1 (positive or negative integers to define sorting positions - usage is a float an cannot be used)
+                return n1.getCurrentUsage() > n2.getCurrentUsage() ? 1 : -1;
+            }
+            
+            // If the usage of "Node A" and "Node B" is the same, sort based on the maximum capacity of the Nodes
+            return n2.getMaximumCapacity() - n1.getMaximumCapacity();
+        });
+    }
+    
+    
 }

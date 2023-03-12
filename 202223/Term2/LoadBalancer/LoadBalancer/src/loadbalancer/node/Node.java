@@ -3,7 +3,6 @@ package loadbalancer.node;
 import java.net.InetAddress;
 import java.util.Timer;
 import java.util.TimerTask;
-import loadbalancer.job.Job;
 import loadbalancer.managers.JobManager;
 import loadbalancer.managers.MessageManager;
 import loadbalancer.managers.NodeManager;
@@ -11,102 +10,97 @@ import loadbalancer.messages.MessageOutbound;
 import loadbalancer.messages.types.MessageOutboundType;
 
 public class Node {
-    // Node details (socket, capacity, id)
+    // Unique ID Number of the Node used to identify it
     private final int idNumber;
-    private final int maxCapacity;
+    
+    // Maximum capacity of the Node - used to control possible Job allocations and calculate usage
+    private final int maximumCapacity;
+    
+    // Node socket details
     private final InetAddress ipAddress;
     private final int portNumber;
     
-    private NodeManager nodeManager = null;
+    // Message and Node Manager singletons
     private MessageManager messageManager = null;
-    private JobManager jobManager = null;
+    private NodeManager nodeManager = null;
     
-    // Warnings for no response to IS_ALIVE Messages
+    // Integer value used to track the Node's warnings (maximum 3)
     private int warnings = 0;
     
-    private Timer warningTimer = null;
-
-    public Node(int idNum, InetAddress ipAddress, int portNumber, int maxCapacity) {
-        this.idNumber = idNum;
-        this.maxCapacity = maxCapacity;
+    // Timer used to send a IS_ALIVE Message to the Node socket every 30 seconds
+    private Timer keepAliveTimer = null;
+    
+    public Node(int idNumber, InetAddress ipAddress, int portNumber, int maximumCapacity) {
+        this.idNumber = idNumber;
         this.ipAddress = ipAddress;
         this.portNumber = portNumber;
+        this.maximumCapacity = maximumCapacity;
         
-        nodeManager = NodeManager.getInstance();
         messageManager = MessageManager.getInstance();
-        jobManager = JobManager.getInstance();
+        nodeManager = NodeManager.getInstance();
     }
     
     public int getIdNumber() {
-        // return the idNumber property
-        return this.idNumber;
+        return idNumber;
     }
     
-    public InetAddress getIpAddr() {
-        // return the ipAddress property
+    public InetAddress getIpAddress() {
         return ipAddress;
     }
     
-    public int getPortNum() {
-        // return the portNumber property
+    public int getPortNumber() {
         return portNumber;
     }
     
-    public int getMaxCapacity() {
-        // return the maxCapacity property
-        return maxCapacity;
+    public int getMaximumCapacity() {
+        return maximumCapacity;
     }
     
-    public float getUsage() {
-        // Calculate and return the current usage of the Node
-        return ((float) JobManager.getInstance().getNumberOfNodeJobs(this) / maxCapacity) * 100;
-    }
-
-    public void keepAlive() {
-        warningTimer = new Timer();
-        
-        warningTimer.schedule(new TimerTask() {
-            @Override
-            public void run() {
-                if (warnings >= 3) {
-                    System.out.printf("Node %d - INFO: Unregistering (Failed to respond to 3 IS_ALIVE Messages)\n", idNumber);
-                    
-                    // Leave timer instance and unregister Node from the NodeManager
-                    unregisterSelf();
-                    
-                    // Cancel the keepAlive Timer loop
-                    warningTimer.cancel();
-                    warningTimer.purge();
-                    return;
-                }
-                
-                // Send an IS_ALIVE Message to the corresponding Node socket
-                MessageOutbound isAliveMessage = new MessageOutbound(MessageOutboundType.IS_ALIVE);
-                messageManager.sendMessage(isAliveMessage, ipAddress, portNumber);
-                
-                // Pre-emptively increment the Node warnings (will be reset upon receipt of an ACK_IS_ALIVE Message)
-                warnings += 1;
-            }
-        }, 10000, 10000);
-    }
-    
-    public void stopKeepAliveThread() {
-        warningTimer.cancel();
-        warningTimer.purge();
-    }
-    
-    private void unregisterSelf() {
-        // Unregister (remove) Node from the NodeManager
-        nodeManager.unregisterNode(this);
-        
-        for (Job job : jobManager.getNodeJobs(this)) {
-            jobManager.deallocateJob(job);
-            jobManager.queueJob(job);
-        }
+    public float getCurrentUsage() {
+        // Current Capacity / Maximum Capacity * 100
+        return ((float) JobManager.getInstance().getNodeJobs(this).size() / maximumCapacity) * 100;
     }
     
     public void resetWarnings() {
-        // Reset Node's warnings to zero (0)
         warnings = 0;
+    }
+    
+    public void startKeepAlive() {
+        // Create a new Timer object
+        keepAliveTimer = new Timer();
+        
+        // Schedule the Timer to send a IS_ALIVE Message to the Node socket every 30000 milliseconds (30 seconds)
+        keepAliveTimer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                if (warnings >= 3) { // If the "warnings" value is greater than or equal to 3
+                    System.out.printf("Node %d - INFO: Failed to respond to 3 IS_ALIVE Messages - Unregistering", idNumber);
+                    
+                    // Unregister the Node (remove from Node Manager)
+                    unregister();
+                    
+                    // Stop (this) keep alive timer
+                    stopKeepAlive();
+                    
+                    return;
+                }
+                
+                messageManager.sendMessage(new MessageOutbound(MessageOutboundType.IS_ALIVE), ipAddress, portNumber);
+                
+                // Increment the "warnings" value by 1
+                warnings += 1;
+            }
+        }, 30000, 30000);
+    }
+    
+    public void stopKeepAlive() {
+        // Cancel and clear the "keepAliveTimer" Timer
+        keepAliveTimer.cancel();
+        keepAliveTimer.purge();
+    }
+    
+    private void unregister() {
+        // Unregister the Node from the Node Manager
+        nodeManager.unregisterNode(this);
     }
 }

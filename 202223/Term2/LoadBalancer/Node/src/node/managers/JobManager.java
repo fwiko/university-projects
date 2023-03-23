@@ -67,7 +67,7 @@ public class JobManager {
             for (Job job: jobs) {
                 if (job.getStatus() == JobStatus.RUNNING) {
                     job.stop();
-                    System.out.printf("JobManager - INFO: Stopped Job %d\n", 0);
+                    System.out.printf("JobManager - INFO: Stopped Job %d\n", job.getIdNumber());
                 }
             }
         }

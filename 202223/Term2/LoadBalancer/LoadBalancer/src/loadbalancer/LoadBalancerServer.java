@@ -71,7 +71,7 @@ public class LoadBalancerServer {
             if (message != null) {
                 handleMessage(message);
             }
-            
+
         }
         
         System.out.println("LoadBalancerServer - INFO: Stopped...");
@@ -293,13 +293,10 @@ public class LoadBalancerServer {
                     // Stop the Keep Alive timer of the Node
                     node.stopKeepAlive();
                     
-                    // Unregister the Node from the Node Manager
-                    nodeManager.unregisterNode(node);
-                    
                     // Send a STOP_NODE Message to the Node
                     messageManager.sendMessage(stopNodeMessage, node.getIpAddress(), node.getPortNumber());
                 }
-                
+
                 break;
                 
             }

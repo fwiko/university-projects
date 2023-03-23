@@ -83,10 +83,10 @@ public class MessageManager {
             public void run() {
                 System.out.printf("MessageManager - INFO: Listening for Messages on Socket %s:%s\n",datagramChannel.socket().getLocalAddress().getHostAddress(), datagramChannel.socket().getLocalPort());
                 
-                while (!interrupted()) {
+                while (!Thread.currentThread().isInterrupted()) {
                     // Create a new ByteBuffer (similar to byte[]) and allocate 1024 Bytes
                     ByteBuffer buffer = ByteBuffer.allocate(1024);
-                    
+
                     // Attempt to receive a Message over the Datagram Channel and store it in "buffer"
                     try {
                         datagramChannel.receive(buffer);
@@ -94,18 +94,18 @@ public class MessageManager {
                         messageReceiver.interrupt();
                         break;
                     }
-                    
+
                     // "Decode" the received Message bytes into a String and remove white space
                     String messageString = new String(buffer.array()).trim();
-                    
+
                     // If the Message String is empty, jump to the top of the loop
                     if (messageString.isEmpty()) { continue; }
-                    
+
                     // Create a new MessageInbound object with the contents of the received Message and add it to the Message Queue
                     MessageInbound message = new MessageInbound(messageString);
-                    
+
                     System.out.printf("MessageManager - INFO: Received %s Message\n", message.getType());
-                    
+
                     queueMessage(message);
                 }
             }

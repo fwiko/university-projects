@@ -53,7 +53,7 @@ public class InitiatorClient {
         messageHandler = new Thread() {
             @Override
             public void run() {
-                while (!interrupted() && !messageManager.isStopped()) {
+                while (!Thread.currentThread().isInterrupted() && !messageManager.isStopped()) {
                     // Get the next queued Message from the Message Manager (FIFO)
                     MessageInbound message = messageManager.getNextQueuedMessage();
                     
@@ -77,6 +77,7 @@ public class InitiatorClient {
         register();
         
         System.out.print("### STARTED INITIATOR CLIENT ###");
+        
         
         // Display the list of command-line input options for the User
         showOptions();

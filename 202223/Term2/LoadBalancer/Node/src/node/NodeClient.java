@@ -11,22 +11,22 @@ import node.messages.types.MessageOutboundType;
 
 public class NodeClient {
     // Maximum capacity of the Node - communicated with Load-Balancer
-    int maximumCapacity = -1;
+    private int maximumCapacity = -1;
     
     // Node socket details
-    InetAddress ipAddress = null;
-    int portNumber = -1;
+    private InetAddress ipAddress = null;
+    private int portNumber = -1;
     
     // Load-Balancer socket details
-    InetAddress loadBalancerIpAddress = null;
-    int loadBalancerPortNumber = -1;
+    private InetAddress loadBalancerIpAddress = null;
+    private int loadBalancerPortNumber = -1;
     
     // ID number of Node - received upon successful registration
-    int nodeIdNumber = -1;
+    private int nodeIdNumber = -1;
     
     // Message and Job Manager class singletons
-    MessageManager messageManager = null;
-    JobManager jobManager = null;
+    private MessageManager messageManager = null;
+    private JobManager jobManager = null;
     
     public NodeClient(int maximumCapacity, InetAddress ipAddress, int portNumber, InetAddress loadBalancerIpAddress, int loadBalancerPortNumber) {
         this.maximumCapacity = maximumCapacity;
@@ -71,6 +71,7 @@ public class NodeClient {
             } catch (IllegalArgumentException exception) { // Handle an IllegalArgumentException if insufficient or illegal arguments have been provideds
                 System.err.printf("NodeClient - ERROR: Could not handle %s Message (%s)\n", message.getType(), exception.getMessage());
             }
+
         }
         
         System.out.println("NodeClient - INFO: Stopped...");

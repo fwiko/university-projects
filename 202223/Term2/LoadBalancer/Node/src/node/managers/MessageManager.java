@@ -85,7 +85,7 @@ public class MessageManager {
             public void run() {
                 System.out.printf("MessageManager - INFO: Listening for Messages on Socket %s:%s\n",datagramChannel.socket().getLocalAddress().getHostAddress(), datagramChannel.socket().getLocalPort());
                 
-                while (!interrupted()) {
+                while (!Thread.currentThread().isInterrupted()) {
                     // Create a new ByteBuffer (similar to byte[]) and allocate 1024 Bytes
                     ByteBuffer buffer = ByteBuffer.allocate(1024);
                     

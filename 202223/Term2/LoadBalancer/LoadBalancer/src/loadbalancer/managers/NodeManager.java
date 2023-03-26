@@ -50,7 +50,8 @@ public class NodeManager {
         // Start the "Keep Alive" Timer/loop for the new Node
         node.startKeepAlive();
         
-        System.out.printf("NodeManager - INFO: Registered Node %d with a maximum capacity of %d on socket %s:%d\n", node.getIdNumber(), node.getMaximumCapacity(), node.getIpAddress().getHostAddress(), node.getPortNumber());
+        System.out.printf("NodeManager - INFO: Registered Node %d with a maximum capacity of %d on socket %s:%d\n", 
+                node.getIdNumber(), node.getMaximumCapacity(), node.getIpAddress().getHostAddress(), node.getPortNumber());
         
         // Increment the next Node ID Number value by 1
         nextNodeIdNumber += 1;
@@ -88,12 +89,6 @@ public class NodeManager {
         synchronized (registeredNodesMutex) {
             switch (allocationAlgorithm) {
                 case NORMAL -> { // If the specified Allocation Algorithm is NORMAL
-                    
-//                    if (registeredNodes.get(nextNodePointer).getCurrentUsage() < 100) {
-//                        node = registeredNodes.get(nextNodePointer);
-//                        nextNodePointer = (nextNodePointer + 1) % registeredNodes.size();
-//                        break;
-//                    }
                     
                     // Loop registeredNodes length times
                     for (int i = 0; i < registeredNodes.size(); i++) {

@@ -20,3 +20,6 @@ __pycache__
 /202223/Term2/LoadBalancer/RmiServer/build/
 /202223/Term2/LoadBalancer/RmiExample/build/
 /202223/Term2/LoadBalancer/RmiExample/dist/
+/202223/Term2/LoadBalancer/Controller/build/
+/202223/Term2/LoadBalancer/Controller/dist/
+/202223/Term2/LoadBalancer/Controller/nbproject/private/

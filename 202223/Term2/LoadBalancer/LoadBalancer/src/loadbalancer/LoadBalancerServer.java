@@ -19,12 +19,12 @@ public class LoadBalancerServer {
     private int portNumber = 0;
     private AllocationAlgorithm allocationAlgorithm = null;
     
-    // Initiator socket details
-    private InetAddress initiatorIpAddress = null;
-    private int initiatorPortNumber = -1;
+    // Controller socket details
+    private InetAddress controllerIpAddress = null;
+    private int controllerPortNumber = -1;
     
-    // Flag used to check whether the Initiator is registered
-    private boolean initiatorRegistered = false;
+    // Flag used to check whether the Controller is registered
+    private boolean controllerRegistered = false;
     
     // Message, Job, and Node Manager class singletons
     private MessageManager messageManager = null;
@@ -128,8 +128,8 @@ public class LoadBalancerServer {
                 // Remove the Job allocation record from the Job Manager
                 jobManager.deallocateJob(job);
                 
-                // If an initiator is registered with the Load-Balancer - send a FIN_JOB Message to the Initiator socket
-                if (initiatorRegistered) { messageManager.sendMessage(new MessageOutbound(MessageOutboundType.FIN_JOB, String.valueOf(job.getIdNumber())), initiatorIpAddress, initiatorPortNumber); }
+                // If an controller is registered with the Load-Balancer - send a FIN_JOB Message to the Controller socket
+                if (controllerRegistered) { messageManager.sendMessage(new MessageOutbound(MessageOutboundType.FIN_JOB, String.valueOf(job.getIdNumber())), controllerIpAddress, controllerPortNumber); }
                 
                 System.out.printf("LoadBalancerServer - INFO: Job %d has finished\n", jobIdNumber);
                 
@@ -197,44 +197,44 @@ public class LoadBalancerServer {
                 break;
                 
             }
-            case REG_INITIATOR -> {
+            case REG_CONTROLLER -> {
             
-                // If an insufficient number of additional arguments have been provided (2 needed for REG_INITIATOR), throw an IllegalArgumentException
+                // If an insufficient number of additional arguments have been provided (2 needed for REG_CONTROLLER), throw an IllegalArgumentException
                 if (message.getArguments().length < 2) { throw new IllegalArgumentException("Insufficient number of Message arguments"); }
                 
-                // Parse the first additional argument (Initiator IP Address) as an InetAddress
-                InetAddress tempInitiatorIpAddress = parseIpAddressArgument(message.getArgument(0));
+                // Parse the first additional argument (Controller IP Address) as an InetAddress
+                InetAddress tempControllerIpAddress = parseIpAddressArgument(message.getArgument(0));
                 
-                // Parse the second additional argument (Initiator Port Number) as an Integer
-                int tempInitiatorPortNumber = parseIntegerArgument(message.getArgument(1));
+                // Parse the second additional argument (Controller Port Number) as an Integer
+                int tempControllerPortNumber = parseIntegerArgument(message.getArgument(1));
                 
                 // If either provided argument is invalid, throw an IllegalArgumentException
-                if (tempInitiatorIpAddress == null || (tempInitiatorPortNumber < 1 || tempInitiatorPortNumber > 65534)) { throw new IllegalArgumentException("Illegal Message arguments provided"); }
+                if (tempControllerIpAddress == null || (tempControllerPortNumber < 1 || tempControllerPortNumber > 65534)) { throw new IllegalArgumentException("Illegal Message arguments provided"); }
                 
-                // If an Initiator has already registered - replace it
-                if (initiatorRegistered) {
+                // If an Controller has already registered - replace it
+                if (controllerRegistered) {
                     
-                    initiatorRegistered = false;
+                    controllerRegistered = false;
                     
-                    // Send a STOP_INITIATOR Message to the old registered Initiator
-                    messageManager.sendMessage(new MessageOutbound(MessageOutboundType.STOP_INITIATOR), initiatorIpAddress, initiatorPortNumber);
+                    // Send a STOP_CONTROLLER Message to the old registered Controller
+                    messageManager.sendMessage(new MessageOutbound(MessageOutboundType.STOP_CONTROLLER), controllerIpAddress, controllerPortNumber);
                     
-                    System.out.printf("LoadBalancerServer - INFO: A new Initiator has requested to register, the old Initiator has been stopped\n", tempInitiatorIpAddress.getHostAddress(), tempInitiatorPortNumber);
+                    System.out.printf("LoadBalancerServer - INFO: A new Controller has requested to register, the old Controller has been stopped\n", tempControllerIpAddress.getHostAddress(), tempControllerPortNumber);
                     
                     break;
                 }
                 
-                // Set the (permanent) Initiator IP Address and Port Number values to the ones given
-                initiatorIpAddress = tempInitiatorIpAddress;
-                initiatorPortNumber = tempInitiatorPortNumber;
+                // Set the (permanent) Controller IP Address and Port Number values to the ones given
+                controllerIpAddress = tempControllerIpAddress;
+                controllerPortNumber = tempControllerPortNumber;
                 
-                // Set the "initiatorRegistered" flag to true for line 215 in future
-                initiatorRegistered = true;
+                // Set the "controllerRegistered" flag to true for line 215 in future
+                controllerRegistered = true;
                 
-                // Send a REG_SUCCESS Message to the Initiator
-                messageManager.sendMessage(new MessageOutbound(MessageOutboundType.REG_SUCCESS), initiatorIpAddress, initiatorPortNumber);
+                // Send a REG_SUCCESS Message to the Controller
+                messageManager.sendMessage(new MessageOutbound(MessageOutboundType.REG_SUCCESS), controllerIpAddress, controllerPortNumber);
                 
-                System.out.printf("LoadBalancerServer - INFO: Initiator registered on socket %s:%d\n", initiatorIpAddress.getHostAddress(), initiatorPortNumber);
+                System.out.printf("LoadBalancerServer - INFO: Controller registered on socket %s:%d\n", controllerIpAddress.getHostAddress(), controllerPortNumber);
                 
                 break;
             
@@ -247,17 +247,17 @@ public class LoadBalancerServer {
                 // Parse the first additional argument (Execution Time) as an Integer
                 int executionTime = parseIntegerArgument(message.getArgument(0));
                 
-                // If the Execution Time argument is an invalid Integer or is negative, send a NEW_JOB_FAILURE Message to the initiator and throw an IllegalArgumentException
+                // If the Execution Time argument is an invalid Integer or is negative, send a NEW_JOB_FAILURE Message to the controller and throw an IllegalArgumentException
                 if (executionTime < 1) {
-                    messageManager.sendMessage(new MessageOutbound(MessageOutboundType.NEW_JOB_FAILURE), initiatorIpAddress, initiatorPortNumber);
+                    messageManager.sendMessage(new MessageOutbound(MessageOutboundType.NEW_JOB_FAILURE), controllerIpAddress, controllerPortNumber);
                     throw new IllegalArgumentException("Illegal Message arguments provided");
                 }
                 
                 // Tell the Job Manager to queue a new Job with the given Execution Time
                 Job job = jobManager.addNewJob(executionTime);
                 
-                // Send a NEW_JOB_SUCCESS Message to the Initiator
-                messageManager.sendMessage(new MessageOutbound(MessageOutboundType.NEW_JOB_SUCCESS, String.valueOf(job.getIdNumber())), initiatorIpAddress, initiatorPortNumber);
+                // Send a NEW_JOB_SUCCESS Message to the Controller
+                messageManager.sendMessage(new MessageOutbound(MessageOutboundType.NEW_JOB_SUCCESS, String.valueOf(job.getIdNumber())), controllerIpAddress, controllerPortNumber);
                 
                 break;
                 
@@ -275,8 +275,8 @@ public class LoadBalancerServer {
                 // If Nodes are connected, add their summaries to the information String
                 if (nodeSummaries.length > 0) { informationString += String.format(",%s", String.join(",", nodeSummaries)); }
                 
-                // Send the String of information to the Initiator with the INFO Message type
-                messageManager.sendMessage(new MessageOutbound(MessageOutboundType.INFO, informationString), initiatorIpAddress, initiatorPortNumber);
+                // Send the String of information to the Controller with the INFO Message type
+                messageManager.sendMessage(new MessageOutbound(MessageOutboundType.INFO, informationString), controllerIpAddress, controllerPortNumber);
                 
                 break;
                 

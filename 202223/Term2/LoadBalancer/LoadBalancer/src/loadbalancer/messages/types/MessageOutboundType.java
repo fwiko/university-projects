@@ -9,5 +9,5 @@ public enum MessageOutboundType {
     NEW_JOB_SUCCESS,
     NEW_JOB_FAILURE,
     INFO,
-    STOP_INITIATOR
+    STOP_CONTROLLER
 }

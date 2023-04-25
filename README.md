@@ -9,7 +9,7 @@ A collection of some of my university coursework and projects completed during m
 
 ## Second Year
 - [PCAP File Analyser](/202223/Term2/PCAPAnalyser) (High 1st)
-- [Load Balancer](/202223/Term2/LoadBalancer)
+- [Load Balancer](/202223/Term2/LoadBalancer) (Exceptional 1st)
 
 ## Third Year
 ...

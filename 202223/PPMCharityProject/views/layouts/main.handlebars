@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+
+{{!-- Head Content --}}
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    {{!-- CSS Styling --}}
+    <link rel="stylesheet" href="/styles/main.css">
+    {{!-- Fontawesome Icons --}}
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v6.1.1/css/all.css">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v6.1.1/css/v4-shims.css">
+    {{!-- Navigation Drop Down Script --}}
+    <script src="/scripts/navigation.js"></script>
+    <title>The Bridges Community Trust</title>
+    <meta name="description" content="Serving the Nottingham community with local support services.">
+</head>
+
+{{!-- Page Content --}}
+
+<body>
+    {{!-- Header Section --}}
+    <header class="header">
+        {{!-- Navigation bar --}}
+        <nav class="navbar">
+            <div class="content">
+                <div class="flex flex-direction-row flex-wrap flex-gap--medium" style="justify-content: space-between;">
+                    {{!-- The Bridges Community Trust Logo --}}
+                    <a href="/">
+                        <img src="/images/bridges-community-trust-logo.png" alt="" style="flex: 0;">
+                    </a>
+                    {{!-- Navigation Items/Links --}}
+                    <ul class="navbar-items">
+                        <li><a href="/">Home</a></li>
+                        <li><a href="/about">Our Mission</a></li>
+                        <li><a href="/services">Services</a></li>
+                        <li><a href="/events">Events</a></li>
+                        <li><a href="/employment-support">Employment Support</a></li>
+                        <li><a href="/newsletter">Newsletter</a></li>
+                    </ul>
+                    {{!-- Contact Page Button/Link --}}
+                    <a href="/contact" id="contact-button" class="button">
+                        <i class="fa-solid fa-envelope"></i>
+                        Contact
+                    </a>
+                    {{!-- Dropdown Menu Button --}}
+                    <button class="button dropdown-button" onclick="toggleDropdown()">
+                        <i class="fa-solid fa-bars fa-xl"></i>
+                    </button>
+                </div>
+                {{!-- Dropdown Menu Items (initially hidden) --}}
+                <div class="dropdown-items flex flex-direction-column flex-gap--small">
+                    <a href="/" class="dropdown-item">Home</a>
+                    <a href="/about" class="dropdown-item">Our Mission</a>
+                    <a href="/services" class="dropdown-item">Services</a>
+                    <a href="/events" class="dropdown-item">Events</a>
+                    <a href="/employment-support" class="dropdown-item">Employment Support</a>
+                    <a href="/newsletter" class="dropdown-item">Newsletter</a>
+                    <a href="/news" class="dropdown-item">News</a>
+                    <a href="/contact" class="dropdown-item">Contact</a>
+                </div>
+            </div>
+        </nav>
+        {{!-- Page Title --}}
+        <div class="content">
+            <h1 class="text-size--large" id="header-title">{{title}}</h1>
+        </div>
+    </header>
+
+    {{!-- Main Section --}}
+    <main class="main">
+        <div class="content">
+            {{{body}}}
+        </div>
+    </main>
+
+    {{!-- Footer Section --}}
+    <footer class="footer">
+        <div class="content">
+            {{!-- Three-Column-Wide Grid --}}
+            <div class="grid grid-cols--3">
+                {{!-- Charity Associations --}}
+                <div class="flex flex-direction-row flex-wrap flex-gap--medium">
+                    <img src="/images/community-fund-logo.webp" alt="" style="max-width: 5rem;">
+                    <img src="/images/sladen-estates-logo.webp" alt="" style="max-width: 5rem;">
+                    <img src="/images/bct-employment-support-logo.webp" alt="" style="max-width: 5rem;">
+                    <img src="/images/european-social-fund-logo.png" alt="" style="max-width: 5rem;">
+                    <img src="/images/thnlcommunity-fund-logo.png" alt="" style="max-width: 5rem;">
+                    <img src="/images/connected2-logo.png" alt="" style="max-width: 5rem;">
+                    <img src="/images/bj-logo.gif" alt="" style="max-width: 5rem;">
+                    <img src="/images/power-to-change-logo.webp" alt="" style="max-width: 10rem;">
+                </div>
+                {{!-- Social Media Links --}}
+                <div class="flex flex-direction-row flex-wrap flex-gap--large">
+                    {{!-- Facebook link --}}
+                    <a target="_blank" href="https://www.facebook.com/The-Bridges-Community-Trust-123667581036212"
+                        class="button">
+                        <i class="fa-brands fa-facebook fa-2xl"></i>
+                    </a>
+                    {{!-- Instagram link --}}
+                    <a target="_blank" href="https://www.instagram.com/bridgescommunitytrust/" class="button">
+                        <i class="fa-brands fa-instagram fa-2xl"></i>
+                    </a>
+                    {{!-- Twitter link --}}
+                    <a target="_blank" href="https://twitter.com/TheBridgesComm1" class="button">
+                        <i class="fa-brands fa-twitter fa-2xl"></i>
+                    </a>
+                    {{!-- LinkedIn link --}}
+                    <a target="_blank" href="https://www.linkedin.com/company/the-bridges-community-trust/"
+                        class="button">
+                        <i class="fa-brands fa-linkedin fa-2xl"></i>
+                    </a>
+                </div>
+                {{!-- Contact Details --}}
+                <div class="text-align--left" style="vertical-align: middle">
+                    <h3>Contact Info</h3>
+                    <hr class="separator">
+                    {{!-- Address --}}
+                    <p>
+                        5-7 Bridgeway Centre<br>
+                        The Meadows<br>
+                        Nottingham<br>
+                        NG2 2JD
+                    </p>
+                    {{!-- Phone number and Email address --}}
+                    <p>
+                        Phone: <a target="_blank" href="tel:+0115 6710200">0115 6710200</a><br>
+                        Email: <a target="_blank"
+                            href="mailto:info@bridgescommunitytrust.org.uk">info@bridgescommunitytrust.org.uk</a>
+                    </p>
+                    {{!-- Registered charity identification number --}}
+                    <p>Registered Charity: <b>1139749</b></p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+</body>
+
+</html>

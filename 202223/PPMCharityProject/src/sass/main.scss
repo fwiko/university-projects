@@ -1,0 +1,447 @@
+@import "./settings/colours";
+
+* {
+    box-sizing: border-box;
+    transition: all 0.2s ease-in-out;
+    scrollbar-color: $highlight-colour transparent;
+    scroll-behavior: smooth;
+}
+
+html,
+body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    background-image: $background-topography;
+    background-color: #d6d6d6;
+    font-family: "Inter", sans-serif;
+}
+
+// main styling - mainly dynamic
+
+.main {
+    @media screen and (max-width: 1010px) {
+        .content {
+            padding: 1rem;
+        }
+    }
+}
+
+// header styling ----------------------------------------------
+
+.header {
+    background-image: url(../images/nottingham.jpg);
+    background-size: cover;
+    text-align: center;
+
+    #header-title {
+        margin: 0;
+        color: white;
+        text-shadow: 0 0 0.25em rgba(0, 0, 0, 0.5);
+
+        text-transform: capitalize;
+    }
+}
+
+// nav styling --------------------------------------------------
+
+.navbar {
+    width: 100%;
+
+    background-color: hsla(227, 13%, 59%, 0.5);
+    backdrop-filter: blur(0.5rem);
+    border-bottom: 2px solid $dark-colour-primary;
+
+    &-items {
+        display: flex;
+        justify-content: flex-end;
+        align-items: center;
+        gap: 2em;
+        list-style: none;
+        flex-wrap: wrap;
+        padding: 0;
+
+        li {
+            a {
+                text-decoration: none;
+                color: $light-colour-primary;
+                font-weight: bold;
+                text-shadow: 0 2px 0 $dark-colour-secondary;
+
+                &:hover {
+                    color: $highlight-colour;
+                }
+            }
+        }
+    }
+
+    .dropdown {
+        &-button {
+            display: none;
+        }
+
+        &-items {
+            display: none;
+            margin: 2em 0 0 0;
+
+            &--show {
+                display: flex;
+            }
+        }
+
+        &-item {
+            display: block;
+            width: 100%;
+            padding: 1em;
+            background-color: $light-colour-primary;
+            border-radius: 10px;
+            text-decoration: none;
+            font-weight: bold;
+            color: $dark-colour-primary;
+
+            &:hover {
+                background-color: $dark-colour-primary;
+                color: $light-colour-primary;
+            }
+        }
+    }
+
+    @media (max-width: 1010px) {
+        &-items {
+            display: none;
+        }
+        #contact-button {
+            display: none;
+        }
+        .dropdown-button {
+            display: block;
+        }
+    }
+}
+
+// content section styling --------------------------------------
+
+.content {
+    padding: 2rem;
+    max-width: 100rem;
+
+    margin: 0 auto;
+}
+
+// card styling -------------------------------------------------
+
+.card {
+    background-color: $light-colour-secondary;
+    color: $dark-colour-primary;
+    border-radius: 10px;
+    border: 2px solid $light-colour-tertiary;
+    border-bottom: 5px solid $light-colour-tertiary;
+
+    #card-title {
+        padding: 2rem 2rem 0 2rem;
+        color: $light-colour-primary;
+        background-color: $dark-colour-primary;
+        border-bottom: 5px solid $highlight-colour;
+        border-radius: 10px;
+
+        h2 {
+            margin-top: 0;
+            margin-bottom: 2rem;
+        }
+
+        @media screen and (max-width: 1010px) {
+            padding: 1rem 1rem 0 1rem;
+
+            h2 {
+                margin-bottom: 1rem;
+            }
+        }
+    }
+
+    #card-content {
+        padding: 0 2rem 2rem 2rem;
+
+        @media screen and (max-width: 1010px) {
+            padding: 0 1rem 1rem 1rem;
+        }
+    }
+}
+
+// section styling -----------------------------------------
+
+.section {
+    #section-title {
+        margin: 0;
+        color: $dark-colour-primary;
+
+        h2 {
+            margin-top: 0;
+            margin-bottom: 2rem;
+        }
+    }
+}
+
+// text styling -------------------------------------------------
+
+.text {
+    &-size {
+        &--large {
+            font-size: 48pt;
+        }
+        &--medium {
+            font-size: 32pt;
+        }
+        &--small {
+            font-size: 20pt;
+        }
+    }
+
+    &-align {
+        &--left {
+            text-align: left;
+        }
+        &--center {
+            text-align: center;
+        }
+        &--right {
+            text-align: right;
+        }
+    }
+}
+
+// grid styling -------------------------------------------------
+
+.grid {
+    display: grid;
+    grid-gap: 2rem;
+
+    &-cols {
+        &--1 {
+            grid-template-columns: repeat(1, 1fr);
+        }
+        &--2 {
+            grid-template-columns: repeat(2, 1fr);
+        }
+        &--3 {
+            grid-template-columns: repeat(3, 1fr);
+        }
+        &--4 {
+            grid-template-columns: repeat(4, 1fr);
+        }
+    }
+
+    @media screen and (max-width: 1010px) {
+        grid-template-columns: 1fr;
+        grid-gap: 1rem;
+    }
+}
+
+// button styling -----------------------------------------------
+
+.button {
+    display: inline-block;
+    padding: 1rem;
+    border-radius: 10px;
+    background-color: $dark-colour-primary;
+    color: $light-colour-primary;
+    text-decoration: none;
+
+    border: 2px solid $dark-colour-secondary;
+    border-bottom: 5px solid $dark-colour-secondary;
+
+    text-align: center;
+    font-weight: bold;
+
+    &:hover {
+        background-color: $highlight-colour;
+        color: $dark-colour-primary;
+    }
+}
+
+// separator styling --------------------------------------------
+
+.separator {
+    margin: 1rem 0;
+    border: 2px solid $dark-colour-primary;
+}
+
+// footer styling
+
+.footer {
+    background-color: $light-colour-secondary;
+    color: $dark-colour-primary;
+    text-align: center;
+    padding: 1rem;
+    border-top: 2px solid $dark-colour-primary;
+}
+
+// flexbox styling ----------------------------------------------
+
+.flex {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    &-direction {
+        &-row {
+            flex-direction: row;
+        }
+        &-column {
+            flex-direction: column;
+        }
+    }
+
+    &-wrap {
+        flex-wrap: wrap;
+    }
+
+    &-gap {
+        &--small {
+            gap: 0.5em;
+        }
+        &--medium {
+            gap: 1em;
+        }
+        &--large {
+            gap: 2em;
+        }
+    }
+}
+
+// article styling ----------------------------------------------
+
+.article {
+    background-color: $light-colour-secondary;
+    color: $dark-colour-primary;
+    border-radius: 10px;
+    padding: 2rem;
+
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6 {
+        font-size: 32pt;
+        margin: 0;
+    }
+
+    p {
+        font-size: 20pt;
+    }
+
+    img {
+        margin: 0 auto;
+        display: block;
+        width: 50%;
+    }
+
+    &-preview {
+        border: 2px solid $dark-colour-primary;
+        border-bottom: 5px solid $dark-colour-primary;
+        color: $dark-colour-primary;
+        border-radius: 10px;
+        padding: 1rem;
+        text-align: center;
+        text-decoration: none;
+        background-color: $light-colour-tertiary;
+
+        &-date {
+            color: rgb(0, 158, 34);
+            font-weight: bold;
+        }
+    }
+
+    @media screen and (max-width: 1010px) {
+        padding: 1rem;
+        img {
+            width: 75%;
+        }
+    }
+}
+
+// contact form styling -----------------------------------------
+
+.contact-form {
+    width: 100%;
+    height: 100%;
+    padding: 2rem;
+
+    input[type="text"],
+    select,
+    textarea {
+        width: 100%;
+        padding: 1rem;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        box-sizing: border-box;
+        margin-top: 6px;
+        margin-bottom: 16px;
+        resize: vertical;
+        width: 100%;
+    }
+
+    /* Style the submit button with a specific background color etc */
+    input[type="submit"] {
+        cursor: pointer;
+        width: 100%;
+    }
+}
+
+// team-member styling ------------------------------------------
+
+.team-member {
+    text-align: center;
+    &-portrait {
+        width: 15em;
+        height: 15em;
+        object-fit: cover;
+        border-radius: 50%;
+        display: block;
+        margin: 1rem auto;
+        border: 0.25rem solid $highlight-colour;
+    }
+}
+
+// events table styling -----------------------------------------
+
+.events-table {
+    width: 100%;
+
+    tr {
+        &:nth-child(even) {
+            background-color: $light-colour-primary;
+        }
+        &:hover {
+            background-color: $highlight-colour;
+            cursor: crosshair;
+        }
+    }
+
+    th {
+        padding: 1rem;
+        text-align: left;
+        background-color: $dark-colour-primary;
+        color: $light-colour-primary;
+    }
+
+    td {
+        padding: 0.5rem;
+        border-bottom: 1px solid $dark-colour-primary;
+    }
+
+    @media screen and (max-width: 1010px) {
+        overflow-x: auto;
+        display: block;
+    }
+}
+
+// scrollbar
+
+::-webkit-scrollbar {
+    width: 15px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: $highlight-colour;
+}

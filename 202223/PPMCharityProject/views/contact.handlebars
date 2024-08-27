@@ -1,0 +1,26 @@
+<div class="card">
+    <div id="card-title">
+        <h2 class="text-size--medium">Contact Form</h2>
+    </div>
+    <div id="card-conten">
+        <div class="contact-form">
+            {{!-- contact form --}}
+            <form class="contact-form" action="/contact" method="POST" class="form">
+                <label for="name">Name</label>
+                <input type="text" id="name" name="name" placeholder="Your name..." required>
+
+                <label for="phonenumber">Phone Number</label>
+                <input type="text" id="phone" name="phone" placeholder="Your phone number..." required>
+
+                <label for="subject">Message</label>
+                <textarea id="message" name="message" placeholder="Your message..." style="height: 10rem"
+                    required></textarea>
+
+                <input type="submit" value="Submit" class="button">
+            </form>
+            {{#if message}}
+            <p class="text-size--small" style="text-align: center;">{{message}}</p>
+            {{/if}}
+        </div>
+    </div>
+</div>

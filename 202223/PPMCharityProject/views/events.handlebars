@@ -1,0 +1,17 @@
+<div class="article">
+    {{!-- three columned table --}}
+    <table class="events-table">
+        <tr>
+            <th>Event</th>
+            <th>Location</th>
+            <th>Date</th>
+        </tr>
+        {{#each events}}
+        <tr>
+            <td>{{this.name}}</td>
+            <td>{{this.location}}</td>
+            <td>{{this.time}}</td>
+        </tr>
+        {{/each}}
+    </table>
+</div>

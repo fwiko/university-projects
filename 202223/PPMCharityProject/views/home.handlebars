@@ -1,0 +1,97 @@
+<div id="home-summary">
+    <div class="card">
+        <div id="card-title">
+            <h2 class="text-size--medium">About the Trust</h2>
+        </div>
+        <div id="card-content">
+            <p class="text-size--small"><b>The Bridges Community Trust is dedicated to serving the Meadows and Clifton
+                    communities and surrounding areas, to provide better local services and facilities</b>.</p>
+            <p class="text-size--small">
+                We have a long established working relationship with the local community and local VCS organisations.
+                Primarily, <b>we deliver employment services, which contribute to the local community by raising the
+                    standards of living, giving locals more disposable income, and contributing to the health and
+                    wellbeing
+                    of the local residents</b>.
+            </p>
+            <a class="button" href="/about" style="width: 100%;">Read More</a>
+        </div>
+    </div>
+</div>
+
+<div id="home-features" style="margin: 5rem 0; color: #355963;">
+    <div class="grid grid-cols--4">
+        <div class="text-align--center">
+            <i class="fa-solid fa-phone fa-2xl"></i>
+            <h2 class="text-size--small">
+                Office Services
+            </h2>
+            <hr class="separator">
+            <p class="text-size--xsmall">We offer use of a computer, phone, printing and photocopying on <b>Mondays
+                    to
+                    Thursdays: 9.30am to 4pm & Fridays 9:30 - 12:00</b>.</p>
+            <a class="button" href="/services#it-services" style="width: 100%;">Find Out More</a>
+        </div>
+        <div class="text-align--center">
+            <i class="fa-solid fa-user fa-2xl"></i>
+            <h2 class="text-size--small">
+                Employment
+            </h2>
+            <hr class="separator">
+            <p class="text-size--xsmall">We provide support with a range of career development activities, such as:
+                <b>CV
+                    writing, job searching, and confidence building</b>.
+            </p>
+            <a class="button" href="/employment-support" style="width: 100%;">Find Out More</a>
+        </div>
+        <div class="text-align--center">
+            <i class="fa-solid fa-bowl-food fa-2xl"></i>
+            <h2 class="text-size--small">
+                Food Bank
+            </h2>
+            <hr class="separator">
+            <p class="text-size--xsmall">We issue Trussel Trust food bank with vouchers every <b>Tuesday &
+                    Friday</b>,
+                providing
+                easy access to food to those in need.</p>
+            <a class="button" href="/services#food-bank" style="width: 100%;">Find Out More</a>
+        </div>
+        <div class="text-align--center">
+            <i class="fa-solid fa-tree fa-2xl"></i>
+            <h2 class="text-size--small">
+                Community
+            </h2>
+            <hr class="separator">
+            <p class="text-size--xsmall">We are here to provide help and support in the <b>Meadows and Clifton
+                    areas</b>,
+                with a
+                range of community projects and events.</p>
+            <a class="button" href="/employment-support" style="width: 100%;">Find Out More</a>
+        </div>
+    </div>
+</div>
+
+<div id="home-latest-news">
+    <div class="card">
+        <div id="card-title">
+            <h2 class="text-size--medium">Recent News</h2>
+        </div>
+        <div id="card-content">
+            <div class="grid grid-cols--4" style="margin: 2rem 0;">
+                {{#each previewArticles}}
+                <a href="/news/{{this.link}}" class="article-preview">
+                    <h3 style="text-transform: capitalize;">
+                        {{this.name}}
+                    </h3>
+                    <p>
+                        {{this.content}}
+                    </p>
+                    <p>
+                        Posted: <span class="article-preview-date">{{this.time}}</span>
+                    </p>
+                </a>
+                {{/each}}
+            </div>
+            <a class="button" href="/news" style="width: 100%;">More Articles</a>
+        </div>
+    </div>
+</div>

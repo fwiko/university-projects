@@ -1,0 +1,32 @@
+{
+  "name": "ppm-project",
+  "version": "1.0.0",
+  "description": "",
+  "main": "src/app.js",
+  "scripts": {
+    "dev": "nodemon src/app.js",
+    "start": "node src/app.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/fwiko/PPM-Project.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/fwiko/PPM-Project/issues"
+  },
+  "homepage": "https://github.com/fwiko/PPM-Project#readme",
+  "dependencies": {
+    "csv": "^6.2.8",
+    "express": "^4.18.2",
+    "express-handlebars": "^7.0.4",
+    "marked": "^4.3.0",
+    "marked-images": "^3.0.2",
+    "node-sass-middleware": "^1.0.1"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.22"
+  }
+}

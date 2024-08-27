@@ -1,0 +1,22 @@
+<div class="card">
+    <div id="card-title">
+        <h2 class="text-size--medium">Articles</h2>
+    </div>
+    <div id="card-content">
+        <div class="grid grid-cols--4" style="margin: 2rem 0 0 0;">
+            {{#each previewArticles}}
+            <a href="/news/{{this.link}}" class="article-preview">
+                <h3 style="text-transform: capitalize;">
+                    {{this.name}}
+                </h3>
+                <p>
+                    {{this.content}}
+                </p>
+                <p>
+                    Posted: <span class="article-preview-date">{{this.time}}</span>
+                </p>
+            </a>
+            {{/each}}
+        </div>
+    </div>
+</div>
